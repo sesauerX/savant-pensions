@@ -1,0 +1,12 @@
+---
+import Base from "../layouts/Base.astro";
+const html = '<p>A dental practice often looks “small” until the census lists hygienists, assistants, and an associate. Those people can be entitled to a benefit. The owner-dentist, often in their 50s with high collections and a long-running 401(k), is the person who feels the <strong>$24,500</strong> deferral as too small. The pension is the next layer, not a replacement for paying the team.</p>\n<p>We will not quote a contribution from production numbers alone. Collections are not always W-2 wages, and an S corporation’s distributions are not pension compensation. The briefing on S-corp wages is in the <a href="/insights">archive</a>. The statutory frame is in <a href="https://www.irs.gov/publications/p560">Publication 560</a> and the <a href="https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions">COLA table</a>.</p>\n<p>If income is steady and the hygienist cost is acceptable, a <a href="/combo">401(k) plus cash balance</a> is the usual shape. If you might add an associate this year, say so before the document is signed. Then <a href="/contact">send the roster</a>.</p>\n<img src="/images/guides/dentists.jpg" alt="A dentist speaking with an advisor" class="mt-6 h-80 w-full rounded-3xl object-cover" />';
+---
+<Base title="Dental practices. | Savant Pensions">
+  <section class="wrap page">
+    <p class="kicker">Dentists</p>
+    <h1>Dental practices.</h1>
+    <p class="lede">Hygienists and associates change the design. The owner’s age still drives the credit.</p>
+    <div class="guide" set:html={html} />
+  </section>
+</Base>

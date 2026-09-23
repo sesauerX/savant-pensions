@@ -1,0 +1,33 @@
+---
+import Base from "../../layouts/Base.astro";
+import { formatDate, posts } from "../../lib/posts";
+const [lead, ...rest] = posts;
+---
+<Base title="Owner briefing | Savant Pensions" description="A briefing every two weeks for self-employed owners, from September 2024 through today.">
+  <section class="wrap page">
+    <p class="kicker">Owner briefing</p>
+    <h1>What changed, and what a self-employed owner should do about it.</h1>
+    <p class="lede">A briefing every two weeks, from September 1, 2024 through today. Each note uses the limits that were current that week.</p>
+  </section>
+  {lead && (
+    <section class="wrap split" style="padding-bottom:24px;">
+      <a href={`/insights/${lead.slug}`}><img class="photo" src={lead.image} alt="" style="height:420px;" /></a>
+      <div>
+        <p class="kicker">{formatDate(lead.date)}</p>
+        <h2><a href={`/insights/${lead.slug}`}>{lead.title}</a></h2>
+        <p class="lede">{lead.description}</p>
+        <a class="btn primary" href={`/insights/${lead.slug}`}>Read the briefing</a>
+      </div>
+    </section>
+  )}
+  <section class="wrap grid3" style="padding-bottom:64px;">
+    {rest.map((post) => (
+      <article class="panel">
+        <a href={`/insights/${post.slug}`}><img src={post.image} alt="" style="height:180px;width:100%;object-fit:cover;border-radius:16px;" /></a>
+        <p class="kicker" style="margin-top:12px;">{formatDate(post.date)}</p>
+        <h3><a href={`/insights/${post.slug}`}>{post.title}</a></h3>
+        <p>{post.description}</p>
+      </article>
+    ))}
+  </section>
+</Base>

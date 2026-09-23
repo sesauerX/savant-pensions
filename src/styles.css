@@ -117,3 +117,8 @@ input, textarea, select { width: 100%; margin-top: 6px; padding: 12px 14px; bord
   .visual img, .photo { height: 320px; }
   .cta { padding: 28px; }
 }
+
+.guide p, .briefing p { margin: 1rem 0; line-height: 1.7; }
+.guide h2, .briefing h2 { margin-top: 1.8rem; }
+.guide ul, .briefing ul { margin: 1rem 0 1rem 1.2rem; }
+.guide a, .briefing a { color: var(--navy); font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold); }

@@ -1,0 +1,32 @@
+---
+import Base from "../../layouts/Base.astro";
+import { formatDate, getPost, posts } from "../../lib/posts";
+
+export function getStaticPaths() {
+  return posts.map((post) => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = getPost(slug!);
+if (!post) return Astro.redirect("/insights");
+const more = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
+---
+<Base title={`${post.title} | Savant Pensions`} description={post.description}>
+  <article class="wrap page">
+    <p class="kicker">{post.kicker} · {formatDate(post.date)}</p>
+    <h1>{post.title}</h1>
+    <img class="photo" src={post.image} alt="" style="height:420px;margin-top:20px;" />
+    <div class="briefing" set:html={post.html} />
+  </article>
+  <section class="wrap" style="padding-bottom:48px;">
+    <h2>More from the briefing</h2>
+    <div class="grid3" style="margin-top:16px;">
+      {more.map((item) => (
+        <a class="panel" href={`/insights/${item.slug}`}>
+          <p class="kicker">{formatDate(item.date)}</p>
+          <h3>{item.title}</h3>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

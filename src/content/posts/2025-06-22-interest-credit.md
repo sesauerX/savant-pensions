@@ -1,0 +1,62 @@
+---
+title: "The interest credit is not the investment return."
+date: 2025-06-22
+kicker: Owner briefing
+description: "A cash balance account grows by a crediting rate in the document. Most micro plans use a fixed rate. That is a pattern, not a rule."
+image: /images/briefing/2025-06-22.jpg
+slug: interest-credits
+---
+
+A cash balance statement shows an opening balance, a pay credit, an interest credit, and a closing balance. The interest credit is the line owners point at when they ask whether the plan "earned" five percent. Often the plan's investments earned something else. The line on the statement is not a report of the portfolio. It is the growth the document promised to post to a hypothetical account. The portfolio is the trust. The two are allowed to differ, and in a fixed-rate plan they usually do. Understanding that difference is the difference between reading the statement and understanding the funding.
+
+This briefing is about the choice of crediting rate, in plain language. It is not a recommendation of a rate. Most micro plans use a fixed rate. That is an industry pattern. It is not a requirement, and it is not a recommendation that your plan copy the pattern. Savant Pensions is a third-party administrator in West Hartford. We administer the rate the document states. An independent Enrolled Actuary values it. We are not an actuarial firm, and we do not choose the investments that sit underneath the promise.
+
+## Two credits, and only one of them is interest
+
+Each year a [cash balance plan](/cash-balance) adds a pay credit for the participant. The pay credit is the contribution-like piece: a dollar amount or a percentage of pay, written in the formula. The plan also adds an interest credit. The interest credit is applied to the hypothetical account at the rate the document defines. Together they produce the account the participant sees. The account is a record maintained under the plan. It is not a separate account at a custodian with the participant's name on it, and the participant does not direct it.
+
+The trust is invested as one pool. It might hold bonds, funds, an insurance contract, or a mix. The trustee and the investment adviser are responsible for that pool. The crediting rate does not have to equal the pool's return. When the rate is fixed, it almost never equals the return except by coincidence. When the pool earns more than the fixed credit, the extra stays in the funding of the plan and can reduce future required contributions. When the pool earns less, the sponsor's future contributions rise to keep the promise intact. The participant's statement still shows the fixed credit. The statement is doing what the document said. The actuary is watching the other side of the ledger.
+
+A traditional [defined benefit plan](/defined-benefit) does not show this machinery as an account. It promises an annuity, and the actuary discounts that promise with valuation assumptions. A cash balance plan is a defined benefit plan that communicates the promise as an account. The funding rules are still defined benefit rules. The interest crediting rate is part of the promise. The valuation interest assumptions are part of the funding measurement. They are related and they are not the same number. Owners who want one percentage to serve both jobs should expect the actuary to refuse the simplification.
+
+## Fixed, variable, and market
+
+A fixed credit is a stated percent. Under the market-rate rules that govern cash balance plans, a fixed rate is generally not permitted above 6 percent. That ceiling is a legal boundary on how generous a fixed promise may be. It is not a target, and it is not a reason to pick 6 percent because it is the largest number on the menu. A lower fixed rate is common. It posts a steadier, smaller promise, and it is easier for a conservative portfolio to resemble. It also changes the projection that determines how large a pay credit can be this year, because today's credit is carried forward to retirement at the rate in the document. The rate and the pay credit are one design, not two.
+
+A variable rate moves with an outside index the regulations allow, often a Treasury yield. The participant does not know next year's credit in advance. The sponsor does not know it either. The account is less of a fixed promise and more of a bond-like promise. A floor can sometimes be written under a variable rate, within limits. A floor reintroduces a piece of the fixed promise, and the actuary will value it as such.
+
+A market-rate credit tracks an actual investment return: the return of the trust, of a subset of the assets, or of a stated fund. In a year when the portfolio is up sharply, the hypothetical accounts are up sharply. In a year when the portfolio is down, the accounts can be down, subject to the preservation rules that keep a participant's account from being credited in a way the statute forbids over the life of the promise. Market-rate designs can line the statement up with the assets, which reduces the sponsor's mismatch. They can also make next year's contribution swing, because the actuary's funding target moved with the market. They complicate testing when the plan is not owner-only. They are a legitimate design. They are not the usual micro-plan design.
+
+The pattern is worth stating carefully. Among very small plans, especially owner-only and owner-and-spouse plans, the fixed rate is what we see most often. Vendors know how to administer it. Actuaries know how to value it. Participants can understand a statement that goes up by a stated percent. That pattern does not make a fixed rate the right rate for a plan whose sponsor wants the contribution to absorb market returns, and it does not make a market-rate plan exotic or improper. It means you should choose, not inherit. If a proposal says "everyone uses 5 percent," ask whether that is a description of their client base or a reason for your document. A description is not a reason.
+
+## What the mismatch does to the check you write
+
+Suppose a hypothetical account is credited at a fixed 4 percent, and the trust earns 1 percent, or 9 percent. Those rates are an example, not a recommendation and not a limit. In the 1 percent year, the statement still receives 4 percent. The plan has become relatively less well funded. The Enrolled Actuary's next valuation will reflect that. The minimum required contribution can rise. In the 9 percent year, the statement still receives 4 percent. The plan has become relatively better funded. A later minimum can fall, and the deductible maximum can fall with it. Owners who wanted a large deduction are sometimes unhappy with a year in which the investments did well. The unhappiness is the structure working. You do not get a large, stable deduction and a market return that you also keep out of the funding calculation.
+
+A market-rate credit reverses the picture. The statement absorbs the 1 percent or the 9 percent. The sponsor's mismatch shrinks. The participant's account becomes volatile, which some sponsors want and some participants, if there are any who are not the owner, will not expect from a "pension." Communication is part of the design. A fixed-rate statement that never declines is easier to explain. It is also a promise the sponsor keeps in a down market.
+
+Neither choice escapes the 2025 limits. Compensation taken into account is capped at **$350,000**. The defined benefit dollar limit is an annual benefit of **$280,000**, reduced for early payment and short participation, as described on the IRS [benefit limits page](https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-defined-benefit-plan-benefit-limits). The annual additions limit of **$70,000**, the deferral limit of **$23,500**, and the catch-up of **$7,500** or **$11,250** belong to a defined contribution plan if you have one beside the pension. They do not cap the interest credit. The sources for the dollar figures are [IR-2024-285](https://www.irs.gov/newsroom/401k-limit-increases-to-23500-for-2025-ira-limit-remains-7000) and the IRS [COLA page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions). [Publication 560](https://www.irs.gov/publications/p560) is the small-business overview of the plan type. None of those pages picks your crediting rate.
+
+The rate also interacts with age. Projecting a pay credit to retirement at 5 percent produces a different maximum credit than projecting it at 3 percent. A higher fixed rate can support a different shape of contribution, and it creates a richer promise if the assets do not keep up. Looking at a contribution illustration without looking at the rate that produced it is looking at half the sentence. The [illustration examples](/illustrations) are only useful if the rate is printed on them. A page of contribution dollars with the rate in a footnote nobody reads is how plans get adopted on the wrong term.
+
+## Changing the rate later
+
+The crediting rate is a plan term. Changing it is an amendment. A change that reduces the rate of future interest credits can be a significant reduction in future accruals, which can require a notice under ERISA section 204(h) before it takes effect. You do not change the rate for the year that just happened because the market disappointed you. The rate that applied to last year's balance is already in the document. Prospective changes, done in time, are the lawful version. Quiet changes, done on the statement and not in the document, are an operational failure.
+
+This is one reason to choose slowly at adoption and then leave the rate alone. A plan that switches from fixed to market, or from 5 percent to 3 percent, every time the funding looks inconvenient, is a plan with an amendment history instead of a design. There are good reasons to amend: a genuine change in how you invest, a change in the participant group, a freeze. "The deduction came in lower than the sketch" is not, by itself, a reason to rewrite the promise retroactively. It is a reason to have included the actuary before the document was signed.
+
+If the plan covers employees, the rate is also a testing fact. Market-rate credits can make the general test harder to predict, because the benefit you are testing moved during the year. Fixed credits are calmer in the test and more demanding in the funding. A [combination plan](/combo) does not remove the choice. It adds a defined contribution plan beside it. The 401(k) can take market returns in the employee's own account. That is a reason some sponsors keep the cash balance credit fixed and take their market risk in the 401(k), where the employee, not the funding rules, bears the return. It is a reason, not a rule.
+
+## Who decides
+
+You decide, with the Enrolled Actuary explaining the funding consequence and the investment adviser explaining what the portfolio can credibly seek. We write and administer the document you adopt. We will not pick 5 percent for you because it is familiar, and we will not talk you into a market-rate credit because it is newer. Familiar is the pattern. Newer is available. The certification of whatever you pick is the actuary's signature, not ours.
+
+This briefing is not tax, legal, investment, or actuarial advice. A crediting rate has legal constraints, funding effects, and investment implications. Three professionals are a normal number for that decision. One number on a sales illustration is not.
+
+## What to do in the next two weeks
+
+Read the interest crediting definition in your document, or in the draft you were given. Write down, in one sentence, whether it is fixed, tied to an index, or tied to an investment return. If you cannot tell, you are not ready to adopt or to judge last year's statement.
+
+Set that sentence next to last year's trust return, if the plan already exists. The gap between the two numbers is not a mistake. It is the mismatch you are funding. Ask the actuary how that gap showed up in the minimum and the maximum. Ask the adviser whether the portfolio is built for that rate.
+
+If you are still designing, ask for two illustrations that differ only by the crediting rate, both labeled as illustrations and neither described as an IRS limit. Look at the pay credit and at a down-market year, not only at the deduction in a normal year. Then [bring the two pages](/contact). We will administer the one you choose. We will not choose it on the phone.
