@@ -2,12 +2,38 @@
 import Base from "../../layouts/Base.astro";
 import { formatDate, posts } from "../../lib/posts";
 const [lead, ...rest] = posts;
+const hub = [
+  ["#briefing", "Owner briefing", "A note every two weeks, written to the limits that were current that week."],
+  ["/limits", "2024–2026 IRS limits", "Deferrals, annual additions, compensation cap, and the defined-benefit dollar limit."],
+  ["/compare", "Compare SEP, 401(k), pension", "What changes once a SEP or solo 401(k) is already full."],
+  ["/illustrations", "Illustrative contributions", "Age-based ranges, labeled as illustrations, not IRS caps."],
+  ["/not-a-fit", "When it is not a fit", "Income, staff, and timing cases where this plan should wait."],
+  ["/staff-cost", "Staff cost", "Why the census, not a slogan, decides what the owner keeps."],
+  ["/calendar", "Deadline calendar", "Form 5500, minimum funding, and the tax-return date."],
+  ["/fees", "Fees and who does what", "Administrator, enrolled actuary, trustee, and CPA."],
+  ["/plan-lifecycle", "After the plan exists", "A soft year, a new hire, a practice sale, and termination."],
+  ["/calculator", "Tax savings calculator", "A first sketch of contribution room. Not a quote."],
+  ["/faq", "FAQs", "Questions owners ask before they send a census."],
+  ["/contact", "Schedule a consultation", "Send compensation and a roster. We’ll say if a design is worth it."],
+];
 ---
-<Base title="Owner briefing | Savant Pensions" description="A briefing every two weeks for self-employed owners, from September 2024 through today.">
+<Base title="Insights | Savant Pensions" description="Guides, limits, deadlines, and the owner briefing.">
   <section class="wrap page">
+    <p class="kicker">Insights</p>
+    <h1>Guides and the owner briefing.</h1>
+    <p class="lede">The pages in the footer, in one place.</p>
+  </section>
+  <section class="wrap grid3" style="padding-bottom:24px;">
+    {hub.map(([href, label, blurb]) => (
+      <a class="panel" href={href}>
+        <h2 style="font-size:22px;">{label}</h2>
+        <p>{blurb}</p>
+      </a>
+    ))}
+  </section>
+  <section id="briefing" class="wrap page">
     <p class="kicker">Owner briefing</p>
-    <h1>What changed, and what a self-employed owner should do about it.</h1>
-    <p class="lede">A briefing every two weeks, from September 1, 2024 through today. Each note uses the limits that were current that week.</p>
+    <h2>Every two weeks, from September 2024.</h2>
   </section>
   {lead && (
     <section class="wrap split" style="padding-bottom:24px;">

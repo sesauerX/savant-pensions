@@ -6,7 +6,7 @@ const nav = [
   ["/defined-benefit", "Defined Benefit"],
   ["/cash-balance", "Cash Balance"],
   ["/services", "Services"],
-  ["/insights", "Briefing"],
+  ["/insights", "Insights"],
   ["/about", "About"],
   ["/contact", "Contact"],
 ];
@@ -52,7 +52,7 @@ const resources = [
         </a>
         <nav class="desk">
           {nav.map(([href, label]) => (
-            <a href={href} aria-current={path === href ? "page" : undefined}>{label}</a>
+            <a href={href} aria-current={path === href || (href !== "/" && path.startsWith(href)) ? "page" : undefined}>{label}</a>
           ))}
         </nav>
         <div class="actions">
