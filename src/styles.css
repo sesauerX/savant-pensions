@@ -100,6 +100,8 @@ footer .cols { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.1fr; gap: 2
 footer h4 { color: #fff; margin: 0 0 12px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; font-family: "IBM Plex Sans", sans-serif; }
 footer a { display: block; margin: 7px 0; color: #c7d1de; font-size: 14px; }
 footer a:hover { color: var(--gold-soft); }
+footer .fine a { display: inline; margin: 0; font-size: inherit; color: inherit; }
+footer .fine a:hover { color: #fff; }
 .fine { margin-top: 28px; font-size: 12px; color: #8b97a8; border-top: 1px solid rgba(255,255,255,.08); padding-top: 18px; }
 .page { padding: 56px 0 12px; max-width: 760px; }
 form { display: grid; gap: 12px; }
