@@ -1,0 +1,102 @@
+---
+import "../styles.css";
+const { title = "Savant Pensions", description = "Defined Benefit and Cash Balance plans for business owners." } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const nav = [
+  ["/defined-benefit", "Defined Benefit"],
+  ["/cash-balance", "Cash Balance"],
+  ["/services", "Services"],
+  ["/about", "About"],
+  ["/faq", "Resources"],
+  ["/contact", "Contact"],
+];
+const plans = [
+  ["/defined-benefit", "Defined Benefit Plans"],
+  ["/cash-balance", "Cash Balance Plans"],
+  ["/self-employed", "Self-Employed Cash Balance"],
+  ["/combo", "401(k) + Cash Balance Combo"],
+  ["/administration", "Plan Administration & TPA"],
+];
+const resources = [
+  ["/calculator", "Tax Savings Calculator"],
+  ["/faq", "Frequently Asked Questions"],
+  ["/about", "About Savant Pensions"],
+  ["/compliance", "Annual Compliance Review"],
+  ["/case-studies", "Case Studies"],
+  ["/insights", "Blog & Insights"],
+  ["/contact", "Schedule Free Consultation"],
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <header class="site">
+      <div class="wrap bar">
+        <a class="brand" href="/" aria-label="Savant Pensions home">
+          <img src="/logo.svg" width="42" height="42" alt="" />
+          <span><strong>SAVANT</strong><small>PENSIONS</small></span>
+        </a>
+        <nav class="desk">
+          {nav.map(([href, label]) => (
+            <a href={href} aria-current={path === href ? "page" : undefined}>{label}</a>
+          ))}
+        </nav>
+        <div class="actions">
+          <a class="btn ghost" href="/calculator">Estimate savings</a>
+          <a class="btn primary" href="/contact">Free consultation</a>
+        </div>
+        <button class="menu-btn" type="button" aria-label="Open menu" id="menu-btn">☰</button>
+      </div>
+      <div class="wrap mobile" id="mobile-nav" hidden>
+        {nav.map(([href, label]) => <a href={href}>{label}</a>)}
+        <a class="btn primary" href="/contact">Free consultation</a>
+      </div>
+    </header>
+    <main><slot /></main>
+    <footer>
+      <div class="wrap cols">
+        <div>
+          <a class="brand" href="/"><img src="/logo.svg" width="40" height="40" alt="" /><span><strong style="color:#fff">SAVANT</strong><small>PENSIONS</small></span></a>
+          <p>Premier Defined Benefit and Cash Balance retirement consulting and third-party administration for business owners, independent consultants, and physician practices across the United States.</p>
+          <p style="color:var(--gold);font-weight:700;font-size:13px;">Independent Third-Party Administration</p>
+        </div>
+        <div>
+          <h4>Retirement plans</h4>
+          {plans.map(([href, label]) => <a href={href}>{label}</a>)}
+        </div>
+        <div>
+          <h4>Resources & insights</h4>
+          {resources.map(([href, label]) => <a href={href}>{label}</a>)}
+        </div>
+        <div>
+          <h4>Headquarters</h4>
+          <p>Savant Pensions LLC<br />15 N Main St #100<br />West Hartford, CT 06107<br />United States</p>
+          <a href="tel:+18605907172">+1 (860) 590-7172</a>
+          <a href="mailto:info@savantpensions.com">info@savantpensions.com</a>
+        </div>
+      </div>
+      <div class="wrap fine">
+        <p>Professional Practice Notice: Third-Party Administrator & Defined Benefit / Cash Balance Retirement Consultants. Savant Pensions LLC is a pension consulting and third-party administration firm; we are not actuaries. Where mandatory certified actuarial sign-offs are required, Savant Pensions collaborates with independent Enrolled Actuaries.</p>
+        <p>© 2026 Savant Pensions LLC. All rights reserved. <a href="/terms">Terms & Privacy</a> · <a href="/support">Client Support</a></p>
+      </div>
+    </footer>
+    <script>
+      const btn = document.getElementById("menu-btn");
+      const nav = document.getElementById("mobile-nav");
+      btn?.addEventListener("click", () => {
+        const open = nav.hasAttribute("hidden");
+        if (open) nav.removeAttribute("hidden");
+        else nav.setAttribute("hidden", "");
+        btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        btn.textContent = open ? "×" : "☰";
+      });
+    </script>
+  </body>
+</html>

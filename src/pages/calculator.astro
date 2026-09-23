@@ -1,0 +1,35 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Calculator | Savant Pensions">
+
+<section class="wrap page">
+  <p class="kicker">Tax savings calculator</p>
+  <h1>A starting point, not a finished answer.</h1>
+  <p class="lede">Bring the estimate to a Savant consultant for a grounded view. Not a quote or tax advice.</p>
+</section>
+<section class="section wrap split">
+  <form class="panel" id="calc">
+    <label>Owner age<input id="age" type="number" value="52" min="25" max="80" /></label>
+    <label>Estimated earned income<input id="income" type="number" value="350000" min="0" /></label>
+    <label>Employees (approx.)<input id="emps" type="number" value="3" min="0" /></label>
+    <button class="btn primary" type="submit">Estimate contribution room</button>
+    <p id="out"></p>
+  </form>
+  <div class="panel"><h2>Numbers are a starting point.</h2><p>Age, income, structure, employees, and timeline all change the answer.</p><a class="btn gold" href="/contact">Talk with Savant</a></div>
+</section>
+<script>
+  document.getElementById("calc")?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const age = +document.getElementById("age").value;
+    const income = +document.getElementById("income").value;
+    const emps = +document.getElementById("emps").value;
+    let room = Math.min(income * 0.4, 250000);
+    if (age >= 50) room = Math.min(income * 0.5, 280000);
+    if (emps > 5) room *= 0.75;
+    room = Math.max(20000, Math.round(room / 1000) * 1000);
+    document.getElementById("out").textContent = "Illustrative contribution potential: about $" + room.toLocaleString() + " depending on your facts.";
+  });
+</script>
+
+</Base>
