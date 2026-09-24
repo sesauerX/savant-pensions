@@ -5,11 +5,11 @@ import { SITE, faqs, pages } from "../lib/seo";
 const props = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const seo = pages[path];
-const title = seo?.title ?? props.title ?? "Savant Pensions";
+const title = seo?.title ?? props.title ?? "Sterling Pension Group";
 const description =
   seo?.description ??
   props.description ??
-  "Savant Pensions is a pension plan administrator for business owners. We design and administer Defined Benefit and Cash Balance plans.";
+  "Sterling Pension Group is a pension plan administrator for business owners. We design and administer Defined Benefit and Cash Balance plans.";
 const image = props.image ?? "/og.jpg";
 const type = props.type ?? "website";
 const canonical = `${SITE}${path === "/" ? "/" : path}`;
@@ -59,8 +59,8 @@ const graph: Record<string, unknown>[] = [
   {
     "@type": ["Organization", "ProfessionalService"],
     "@id": `${SITE}/#organization`,
-    name: "Savant Pensions LLC",
-    alternateName: "Savant Pensions",
+    name: "Sterling Pension Group LLC",
+    alternateName: "Sterling Pension Group",
     url: `${SITE}/`,
     logo: `${SITE}/logo.svg`,
     image: `${SITE}/og.jpg`,
@@ -83,7 +83,7 @@ const graph: Record<string, unknown>[] = [
     "@type": "WebSite",
     "@id": `${SITE}/#website`,
     url: `${SITE}/`,
-    name: "Savant Pensions",
+    name: "Sterling Pension Group",
     publisher: { "@id": `${SITE}/#organization` },
   },
   {
@@ -174,7 +174,7 @@ const resources = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta property="og:site_name" content="Savant Pensions" />
+    <meta property="og:site_name" content="Sterling Pension Group" />
     <meta property="og:type" content={type === "article" ? "article" : "website"} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -194,9 +194,9 @@ const resources = [
   <body>
     <header class="site">
       <div class="wrap bar">
-        <a class="brand" href="/" aria-label="Savant Pensions home">
-          <img src="/logo.svg?v=3" width="42" height="42" alt="" />
-          <span><strong>SAVANT</strong><small>PENSIONS</small></span>
+        <a class="brand" href="/" aria-label="Sterling Pension Group home">
+          <img src="/logo.svg?v=4" width="42" height="42" alt="" />
+          <span><strong>STERLING</strong><small>PENSION GROUP</small></span>
         </a>
         <nav class="desk">
           {nav.map(([href, label]) => (
@@ -218,7 +218,7 @@ const resources = [
     <footer>
       <div class="wrap cols">
         <div>
-          <a class="brand" href="/"><img src="/logo.svg?v=3" width="40" height="40" alt="" /><span><strong style="color:#fff">SAVANT</strong><small>PENSIONS</small></span></a>
+          <a class="brand" href="/"><img src="/logo.svg?v=4" width="40" height="40" alt="" /><span><strong style="color:#fff">STERLING</strong><small>PENSION GROUP</small></span></a>
           <p>Premier Defined Benefit and Cash Balance retirement consulting and third-party administration for business owners, independent consultants, and physician practices across the United States.</p>
           <p style="color:var(--gold);font-weight:700;font-size:13px;">Independent Third-Party Administration</p>
         </div>
@@ -232,14 +232,14 @@ const resources = [
         </div>
         <div>
           <h4>Headquarters</h4>
-          <p>Savant Pensions LLC<br />15 N Main St #100<br />West Hartford, CT 06107<br />United States</p>
+          <p>Sterling Pension Group LLC<br />15 N Main St #100<br />West Hartford, CT 06107<br />United States</p>
           <a href="tel:+18605907172">+1 (860) 590-7172</a>
           <a href="mailto:info@savantpensions.com">info@savantpensions.com</a>
         </div>
       </div>
       <div class="wrap fine">
-        <p>Professional Practice Notice: Third-Party Administrator & Defined Benefit / Cash Balance Retirement Consultants. Savant Pensions LLC is a pension consulting and third-party administration firm; we are not actuaries. Where mandatory certified actuarial sign-offs are required, Savant Pensions collaborates with independent Enrolled Actuaries.</p>
-        <p>© 2026 Savant Pensions LLC. All rights reserved. <a href="/privacy">Your Privacy</a> · <a href="/terms">Terms of Use</a> · <a href="/disclaimer">Disclaimer</a> · <a href="/support">Client Support</a></p>
+        <p>Professional Practice Notice: Third-Party Administrator & Defined Benefit / Cash Balance Retirement Consultants. Sterling Pension Group LLC is a pension consulting and third-party administration firm; we are not actuaries. Where mandatory certified actuarial sign-offs are required, Sterling Pension Group collaborates with independent Enrolled Actuaries.</p>
+        <p>© 2026 Sterling Pension Group LLC. All rights reserved. <a href="/privacy">Your Privacy</a> · <a href="/terms">Terms of Use</a> · <a href="/disclaimer">Disclaimer</a> · <a href="/support">Client Support</a></p>
       </div>
     </footer>
     <script>

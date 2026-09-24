@@ -9,7 +9,7 @@ slug: selling-the-practice
 
 March 29 is early enough to put an open cash balance plan into a sale, and late enough that a signed letter of intent may already be wrong. The plan is a qualified defined benefit plan of the employer. The hypothetical account on the statement is a way of expressing the accrued benefit. It is not a brokerage account you can assign in a purchase agreement, and it does not vanish because a buyer would rather not buy a pension. If counsel is already trading drafts and the plan has not been named, that is the gap to close this week. **Decide whether the plan will continue, freeze, or terminate before the purchase agreement is final.**
 
-Savant Pensions LLC, in West Hartford, is the third-party administrator. We can assemble the census, the trust statements, the document, and the valuation so the lawyers are not inventing the liability from a participant statement. We are not an actuarial firm. An independent Enrolled Actuary certifies the valuation. We are not the sale counsel, and this briefing is not tax, legal, or actuarial advice.
+Sterling Pension Group LLC, in West Hartford, is the third-party administrator. We can assemble the census, the trust statements, the document, and the valuation so the lawyers are not inventing the liability from a participant statement. We are not an actuarial firm. An independent Enrolled Actuary certifies the valuation. We are not the sale counsel, and this briefing is not tax, legal, or actuarial advice.
 
 ## The plan belongs to the employer, and the form of the sale decides which employer
 

@@ -9,7 +9,7 @@ slug: prior-year-still-open
 
 Today is **March 1, 2026**. The **2025** plan year has been over for two months. For many owners it still feels unfinished, because the tax return is unfinished. That feeling is partly right. If the employer's return for **2025** is extended, the contribution that will be deducted on that return can often still be deposited, and the deduction is not dead. The feeling is also how minimum funding gets missed. The funding statute does not care that the accountant is on extension. A calendar-year defined benefit plan generally owes its minimum required contribution by **September 15, 2026**. An S corporation that files on time may owe the deduction problem in two weeks and the funding problem in September. Those are not two ways of saying the same date.
 
-Savant Pensions is a third-party administrator. We are not an actuarial firm, and we are not your CPA. An independent Enrolled Actuary certifies the minimum and the deductible maximum. The CPA decides what the return can claim. This briefing is not tax, legal, or actuarial advice. It is a separation of the **2025** file, which is still open for many readers, from the **2026** year, which has already been running for sixty days.
+Sterling Pension Group is a third-party administrator. We are not an actuarial firm, and we are not your CPA. An independent Enrolled Actuary certifies the minimum and the deductible maximum. The CPA decides what the return can claim. This briefing is not tax, legal, or actuarial advice. It is a separation of the **2025** file, which is still open for many readers, from the **2026** year, which has already been running for sixty days.
 
 ## Which returns are about to be due, and which are not
 

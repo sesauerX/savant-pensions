@@ -9,7 +9,7 @@ slug: bad-quarter
 
 The first quarter of **2026** is not over, and for some practices it is already soft. Collections slipped. A referral source went quiet. A large case did not close. On **February 15**, the temptation is to treat the cash balance plan as if it were a profit-sharing election you can simply skip. It is not. A cash balance plan can flex, and the flex is narrower than a bad month feels. It can flex inside the formula you already adopted, or by a prospective amendment made before the accrual you want to avoid, with notice when notice is required. It cannot reach backward and cancel a benefit that has accrued. It cannot make the minimum funding obligation optional. And it cannot turn a business disappointment and an investment loss into one problem with one switch.
 
-Savant Pensions is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary measures the minimum contribution and the deductible maximum. This briefing is not tax, legal, or actuarial advice. It is a description of the levers that still move in the middle of February, and of the levers that do not, so a soft quarter does not become a prohibited transaction or an unpaid minimum.
+Sterling Pension Group is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary measures the minimum contribution and the deductible maximum. This briefing is not tax, legal, or actuarial advice. It is a description of the levers that still move in the middle of February, and of the levers that do not, so a soft quarter does not become a prohibited transaction or an unpaid minimum.
 
 ## Two different bad quarters
 

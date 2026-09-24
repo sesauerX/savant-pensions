@@ -9,7 +9,7 @@ slug: investing-the-trust
 
 By June the trust has been invested for half a year, or it is about to be invested because a new plan finally has an account open. Owners who are comfortable buying equities in a taxable account often give the pension the same instructions. That impulse treats the cash balance trust as a larger 401(k). It is not. The hypothetical account grows by the interest credit in the document whether the portfolio cooperates or not. The trust is the pile of real assets that has to support the promise. When the pile is invested as if the owner personally kept the upside and could ignore the downside, the formula and the portfolio are in a fight. The formula usually wins, and the owner writes a check.
 
-Savant Pensions LLC in West Hartford administers plans. We are not an actuarial firm, not a registered investment adviser, and not the trustee. Independent Enrolled Actuaries certify valuations. They do not pick your funds unless you have separately hired someone who does that work and who happens to be an actuary. This briefing is not tax, legal, investment, or actuarial advice. It explains the mismatch so the investment professional is not briefed with the wrong job.
+Sterling Pension Group LLC in West Hartford administers plans. We are not an actuarial firm, not a registered investment adviser, and not the trustee. Independent Enrolled Actuaries certify valuations. They do not pick your funds unless you have separately hired someone who does that work and who happens to be an actuary. This briefing is not tax, legal, investment, or actuarial advice. It explains the mismatch so the investment professional is not briefed with the wrong job.
 
 ## Two rates that are not the same rate
 

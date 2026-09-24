@@ -9,7 +9,7 @@ slug: reading-2025-limits
 
 On November 1, 2024, the IRS released IR-2024-285 and Notice 2024-80. The 2025 cost-of-living adjustments for retirement plans are now public. They are not the limits that govern a paycheck you run in November or December of 2024, and they are not the limits that govern a 2024 cash balance valuation. They take effect for limitation years that begin in 2025. For almost every owner reading this, that means **January 1, 2025**. The useful skill this week is knowing which column to read.
 
-Savant Pensions LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education, not tax, legal, or actuarial advice. The newsroom announcement is [IR-2024-285](https://www.irs.gov/newsroom/401k-limit-increases-to-23500-for-2025-ira-limit-remains-7000). The standing table, which will carry both years, is the [COLA page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions).
+Sterling Pension Group LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education, not tax, legal, or actuarial advice. The newsroom announcement is [IR-2024-285](https://www.irs.gov/newsroom/401k-limit-increases-to-23500-for-2025-ira-limit-remains-7000). The standing table, which will carry both years, is the [COLA page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions).
 
 ## What moved
 
@@ -79,4 +79,4 @@ Read the notice against your own year. Do not celebrate it as found money.
 - If you are ages 60 to 63 next year, or your spouse on payroll is, flag the **$11,250** catch-up as a January question. Do not withhold it in 2024.
 - Leave Roth catch-up alone. It is delayed through 2025.
 
-If you want those instructions turned into a plan-year checklist, [contact Savant Pensions](/contact). Bring the notice, the census, and the payroll calendar. Leave the uncertified contribution increase at home.
+If you want those instructions turned into a plan-year checklist, [contact Sterling Pension Group](/contact). Bring the notice, the census, and the payroll calendar. Leave the uncertified contribution increase at home.

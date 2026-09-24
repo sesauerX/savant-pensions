@@ -9,7 +9,7 @@ slug: db-versus-cash-balance
 
 A solo owner who has outgrown a SEP or a straight 401(k) is usually offered two pensions that are easy to confuse. One is a traditional defined benefit plan. The other is a cash balance plan. Both are defined benefit plans. Both require an enrolled actuary. Both can create a deductible employer contribution far larger than the defined contribution annual additions limit, and neither contribution is a number the IRS prints in a table. The choice is about the shape of the promise, not about which label sounds more modern.
 
-This note is for a self-employed consultant, a physician, a dentist, or an attorney with little or no staff, looking at the 2024 year while there is still time to design rather than to improvise. Savant Pensions LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. Nothing here is tax, legal, or actuarial advice. The structural pages are [traditional defined benefit](/defined-benefit) and [cash balance](/cash-balance). The fall timing note is [/insights/year-end-window](/insights/year-end-window).
+This note is for a self-employed consultant, a physician, a dentist, or an attorney with little or no staff, looking at the 2024 year while there is still time to design rather than to improvise. Sterling Pension Group LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. Nothing here is tax, legal, or actuarial advice. The structural pages are [traditional defined benefit](/defined-benefit) and [cash balance](/cash-balance). The fall timing note is [/insights/year-end-window](/insights/year-end-window).
 
 ## The 2024 ceilings both plans share
 
@@ -63,7 +63,7 @@ Notice 2023-62 delayed the SECURE 2.0 Roth catch-up mandate through 2025. It is 
 
 Ask the enrolled actuary for an **illustrative** range under both formulas, using the same census, the same **$345,000** compensation cap if your pay is at or above it, and the same retirement age. Ask what happens to each range if assets earn less than assumed for two years. Ask what happens if you cut your W-2, or your earned income, in 2025. The formula that looks larger in a single good year and brittle in the next year is often the wrong formula, even if the first-year deduction photographs well.
 
-Savant can coordinate that request. We cannot sign it. The actuary's letter is the document that distinguishes an **illustrative** teaching number from a figure your CPA might rely on. Until that letter exists, do not move money, and do not tell your bookkeeper to accrue a specific pension expense. The [plan lifecycle](/plan-lifecycle) page describes the work that follows a real signature. Signature comes after the comparison, not instead of it.
+Sterling can coordinate that request. We cannot sign it. The actuary's letter is the document that distinguishes an **illustrative** teaching number from a figure your CPA might rely on. Until that letter exists, do not move money, and do not tell your bookkeeper to accrue a specific pension expense. The [plan lifecycle](/plan-lifecycle) page describes the work that follows a real signature. Signature comes after the comparison, not instead of it.
 
 ## What to do in the next two weeks
 
@@ -75,4 +75,4 @@ Make the comparison specific to your practice, not to a generic solo owner.
 - Write down whether you care more about a readable account balance or about a classic accrued benefit. That preference is allowed to decide the tie. It is not allowed to decide the funding obligation.
 - If you want 2024 deferrals as well, tell payroll now. The pension choice will not create a retroactive **$23,000** deferral.
 
-When the two sketches are in hand, [contact Savant Pensions](/contact) if you want the document path and the administration path coordinated with the actuary your CPA is willing to rely on. Choose the promise you can explain on a quiet afternoon. Do not choose the one with the larger unverified number.
+When the two sketches are in hand, [contact Sterling Pension Group](/contact) if you want the document path and the administration path coordinated with the actuary your CPA is willing to rely on. Choose the promise you can explain on a quiet afternoon. Do not choose the one with the larger unverified number.

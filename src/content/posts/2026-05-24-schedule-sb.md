@@ -9,7 +9,7 @@ slug: schedule-sb
 
 Two weeks ago the subject was the signature on the **2025** Form 5500. The page owners actually fear is the one they did not sign. Schedule SB is the actuarial information schedule for a defined benefit plan. A cash balance plan is a defined benefit plan, so if you sponsor one, this schedule is attached. An independent Enrolled Actuary signs it. You do not. You are still supposed to understand the few lines that change what you must wire, what you may not pay out, and what the return is claiming. This is that reading, in plain English, without pretending a briefing can replace the certification.
 
-Savant Pensions LLC in West Hartford is the third-party administrator. We are not an actuarial firm. We do not certify Schedule SB. The enrolled actuary does. This briefing is not tax, legal, or actuarial advice. If a line on your draft disagrees with this explanation, the draft and the actuary win. Send the question back before you treat a general description as your result.
+Sterling Pension Group LLC in West Hartford is the third-party administrator. We are not an actuarial firm. We do not certify Schedule SB. The enrolled actuary does. This briefing is not tax, legal, or actuarial advice. If a line on your draft disagrees with this explanation, the draft and the actuary win. Send the question back before you treat a general description as your result.
 
 ## Why this page exists
 

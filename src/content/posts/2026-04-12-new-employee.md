@@ -9,7 +9,7 @@ slug: new-employee
 
 April is when practices hire. The associate starts in May, the hygienist was promised thirty-two hours, the paralegal is replacing someone who left in February, or a spouse is finally going on payroll. The cash balance plan, if you have one, was illustrated on a census that did not include that person. The illustration is not a contract with the IRS, and it is not a promise that the same deposit will still pass once the payroll changes. **Do not rely on last year's census once you have made an offer.** Tell the administrator before the start date, not at the contribution meeting in September.
 
-Savant Pensions LLC in West Hartford administers the plan. We are a third-party administrator, not an actuarial firm. An independent Enrolled Actuary certifies the valuation after the census is real. This briefing is not tax, legal, or actuarial advice. It is the list of facts a hire changes.
+Sterling Pension Group LLC in West Hartford administers the plan. We are a third-party administrator, not an actuarial firm. An independent Enrolled Actuary certifies the valuation after the census is real. This briefing is not tax, legal, or actuarial advice. It is the list of facts a hire changes.
 
 ## The census is the design, not a spreadsheet attachment
 

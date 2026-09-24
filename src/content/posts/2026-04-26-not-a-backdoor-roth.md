@@ -9,7 +9,7 @@ slug: not-a-backdoor-roth
 
 The individual return was due **April 15, 2026**, unless you extended it. In the week after that date, the conversation that shows up is always the same. Someone at a dinner says they "did a backdoor Roth," and an owner who just wrote a large check to the Treasury asks whether that technique is the sophisticated version of a retirement plan. It is not. A backdoor Roth IRA is a personal contribution to an individual retirement account, followed by a conversion. For 2026 the IRA dollar limit is **$7,500**, plus a catch-up of **$1,100** if you are age 50 or older. A cash balance or defined benefit plan is an employer plan whose ceiling is a retirement benefit, not a **$7,500** deposit. They are not substitutes. Doing the first does not mean you have outgrown the need to look at the second. Skipping the second because the first has a clever name is how high earners stay inside a small account.
 
-Savant Pensions LLC in West Hartford is a third-party administrator of employer plans. We are not an actuarial firm, and we do not custody IRAs. Independent Enrolled Actuaries certify pension valuations. This briefing is not tax, legal, or actuarial advice. Your CPA decides whether a conversion is taxable. We decide nothing about your Form 8606.
+Sterling Pension Group LLC in West Hartford is a third-party administrator of employer plans. We are not an actuarial firm, and we do not custody IRAs. Independent Enrolled Actuaries certify pension valuations. This briefing is not tax, legal, or actuarial advice. Your CPA decides whether a conversion is taxable. We decide nothing about your Form 8606.
 
 ## What the backdoor actually is
 

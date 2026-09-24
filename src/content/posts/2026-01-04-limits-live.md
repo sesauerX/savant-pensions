@@ -9,7 +9,7 @@ slug: limits-live
 
 The effective date has arrived. On **January 1, 2026**, the retirement limits in [IR-2025-111](https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500) and Notice 2025-67 stopped being an announcement and became the rules for the new year. Today is **January 4**. The first payroll of **2026** is the test, not the press release. A deposit you make this month for the **2025** plan year is still a **2025** deposit. Those two sentences are the whole compliance problem of the first week, and they are easy to blur because the money leaves the same operating account.
 
-Savant Pensions is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies minimum funding, the deductible maximum, and Schedule SB. This briefing is not tax, legal, or actuarial advice. It is a separation of the year that just started from the year that just ended, written while both are sitting on the same desk.
+Sterling Pension Group is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies minimum funding, the deductible maximum, and Schedule SB. This briefing is not tax, legal, or actuarial advice. It is a separation of the year that just started from the year that just ended, written while both are sitting on the same desk.
 
 ## The table that now applies
 

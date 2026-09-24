@@ -9,7 +9,7 @@ slug: september-window-2026
 
 August 30, 2026, is the start of the window that matters, not the end of it. If you want a deduction for 2026 from a plan you do not yet have, the design conversation starts now. Not in December, when the remaining payroll cannot carry a year of 401(k) deferrals. Not in March 2027, when the actuary is supposed to certify a benefit nobody documented. And not on the vague theory that the SECURE Act lets you adopt a plan at the tax-filing deadline and therefore lets you postpone thinking. The statute does give a new plan a later adoption date than the old rules did. It does not gather the census, open the trust, or invent compensation you never paid. **Start the design conversation in the next two weeks if 2026 is supposed to be a pension year.**
 
-Savant Pensions LLC in West Hartford is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies any valuation that a real plan requires. This briefing is not tax, legal, or actuarial advice. The deduction is your CPA's conclusion. The document has to exist before that conclusion has something to rest on.
+Sterling Pension Group LLC in West Hartford is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies any valuation that a real plan requires. This briefing is not tax, legal, or actuarial advice. The deduction is your CPA's conclusion. The document has to exist before that conclusion has something to rest on.
 
 ## What "start now" is asking you to produce
 

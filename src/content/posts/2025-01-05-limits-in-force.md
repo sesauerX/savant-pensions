@@ -9,7 +9,7 @@ slug: limits-in-force
 
 The 2025 dollar limits are no longer a preview. For limitation years that begin on January 1, 2025, they are the limits that count. Payroll services should have switched tables. Owner compensation policies for the new year should be written against the new compensation cap. A cash balance accrual that belongs to 2025 will be measured against the new defined benefit limit. None of that rewrites 2024. A contribution still being considered for the 2024 plan year stays on the 2024 column, even though the deposit itself may leave the bank in 2025.
 
-Savant Pensions LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education for a self-employed owner, physician, dentist, attorney, or consultant. It is not tax, legal, or actuarial advice. The IRS announcement that set these figures is [IR-2024-285](https://www.irs.gov/newsroom/401k-limit-increases-to-23500-for-2025-ira-limit-remains-7000). The ongoing table is the [COLA page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions). How to read the notice when it was merely public, and not yet in force, is [/insights/reading-2025-limits](/insights/reading-2025-limits).
+Sterling Pension Group LLC in West Hartford administers plans and coordinates independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education for a self-employed owner, physician, dentist, attorney, or consultant. It is not tax, legal, or actuarial advice. The IRS announcement that set these figures is [IR-2024-285](https://www.irs.gov/newsroom/401k-limit-increases-to-23500-for-2025-ira-limit-remains-7000). The ongoing table is the [COLA page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions). How to read the notice when it was merely public, and not yet in force, is [/insights/reading-2025-limits](/insights/reading-2025-limits).
 
 ## The column that is now live
 
@@ -73,4 +73,4 @@ Turn the table on, and keep last year in its own file.
 - Leave Roth catch-up off. It is delayed through 2025. Do not implement a 2026 operational rule in a January 2025 payroll.
 - If you set owner pay this month, measure it against the **$350,000** cap for 2025 plan purposes, and do not confuse the cap with a contribution.
 
-When payroll and the actuary are using the same year, [contact Savant Pensions](/contact) to coordinate the document, the census, and the valuation calendar. Bring both columns. Use only one of them per plan year.
+When payroll and the actuary are using the same year, [contact Sterling Pension Group](/contact) to coordinate the document, the census, and the valuation calendar. Bring both columns. Use only one of them per plan year.

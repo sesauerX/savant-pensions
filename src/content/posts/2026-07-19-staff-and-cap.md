@@ -9,7 +9,7 @@ slug: staff-and-cap
 
 The compensation cap is the limit owners remember, and the limit they misapply. For 2026 a qualified plan may not take into account more than **$360,000** of any one participant's compensation. The figure comes from section 401(a)(17), it was published with the other cost-of-living adjustments in [IR-2025-111](https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500) on **November 13, 2025**, and the technical detail is in **Notice 2025-67**. Last year the cap was **$350,000**. The IRS keeps the current table on its [cost-of-living adjustments page](https://www.irs.gov/retirement-plans/cola-increases-for-dollar-limitations-on-benefits-and-contributions). The cap limits what the formula can see. It does not limit what you must contribute for employees. **A staff-cost estimate that treats $360,000 as a ceiling on the employee side of the budget is using the wrong ceiling.**
 
-Savant Pensions LLC in West Hartford is a third-party administrator. We are not an actuarial firm. Independent Enrolled Actuaries certify valuations and the cost of a formula. This briefing is not tax, legal, or actuarial advice. It separates two ideas that slide decks tend to merge.
+Sterling Pension Group LLC in West Hartford is a third-party administrator. We are not an actuarial firm. Independent Enrolled Actuaries certify valuations and the cost of a formula. This briefing is not tax, legal, or actuarial advice. It separates two ideas that slide decks tend to merge.
 
 ## What the cap does
 

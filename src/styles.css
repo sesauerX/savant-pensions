@@ -38,9 +38,9 @@ header.site {
   border-bottom: 3px solid var(--gold);
 }
 .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 78px; }
-.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.14em; }
-.brand small { display: block; font-size: 10px; letter-spacing: 0.28em; color: var(--muted); font-weight: 600; }
-.brand strong { font-size: 14px; color: var(--navy); }
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: 0.04em; }
+.brand small { display: block; font-size: 9px; letter-spacing: 0.12em; color: var(--muted); font-weight: 600; }
+.brand strong { font-size: 13px; color: var(--navy); letter-spacing: 0.08em; }
 nav.desk { display: flex; gap: 20px; font-size: 14.5px; font-weight: 700; color: var(--navy-mid); }
 nav.desk a:hover, nav.desk a[aria-current="page"] { color: var(--gold); }
 .actions { display: flex; gap: 10px; align-items: center; }

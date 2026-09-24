@@ -9,7 +9,7 @@ slug: uneven-income
 
 Consulting income does not arrive like a salary. A contract slips, a retainer renews, a single client is half the year, and then the client is gone. Owners who live with that pattern are often attracted to a cash balance plan for a sensible reason. A good year produces more taxable income than a 401(k) can absorb, and a defined benefit credit can move real money into a deductible retirement promise. The attraction becomes a problem when the document freezes last year's good fortune into this year's formula. A pay credit is not a hope. Once the formula has accrued it, the sponsor owes the funding that goes with it. You do not get to skip the deposit because the pipeline thinned out, and you do not get to call the skip a business judgment.
 
-This briefing is for that consultant: one owner, or a small group, with income that is real and uneven. It is not an argument against a plan. It is an argument against the wrong promise. The right design admits, in the document and in the funding conversation, that next year may not look like this year. Savant Pensions is a West Hartford third-party administrator. We coordinate independent Enrolled Actuaries for the valuation. We are not an actuarial firm. We will not write a flattering credit and leave the lean year for someone else to explain.
+This briefing is for that consultant: one owner, or a small group, with income that is real and uneven. It is not an argument against a plan. It is an argument against the wrong promise. The right design admits, in the document and in the funding conversation, that next year may not look like this year. Sterling Pension Group is a West Hartford third-party administrator. We coordinate independent Enrolled Actuaries for the valuation. We are not an actuarial firm. We will not write a flattering credit and leave the lean year for someone else to explain.
 
 ## What the credit actually is
 
@@ -49,7 +49,7 @@ The 401(k), if there is one, is the flexible layer. You can defer from wages as 
 
 If 2025 is already softer than the year the credit was based on, the useful act is a call now, in April, not a silence until the funding date. The questions are narrow. Has the credit for 2025 already accrued. Can the formula be amended before further accruals, and is a 204(h) notice required. What minimum will the actuary sign if nothing changes. What compensation is now realistic. None of those questions is answered by skipping a deposit and hoping the administrator will "true it up."
 
-Savant Pensions can administer the amendment, the notice, the census, and the filing calendar. The independent Enrolled Actuary certifies the funding numbers. Your CPA decides what is deductible and on which return. We will not advise you to ignore a minimum because the business had a difficult quarter. That advice would be wrong, and it would not be ours to give. This briefing is not tax, legal, or actuarial advice.
+Sterling Pension Group can administer the amendment, the notice, the census, and the filing calendar. The independent Enrolled Actuary certifies the funding numbers. Your CPA decides what is deductible and on which return. We will not advise you to ignore a minimum because the business had a difficult quarter. That advice would be wrong, and it would not be ours to give. This briefing is not tax, legal, or actuarial advice.
 
 ## What to do in the next two weeks
 

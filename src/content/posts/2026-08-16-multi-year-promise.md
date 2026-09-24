@@ -9,7 +9,7 @@ slug: multi-year-promise
 
 The honest version of the sales sentence is less exciting and more useful. You should expect to fund a cash balance plan for several years. The deduction in the first year is available because the plan is a real defined benefit promise, with a real minimum funding obligation, for a program the tax law expects to continue. It is not available because a sophisticated owner found a one-time shelter. If the only year you are willing to fund is this year, say so before anyone drafts a document. The right answer may be a SEP, a 401(k), or nothing. The wrong answer is a pension you intend to abandon as soon as the deposit clears.
 
-Savant Pensions LLC in West Hartford is a third-party administrator. We are not an actuarial firm. Independent Enrolled Actuaries certify the valuation each year the plan exists, not only in the year you were enthusiastic. This briefing is not tax, legal, or actuarial advice. It is the conversation we would rather have before adoption than after the second minimum arrives.
+Sterling Pension Group LLC in West Hartford is a third-party administrator. We are not an actuarial firm. Independent Enrolled Actuaries certify the valuation each year the plan exists, not only in the year you were enthusiastic. This briefing is not tax, legal, or actuarial advice. It is the conversation we would rather have before adoption than after the second minimum arrives.
 
 ## What the promise actually is
 

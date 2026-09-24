@@ -9,7 +9,7 @@ slug: interest-credits
 
 A cash balance statement shows an opening balance, a pay credit, an interest credit, and a closing balance. The interest credit is the line owners point at when they ask whether the plan "earned" five percent. Often the plan's investments earned something else. The line on the statement is not a report of the portfolio. It is the growth the document promised to post to a hypothetical account. The portfolio is the trust. The two are allowed to differ, and in a fixed-rate plan they usually do. Understanding that difference is the difference between reading the statement and understanding the funding.
 
-This briefing is about the choice of crediting rate, in plain language. It is not a recommendation of a rate. Most micro plans use a fixed rate. That is an industry pattern. It is not a requirement, and it is not a recommendation that your plan copy the pattern. Savant Pensions is a third-party administrator in West Hartford. We administer the rate the document states. An independent Enrolled Actuary values it. We are not an actuarial firm, and we do not choose the investments that sit underneath the promise.
+This briefing is about the choice of crediting rate, in plain language. It is not a recommendation of a rate. Most micro plans use a fixed rate. That is an industry pattern. It is not a requirement, and it is not a recommendation that your plan copy the pattern. Sterling Pension Group is a third-party administrator in West Hartford. We administer the rate the document states. An independent Enrolled Actuary values it. We are not an actuarial firm, and we do not choose the investments that sit underneath the promise.
 
 ## Two credits, and only one of them is interest
 

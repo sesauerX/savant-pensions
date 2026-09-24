@@ -9,7 +9,7 @@ slug: december-timing
 
 December is when owners try to collapse three different calendars into one wire transfer. The calendars will not collapse. A 2024 employee deferral has to come from 2024 payroll that has not yet been paid. A plan document has its own adoption rules, including a SECURE Act window that is later than December 31 and is still a bad reason to begin thinking now. A defined benefit contribution, including a cash balance contribution, is often funded next year, on dates your CPA and the enrolled actuary do not treat as interchangeable. If you remember only one thing from this briefing, remember that those are three decisions.
 
-Savant Pensions LLC in West Hartford is a third-party administrator. We coordinate independent Enrolled Actuaries. We are not an actuarial firm, and we will not turn a December phone call into a certified contribution. This is education for a self-employed owner, a physician, a dentist, an attorney, or a consultant. It is not tax, legal, or actuarial advice. The neighboring notes are [/insights/do-not-rush-funding](/insights/do-not-rush-funding) and [/insights/reading-2025-limits](/insights/reading-2025-limits).
+Sterling Pension Group LLC in West Hartford is a third-party administrator. We coordinate independent Enrolled Actuaries. We are not an actuarial firm, and we will not turn a December phone call into a certified contribution. This is education for a self-employed owner, a physician, a dentist, an attorney, or a consultant. It is not tax, legal, or actuarial advice. The neighboring notes are [/insights/do-not-rush-funding](/insights/do-not-rush-funding) and [/insights/reading-2025-limits](/insights/reading-2025-limits).
 
 ## Clock one: payroll deferrals end when the last check is calculated
 
@@ -29,7 +29,7 @@ What still has to be true, whenever you sign, is a census you can defend, a form
 
 If staff exist, December is a poor month to discover them. Eligibility, a waiting period, and the hours people have already worked are facts. They are collected on the terms in [/insights/census-first](/insights/census-first). A document that covers "owners only" because that was the slogan in a meeting will not survive a payroll register. Related employers belong in the same packet. If you will not assemble that packet, the honest December decision is to skip a 2024 pension and, if a deferral is still possible, use only the 401(k) you can actually run. Skipping can be the right professional result. The criteria are in [/insights/not-a-fit](/insights/not-a-fit) and on the [not a fit](/not-a-fit) page.
 
-Savant can coordinate a document and an independent actuary when the facts are ready. We cannot sign Schedule SB. We cannot tell your payroll company, on December 23, to recreate checks that posted in October. If the facts are not ready, the work product you want this month is a list, not a signature.
+Sterling can coordinate a document and an independent actuary when the facts are ready. We cannot sign Schedule SB. We cannot tell your payroll company, on December 23, to recreate checks that posted in October. If the facts are not ready, the work product you want this month is a list, not a signature.
 
 ## Clock three: funding can usually wait, and a made-up deposit should wait forever
 
@@ -75,4 +75,4 @@ Separate the clocks on paper before you separate them with money.
 - If the census is incomplete or the profit is not durable, decide to wait. Use the [staff cost](/staff-cost) page and the [comparison](/compare) page to confirm that waiting is a plan, not a delay.
 - Put Form 5500 and Form 5558 on a 2025 list. Do not draft them in December.
 
-When the payroll answer and the CPA's two dates are in writing, [contact Savant Pensions](/contact) if you want the document work coordinated. If those two answers are not in writing, do not contact anyone for a funding number. December still has room for a clean decision. It does not have room for a blended one.
+When the payroll answer and the CPA's two dates are in writing, [contact Sterling Pension Group](/contact) if you want the document work coordinated. If those two answers are not in writing, do not contact anyone for a funding number. December still has room for a clean decision. It does not have room for a blended one.

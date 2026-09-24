@@ -11,7 +11,7 @@ Tomorrow is **September 15**. For a calendar-year defined benefit plan, includin
 
 The new number is only as good as the census under it. September is when firms ask for "a quick update" of an illustration that was built in the spring, or last fall, on a headcount everyone remembers. Memory is not a census. People were hired. People left. Hours crossed a threshold. A spouse's wage changed. A second entity acquired an employee. Ownership shifted by a few percent and changed who is highly compensated. Any one of those facts can move the contribution, the test, or both. Refreshing the census is the work. The model is what happens after the work.
 
-Savant Pensions is a third-party administrator in West Hartford. We will not send a figure to an Enrolled Actuary, and we will not show you a figure from an actuary, on a census we have not refreshed. We are not an actuarial firm. The certification is the actuary's. The census is the fact pattern you and we are responsible for getting right. This briefing is not tax, legal, or actuarial advice.
+Sterling Pension Group is a third-party administrator in West Hartford. We will not send a figure to an Enrolled Actuary, and we will not show you a figure from an actuary, on a census we have not refreshed. We are not an actuarial firm. The certification is the actuary's. The census is the fact pattern you and we are responsible for getting right. This briefing is not tax, legal, or actuarial advice.
 
 ## What a census is
 

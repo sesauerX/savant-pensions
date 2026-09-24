@@ -9,7 +9,7 @@ slug: combo-plan
 
 An owner who asks for "a pension" is often asking for two different tax-favored deposits that the law refuses to treat as one bucket. The first is an employee deferral, and if age allows it a catch-up, inside a 401(k). The second is an employer credit inside a cash balance plan, sized by an enrolled actuary rather than by a published contribution cap. Most durable owner designs are a pair. A pension with no 401(k) leaves the deferral unused. A 401(k) with no pension stops at the defined contribution ceiling. The pair is not a marketing bundle. It is what remains after you take the census, the deduction rules, and the payroll calendar seriously.
 
-Savant Pensions LLC in West Hartford administers arrangements like this and coordinates the independent Enrolled Actuaries who certify the cash balance side. We are not an actuarial firm. This briefing is education for a physician, a dentist, an attorney, a consultant, or another self-employed owner. It is not tax, legal, or actuarial advice. The structural page is the [401(k) and cash balance combination](/combo).
+Sterling Pension Group LLC in West Hartford administers arrangements like this and coordinates the independent Enrolled Actuaries who certify the cash balance side. We are not an actuarial firm. This briefing is education for a physician, a dentist, an attorney, a consultant, or another self-employed owner. It is not tax, legal, or actuarial advice. The structural page is the [401(k) and cash balance combination](/combo).
 
 ## The 2024 numbers, kept in their own boxes
 
@@ -47,7 +47,7 @@ If your CPA cannot yet say which deposits are employer profit sharing and which 
 
 A workable October sequence looks like this. Freeze the census, including related employers. Decide whether 2024 deferrals are still arithmetically possible on the remaining checks. If they are, adopt or amend the 401(k) in time for payroll to withhold, up to **$23,000** and, where age 50 applies, **$7,500**. In parallel, ask the enrolled actuary for an **illustrative** cash balance range that assumes the profit-sharing level your CPA thinks the coordination rule can live with. Then, and only then, talk about documents.
 
-Savant can coordinate the document set and the census. The actuary signs the valuation work, including Schedule SB when the plan year calls for it. Your CPA signs the return. None of those roles is optional because the brochure said "combo." The ongoing work, after signatures, is the [plan lifecycle](/plan-lifecycle): trust accounting, a valuation cycle, and a Form 5500 on EFAST2. A calendar-year filing is generally due **July 31**, extendable to **October 15** on Form 5558. The IRS describes the filing in the [Form 5500 corner](https://www.irs.gov/retirement-plans/form-5500-corner). Budget the professional cost on the [fees](/fees) page before you fall in love with the combined deduction.
+Sterling can coordinate the document set and the census. The actuary signs the valuation work, including Schedule SB when the plan year calls for it. Your CPA signs the return. None of those roles is optional because the brochure said "combo." The ongoing work, after signatures, is the [plan lifecycle](/plan-lifecycle): trust accounting, a valuation cycle, and a Form 5500 on EFAST2. A calendar-year filing is generally due **July 31**, extendable to **October 15** on Form 5558. The IRS describes the filing in the [Form 5500 corner](https://www.irs.gov/retirement-plans/form-5500-corner). Budget the professional cost on the [fees](/fees) page before you fall in love with the combined deduction.
 
 PBGC coverage is decided for the defined benefit plan, not for the 401(k). Many small professional-service employers are exempt. Many small plans are not. Adding a 401(k) does not create an exemption, and being an owner-only sponsor does not answer the question by itself. Coverage guidance is on the [PBGC site](https://www.pbgc.gov/prac/other-guidance/coverage). Ask counsel with the actual entities in view.
 
@@ -75,4 +75,4 @@ Put the two plans on one page before you adopt either new piece.
 - Have your CPA say, even preliminarily, whether the employer defined contribution piece is small enough to sit comfortably beside the pension deduction. Do not wire either deposit this week.
 - Read the [cash balance](/cash-balance) page beside the combo page so the pension leg is clear before the pair makes it look like an account balance.
 
-Then [contact Savant Pensions](/contact) with the census and the payroll calendar. Ask for a coordinated design. Do not ask for a single blended maximum.
+Then [contact Sterling Pension Group](/contact) with the census and the payroll calendar. Ask for a coordinated design. Do not ask for a single blended maximum.

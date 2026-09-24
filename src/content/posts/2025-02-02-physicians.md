@@ -9,7 +9,7 @@ slug: physicians
 
 A medical practice does not get a different Internal Revenue Code from a consulting firm. It gets a harder census. The physician-owner's desired deduction is often large, the clinical staff is often long-tenured, and a second entity sometimes employs the people the professional corporation does not. The design lives or dies on that math. It does not live or die on the phrase "doctors can put away more." Some physician-owners can support a cash balance plan. Some should not open one. The difference is visible on the payroll registers, not on a specialty society slide.
 
-Savant Pensions LLC in West Hartford is a third-party administrator. We coordinate independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education for a physician-owner and for the CPA who sits beside that owner. It is not tax, legal, actuarial, or medical-practice advice. The page that frames the same issue without a date on it is [physicians](/physicians). The cost discussion is [staff cost](/staff-cost).
+Sterling Pension Group LLC in West Hartford is a third-party administrator. We coordinate independent Enrolled Actuaries. We are not an actuarial firm. This briefing is education for a physician-owner and for the CPA who sits beside that owner. It is not tax, legal, actuarial, or medical-practice advice. The page that frames the same issue without a date on it is [physicians](/physicians). The cost discussion is [staff cost](/staff-cost).
 
 ## The 2025 limits are the current limits, and they are not the staff answer
 
@@ -61,7 +61,7 @@ Notice 2023-62 delayed the SECURE 2.0 Roth catch-up mandate through 2025. It is 
 
 ## Administration after the math works
 
-If the staff math works and the owners agree, the plan becomes a recurring practice system. Census updates when someone is hired or crosses an hours threshold. A valuation each year. A Form 5500, generally due **July 31** for a calendar year, extendable to **October 15** with Form 5558, filed on EFAST2. Form 5558 can be e-filed. The IRS overview is the [Form 5500 corner](https://www.irs.gov/retirement-plans/form-5500-corner). The Department of Labor's page is [Form 5500 reporting](https://www.dol.gov/agencies/ebsa/employers-and-advisers/plan-administration-and-compliance/reporting-and-filing/form-5500). Savant can administer that system and coordinate the actuary who signs Schedule SB. The [plan lifecycle](/plan-lifecycle) and the [fees](/fees) are part of the staff-math decision, because a design that only works if professional fees are ignored does not work.
+If the staff math works and the owners agree, the plan becomes a recurring practice system. Census updates when someone is hired or crosses an hours threshold. A valuation each year. A Form 5500, generally due **July 31** for a calendar year, extendable to **October 15** with Form 5558, filed on EFAST2. Form 5558 can be e-filed. The IRS overview is the [Form 5500 corner](https://www.irs.gov/retirement-plans/form-5500-corner). The Department of Labor's page is [Form 5500 reporting](https://www.dol.gov/agencies/ebsa/employers-and-advisers/plan-administration-and-compliance/reporting-and-filing/form-5500). Sterling can administer that system and coordinate the actuary who signs Schedule SB. The [plan lifecycle](/plan-lifecycle) and the [fees](/fees) are part of the staff-math decision, because a design that only works if professional fees are ignored does not work.
 
 The [illustrations](/illustrations) and the [calculator](/calculator) can start a partner conversation. They cannot finish one. The [limits](/limits) page can stop a partner from adding **$280,000** to **$70,000**. The [comparison](/compare) among plan types can stop a practice from adopting a pension when a profit-sharing contribution would have matched its tolerance for fixed costs.
 
@@ -75,4 +75,4 @@ Put the clinical payroll on the table before you put a contribution on it.
 - Decide, with the other owners if there are any, who funds the minimum if production is uneven. If you cannot decide, do not adopt. The [not a fit](/not-a-fit) page is the honest alternative.
 - Tell payroll to run 2025 deferrals at **$23,500** and the correct catch-up, and to leave mandatory Roth catch-up off.
 
-When the registers and the entity answer exist, [contact Savant Pensions](/contact). Send the census first. The design follows the census, or it does not proceed.
+When the registers and the entity answer exist, [contact Sterling Pension Group](/contact). Send the census first. The design follows the census, or it does not proceed.

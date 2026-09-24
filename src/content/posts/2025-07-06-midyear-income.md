@@ -11,7 +11,7 @@ An illustration prepared in January is a hypothesis about compensation. By the f
 
 For a calendar-year defined benefit plan, including a cash balance plan, the minimum required contribution for the prior year is generally due **September 15**. That date is about ten weeks from this briefing. It is not the due date for deciding what 2025 compensation will be, but it is close enough that a practice which is late on 2024 funding should not spend July redesigning 2025. Deposit what the Enrolled Actuary certified, then look at this year. The deduction often follows the employer's return, including extensions, under section 404(a)(6). Confirm that with your CPA. The funding date and the deduction date are different rules. They sometimes share a day on the calendar. Sharing a day does not merge them.
 
-Savant Pensions is a third-party administrator in West Hartford. We can put the midyear census next to the illustration. We do not certify the contribution. An independent Enrolled Actuary does. We are not an actuarial firm, and this briefing is not tax, legal, or actuarial advice.
+Sterling Pension Group is a third-party administrator in West Hartford. We can put the midyear census next to the illustration. We do not certify the contribution. An independent Enrolled Actuary does. We are not an actuarial firm, and this briefing is not tax, legal, or actuarial advice.
 
 ## What to compare, exactly
 

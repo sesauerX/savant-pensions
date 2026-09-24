@@ -9,7 +9,7 @@ slug: how-to-read-cola
 
 Today is **November 9, 2025**. The Internal Revenue Service has not, as of this briefing, posted the retirement-plan cost-of-living adjustments for the coming year. In recent cycles that notice has arrived in late October or the first half of November. It is reasonable to expect it any day. It is not reasonable to design, defer, or deduct as if a number you heard secondhand were already the notice. Until the release is on IRS.gov, the baseline is **2025**. This piece is about how to read the release when it appears, using the limits you already have, so the morning it posts you do not grab the wrong row.
 
-Savant Pensions is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies contributions and Schedule SB. A COLA notice is not a valuation, and this briefing is not tax, legal, or actuarial advice. We will not guess the unpublished figures here. Guessing is the mistake the notice is about to punish.
+Sterling Pension Group is a third-party administrator. We are not an actuarial firm. An independent Enrolled Actuary certifies contributions and Schedule SB. A COLA notice is not a valuation, and this briefing is not tax, legal, or actuarial advice. We will not guess the unpublished figures here. Guessing is the mistake the notice is about to punish.
 
 ## Start from the release you can already open
 

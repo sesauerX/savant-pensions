@@ -9,7 +9,7 @@ slug: roth-catch-up-coming
 
 From the day the Internal Revenue Service posted the **2026** limits, **November 13**, until the day the Roth catch-up rule becomes operational, **January 1, 2026**, is seven weeks. This briefing is dated **December 7, 2025**. The middle of that window is already gone. Calling the project a six-week job was fair in mid-November. It is not fair to spend another quiet week and then discover, over the holidays, that the 401(k) document has no Roth feature and payroll cannot tell a catch-up from a regular deferral. The rule is not in force today. It is close enough that the setup work has to be identified now.
 
-Savant Pensions is a third-party administrator. We are not an actuarial firm, and we are not the 401(k) recordkeeper. An independent Enrolled Actuary certifies pension numbers. The Roth catch-up rule is not a pension number. This briefing is not tax, legal, or actuarial advice. It is a separation of two ideas that vendor emails are about to staple together.
+Sterling Pension Group is a third-party administrator. We are not an actuarial firm, and we are not the 401(k) recordkeeper. An independent Enrolled Actuary certifies pension numbers. The Roth catch-up rule is not a pension number. This briefing is not tax, legal, or actuarial advice. It is a separation of two ideas that vendor emails are about to staple together.
 
 ## What actually changes on January 1
 

@@ -16,8 +16,8 @@ function clip(value: string, max: number) {
   const space = cut.lastIndexOf(" ");
   return `${(space > 40 ? cut.slice(0, space) : cut).replace(/[.,;:]+$/, "")}…`;
 }
-const branded = `${post.title} | Savant Pensions`;
-const seoTitle = branded.length <= 65 ? branded : post.title;
+const branded = `${post.title} | Sterling Pension Group`;
+const seoTitle = branded.length <= 72 ? branded : post.title;
 const seoDescription = clip(post.description, 155);
 ---
 <Base

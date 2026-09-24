@@ -9,7 +9,7 @@ slug: do-not-rush-funding
 
 The week of Christmas feels like a deadline because offices close, payroll freezes, and the year is visibly ending. For a cash balance contribution, that feeling is mostly false. The legal clocks that matter for a 2024 defined benefit deposit sit in 2025. The number that matters is not a round figure you can choose between holiday gatherings. It is the number an independent enrolled actuary can support, which your CPA can then test against the deduction rules. Inventing the number this week creates cleanup that costs more than the feeling of being done was worth.
 
-Savant Pensions LLC in West Hartford administers plans and coordinates those independent actuaries. We are not an actuarial firm. We do not certify Schedule SB, and we will not bless a wire that exists only because the calendar page is red. This briefing is education, not tax, legal, or actuarial advice. It is written for an owner, a physician, a dentist, an attorney, or a consultant who has been told to "just fund something before year-end." The December map of the three real clocks is [/insights/december-timing](/insights/december-timing).
+Sterling Pension Group LLC in West Hartford administers plans and coordinates those independent actuaries. We are not an actuarial firm. We do not certify Schedule SB, and we will not bless a wire that exists only because the calendar page is red. This briefing is education, not tax, legal, or actuarial advice. It is written for an owner, a physician, a dentist, an attorney, or a consultant who has been told to "just fund something before year-end." The December map of the three real clocks is [/insights/december-timing](/insights/december-timing).
 
 ## What is actually due this week
 
@@ -37,7 +37,7 @@ There is a fourth, quieter failure. Trust assets have to be invested under fiduc
 
 ## What an actuary's range is, and what it is not
 
-When the facts are ready, the enrolled actuary can often provide a range: a minimum-funding figure, a recommended deposit, and a maximum deductible figure, which are not three names for one number. Your CPA decides what the return can use. You decide what the business can pay without pretending next year will cooperate. Savant can coordinate the data the actuary needs: census, compensation, entity identification, and asset statements if a trust already exists. Coordination is not certification. If a message this week offers you a "final maximum" without a signed engagement and a census, it is not final.
+When the facts are ready, the enrolled actuary can often provide a range: a minimum-funding figure, a recommended deposit, and a maximum deductible figure, which are not three names for one number. Your CPA decides what the return can use. You decide what the business can pay without pretending next year will cooperate. Sterling can coordinate the data the actuary needs: census, compensation, entity identification, and asset statements if a trust already exists. Coordination is not certification. If a message this week offers you a "final maximum" without a signed engagement and a census, it is not final.
 
 Do not fill the silence with a placeholder wire "to be trued up later." True-up language is how nondeductible contributions and excise-tax conversations begin. It is better for the trust to receive nothing in December than to receive a placeholder. Nothing can be followed by a correct deposit inside the deduction window and inside the minimum-funding window. A placeholder has to be reversed, recharacterized, or explained, often after the return has already reflected it.
 
@@ -81,4 +81,4 @@ The next two weeks include Christmas and New Year's. The work is restraint, plus
 - Write two dates at the top of the folder: minimum funding generally **September 15, 2025**, and the deduction date as your CPA names it under IRC 404(a)(6). If the CPA has not named it, the folder is not ready for a transfer.
 - If someone pressures you to fund **$275,000**, or **$280,000**, or **$69,000** plus either of those, decline. Those are limits of different kinds, and none of them is your deposit.
 
-When the offices reopen, [contact Savant Pensions](/contact) with the folder if you want a 2024 design coordinated properly. If you already know the folder would embarrass you, do not fund your way past the embarrassment. The week of Christmas is a good week to leave an invented contribution uninvented.
+When the offices reopen, [contact Sterling Pension Group](/contact) with the folder if you want a 2024 design coordinated properly. If you already know the folder would embarrass you, do not fund your way past the embarrassment. The week of Christmas is a good week to leave an invented contribution uninvented.

@@ -1,6 +1,6 @@
-# Savant Pensions
+# Sterling Pension Group
 
-Astro rebuild of the Savant Pensions site. Images live in `public/images/`.
+Astro rebuild of the Sterling Pension Group site. Images live in `public/images/`.
 
 ```bash
 npm install

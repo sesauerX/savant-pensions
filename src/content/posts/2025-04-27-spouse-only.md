@@ -9,7 +9,7 @@ slug: spouse-on-payroll
 
 The owner-only plan is a clean picture. One person, one benefit, no staff cost, a short census. Then a spouse starts answering the phone, keeping the books, or seeing patients one day a week, and someone suggests putting the spouse on payroll so the retirement plan can be larger. Sometimes that suggestion is sound. A spouse who does real work, at a wage that matches the work, can be a real participant with a real benefit, and the mathematics of a defined benefit plan can support a larger combined contribution than the owner alone could take. Sometimes the suggestion is a sketch of a second contribution with a token wage underneath it. The plan will not cooperate with the sketch. Payroll taxes, attribution rules, and the document all assume the second person is an employee, not a label.
 
-This briefing is about the difference. It is for a practice that is, or is about to be, a two-person plan: the owner and the spouse, and nobody else. The moment a third person is a common-law employee, you have left this fact pattern and entered ordinary coverage. Savant Pensions administers both. We are a third-party administrator in West Hartford, not an actuarial firm. An independent Enrolled Actuary certifies the funding. We will not illustrate a spousal benefit on a wage that exists only in the planning memo.
+This briefing is about the difference. It is for a practice that is, or is about to be, a two-person plan: the owner and the spouse, and nobody else. The moment a third person is a common-law employee, you have left this fact pattern and entered ordinary coverage. Sterling Pension Group administers both. We are a third-party administrator in West Hartford, not an actuarial firm. An independent Enrolled Actuary certifies the funding. We will not illustrate a spousal benefit on a wage that exists only in the planning memo.
 
 ## The spouse is a participant, or is not
 
@@ -43,7 +43,7 @@ Deductions follow the employer's return. A contribution for both people is still
 
 ## What we will and will not assume
 
-Savant Pensions will administer a two-person plan with the same calendar as any other small plan: document, census, eligibility, coordination with the Enrolled Actuary, Form 5500 series, and the notices the document requires. We will not treat a spouse as a participant because it improves the illustration. We will ask what the spouse does, when the spouse started, how many hours, and what the wage will be. We will ask what else either of you owns. Those questions are the administration, not a hurdle in front of it.
+Sterling Pension Group will administer a two-person plan with the same calendar as any other small plan: document, census, eligibility, coordination with the Enrolled Actuary, Form 5500 series, and the notices the document requires. We will not treat a spouse as a participant because it improves the illustration. We will ask what the spouse does, when the spouse started, how many hours, and what the wage will be. We will ask what else either of you owns. Those questions are the administration, not a hurdle in front of it.
 
 A [self-employed owner](/self-employed) who has no employees and whose spouse does not work in the business should stay with an owner-only design. Adding a payroll that is not real in order to decorate the contribution is the kind of step that looks clever in a seminar and expensive in an examination. If the spouse already works, the honest version is simpler. Put the real wage on the census and let the actuary value two benefits.
 

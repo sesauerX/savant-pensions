@@ -9,7 +9,7 @@ slug: scorp-wages
 
 An S corporation owner will often describe the year in one number. The practice cleared six hundred thousand dollars, or the consulting firm had its best March, or the draw has been steady since January. That number is useful for the household and for the bank. It is usually the wrong number for a retirement plan. A qualified plan does not read the K-1 the way a shareholder does. For a shareholder who works in the business, the plan is built on wages. Distributions, however large and however well earned, are not compensation the formula can use.
 
-That distinction is the whole briefing. If the wage is thin and the distribution is thick, the illustration will come back smaller than the conversation that produced it. The actuary did not miss the profit. The document is not allowed to pretend the profit was pay. Savant Pensions sees this at the start of almost every S corporation design, and it is cheaper to settle it in March than to discover it in December, after payroll for the year is already closed.
+That distinction is the whole briefing. If the wage is thin and the distribution is thick, the illustration will come back smaller than the conversation that produced it. The actuary did not miss the profit. The document is not allowed to pretend the profit was pay. Sterling Pension Group sees this at the start of almost every S corporation design, and it is cheaper to settle it in March than to discover it in December, after payroll for the year is already closed.
 
 ## What the plan is allowed to count
 
@@ -55,7 +55,7 @@ If a 401(k) is paired with the pension, the deferral election has to be in place
 
 ## What we do with the wage, and what we do not
 
-Savant Pensions LLC is a third-party administrator in West Hartford. We design and administer defined benefit and cash balance plans and we coordinate independent Enrolled Actuaries for the valuation and for the Schedule SB certification. We are not an actuarial firm. We do not set reasonable compensation, we do not sign the actuarial schedule, and we do not tell you how much of the profit to distribute. We will refuse to illustrate a contribution on a compensation figure we cannot trace to wages. That refusal is the service.
+Sterling Pension Group LLC is a third-party administrator in West Hartford. We design and administer defined benefit and cash balance plans and we coordinate independent Enrolled Actuaries for the valuation and for the Schedule SB certification. We are not an actuarial firm. We do not set reasonable compensation, we do not sign the actuarial schedule, and we do not tell you how much of the profit to distribute. We will refuse to illustrate a contribution on a compensation figure we cannot trace to wages. That refusal is the service.
 
 This briefing is not tax advice, legal advice, or actuarial advice. The deduction for a contribution, including the timing rule in section 404(a)(6), belongs with your CPA. The wage belongs with your CPA and, if there is any doubt about the services, with counsel. The certified numbers belong with the Enrolled Actuary.
 

@@ -9,7 +9,7 @@ slug: leaving-the-sep
 
 A SEP IRA is a respectable plan. It is also the plan many owners keep for a decade after it has stopped matching the problem. The problem, when it changes, is usually one of three things. The dollar ceiling is too low for the income. The same percentage you give yourself is an expensive way to give every eligible employee a benefit, with no age weighting. Or you have started hearing that a cash balance plan can sit on top of the SEP and double the deduction, which is the sentence that needs to be retired before it becomes a contribution. **Outgrowing a SEP is a document and testing project. It is not a second account you open in August and fund in December.**
 
-Savant Pensions LLC in West Hartford is a third-party administrator of qualified plans. We are not an actuarial firm. Independent Enrolled Actuaries certify defined benefit valuations. We do not administer your SEP IRA as if it were a trust we custody. This briefing is not tax, legal, or actuarial advice. Your CPA has to bless the year the SEP stops and the year anything else starts.
+Sterling Pension Group LLC in West Hartford is a third-party administrator of qualified plans. We are not an actuarial firm. Independent Enrolled Actuaries certify defined benefit valuations. We do not administer your SEP IRA as if it were a trust we custody. This briefing is not tax, legal, or actuarial advice. Your CPA has to bless the year the SEP stops and the year anything else starts.
 
 ## What a SEP actually allows in 2026
 
