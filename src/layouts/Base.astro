@@ -1,8 +1,139 @@
 ---
 import "../styles.css";
-const { title = "Savant Pensions", description = "Defined Benefit and Cash Balance plans for business owners." } = Astro.props;
+import { SITE, faqs, pages } from "../lib/seo";
+
+const props = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const seo = pages[path];
+const title = seo?.title ?? props.title ?? "Savant Pensions";
+const description =
+  seo?.description ??
+  props.description ??
+  "Savant Pensions is a pension plan administrator for business owners. We design and administer Defined Benefit and Cash Balance plans.";
+const image = props.image ?? "/og.jpg";
+const type = props.type ?? "website";
+const canonical = `${SITE}${path === "/" ? "/" : path}`;
+const ogImage = new URL(image, SITE).href;
+
 const nav = [
+  ["/defined-benefit", "Defined Benefit"],
+  ["/cash-balance", "Cash Balance"],
+  ["/services", "Services"],
+  ["/insights", "Insights"],
+  ["/about", "About"],
+  ["/contact", "Contact"],
+];
+const plans = [
+  ["/defined-benefit", "Defined Benefit Plans"],
+  ["/cash-balance", "Cash Balance Plans"],
+  ["/self-employed", "Self-Employed Cash Balance"],
+  ["/physicians", "Physicians"],
+  ["/dentists", "Dentists"],
+  ["/attorneys", "Law firms"],
+  ["/consultants", "Consultants"],
+];
+const resources = [
+  ["/insights", "Owner briefing"],
+  ["/limits", "2024–2026 IRS limits"],
+  ["/compare", "Compare SEP, 401(k), pension"],
+  ["/illustrations", "Illustrative contributions"],
+  ["/not-a-fit", "When it is not a fit"],
+  ["/staff-cost", "Staff cost"],
+  ["/calendar", "Deadline calendar"],
+  ["/fees", "Fees and who does what"],
+  ["/plan-lifecycle", "After the plan exists"],
+  ["/calculator", "Tax savings calculator"],
+  ["/faq", "FAQs"],
+  ["/contact", "Schedule a consultation"],
+];
+
+const crumbs = [{ name: "Home", url: `${SITE}/` }];
+if (path.startsWith("/insights/") && props.crumb) {
+  crumbs.push({ name: "Insights", url: `${SITE}/insights` });
+  crumbs.push({ name: props.crumb, url: canonical });
+} else if (path !== "/" && seo) {
+  crumbs.push({ name: seo.crumb, url: canonical });
+}
+
+const graph: Record<string, unknown>[] = [
+  {
+    "@type": ["Organization", "ProfessionalService"],
+    "@id": `${SITE}/#organization`,
+    name: "Savant Pensions LLC",
+    alternateName: "Savant Pensions",
+    url: `${SITE}/`,
+    logo: `${SITE}/logo.svg`,
+    image: `${SITE}/og.jpg`,
+    description:
+      "Independent third-party administrator for Defined Benefit and Cash Balance plans used by business owners.",
+    telephone: "+1-860-590-7172",
+    email: "info@savantpensions.com",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "15 N Main St #100",
+      addressLocality: "West Hartford",
+      addressRegion: "CT",
+      postalCode: "06107",
+      addressCountry: "US",
+    },
+    areaServed: { "@type": "Country", name: "United States" },
+    knowsAbout: ["Defined benefit plans", "Cash balance plans", "Third-party administration"],
+  },
+  {
+    "@type": "WebSite",
+    "@id": `${SITE}/#website`,
+    url: `${SITE}/`,
+    name: "Savant Pensions",
+    publisher: { "@id": `${SITE}/#organization` },
+  },
+  {
+    "@type": "WebPage",
+    "@id": `${canonical}#webpage`,
+    url: canonical,
+    name: title,
+    description,
+    isPartOf: { "@id": `${SITE}/#website` },
+    about: { "@id": `${SITE}/#organization` },
+    primaryImageOfPage: { "@type": "ImageObject", url: ogImage },
+  },
+  {
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: crumb.name,
+      item: crumb.url,
+    })),
+  },
+];
+
+if (type === "article") {
+  graph.push({
+    "@type": "Article",
+    headline: props.headline ?? title,
+    description,
+    datePublished: props.published,
+    dateModified: props.modified ?? props.published,
+    image: ogImage,
+    author: { "@id": `${SITE}/#organization` },
+    publisher: { "@id": `${SITE}/#organization` },
+    mainEntityOfPage: canonical,
+  });
+}
+
+if (path === "/faq") {
+  graph.push({
+    "@type": "FAQPage",
+    mainEntity: faqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  });
+}
+
+const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
+---
   ["/defined-benefit", "Defined Benefit"],
   ["/cash-balance", "Cash Balance"],
   ["/services", "Services"],
@@ -41,7 +172,24 @@ const resources = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta property="og:site_name" content="Savant Pensions" />
+    <meta property="og:type" content={type === "article" ? "article" : "website"} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    {image === "/og.jpg" && <meta property="og:image:width" content="1200" />}
+    {image === "/og.jpg" && <meta property="og:image:height" content="630" />}
+    <meta property="og:locale" content="en_US" />
+    {props.published && <meta property="article:published_time" content={props.published} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="application/ld+json" set:html={jsonLd} />
   </head>
   <body>
     <header class="site">

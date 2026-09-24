@@ -10,12 +10,29 @@ const { slug } = Astro.params;
 const post = getPost(slug!);
 if (!post) return Astro.redirect("/insights");
 const more = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
+function clip(value: string, max: number) {
+  if (value.length <= max) return value;
+  const cut = value.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 40 ? cut.slice(0, space) : cut).replace(/[.,;:]+$/, "")}…`;
+}
+const branded = `${post.title} | Savant Pensions`;
+const seoTitle = branded.length <= 65 ? branded : post.title;
+const seoDescription = clip(post.description, 155);
 ---
-<Base title={`${post.title} | Savant Pensions`} description={post.description}>
+<Base
+  title={seoTitle}
+  description={seoDescription}
+  image={post.image}
+  type="article"
+  published={post.date}
+  headline={post.title}
+  crumb={post.title}
+>
   <article class="wrap page">
     <p class="kicker">{post.kicker} · {formatDate(post.date)}</p>
     <h1>{post.title}</h1>
-    <img class="photo" src={post.image} alt="" style="height:420px;margin-top:20px;" />
+    <img class="photo" src={post.image} alt={post.title} style="height:420px;margin-top:20px;" />
     <div class="briefing" set:html={post.html} />
   </article>
   <section class="wrap" style="padding-bottom:48px;">
