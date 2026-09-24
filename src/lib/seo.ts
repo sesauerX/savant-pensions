@@ -1,4 +1,4 @@
-export const SITE = "https://savant-pensions.vercel.app";
+export const SITE = "https://sterlingpensiongroup.com";
 
 export type PageSeo = { title: string; description: string; crumb: string };
 

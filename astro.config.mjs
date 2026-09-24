@@ -1,5 +1,7 @@
 import { defineConfig } from "astro/config";
+import vercel from "@astrojs/vercel";
 
 export default defineConfig({
-  site: "https://savant-pensions.vercel.app",
+  site: "https://sterlingpensiongroup.com",
+  adapter: vercel(),
 });

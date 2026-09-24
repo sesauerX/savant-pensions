@@ -2,6 +2,8 @@ import type { APIRoute } from "astro";
 import { posts } from "../lib/posts";
 import { SITE, pages } from "../lib/seo";
 
+export const prerender = true;
+
 export const GET: APIRoute = () => {
   const paths = [...Object.keys(pages), ...posts.map((post) => `/insights/${post.slug}`)];
   const body = `<?xml version="1.0" encoding="UTF-8"?>

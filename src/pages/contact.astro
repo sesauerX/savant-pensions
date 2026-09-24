@@ -18,15 +18,42 @@ import Base from "../layouts/Base.astro";
     <label>Email<input type="email" name="email" required /></label>
     <label>Phone<input type="tel" name="phone" /></label>
     <label>What would you like to explore?<textarea name="message" rows="4"></textarea></label>
+    <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
     <button class="btn primary" type="submit">Request a complimentary call</button>
     <p id="thanks" hidden>Thank you. We’ll be in touch. Or call +1 (860) 590-7172.</p>
+    <p id="form-error" hidden></p>
   </form>
 </section>
 <script>
-  document.getElementById("contact")?.addEventListener("submit", (e) => {
+  document.getElementById("contact")?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    document.getElementById("thanks").hidden = false;
-    e.currentTarget.querySelector("button").disabled = true;
+    const form = e.currentTarget;
+    const button = form.querySelector("button");
+    const thanks = document.getElementById("thanks");
+    const error = document.getElementById("form-error");
+    button.disabled = true;
+    error.hidden = true;
+    const data = Object.fromEntries(new FormData(form).entries());
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.ok) {
+        error.textContent = body.error || "We could not send that. Email info@savantpensions.com.";
+        error.hidden = false;
+        button.disabled = false;
+        return;
+      }
+      thanks.hidden = false;
+      form.reset();
+    } catch {
+      error.textContent = "We could not send that. Email info@savantpensions.com.";
+      error.hidden = false;
+      button.disabled = false;
+    }
   });
 </script>
 
