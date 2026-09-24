@@ -111,6 +111,7 @@ input, textarea, select { width: 100%; margin-top: 6px; padding: 12px 14px; bord
 @media (max-width: 900px) {
   nav.desk, .actions { display: none; }
   .menu-btn { display: inline-flex; align-items: center; justify-content: center; }
+  .mobile:not([hidden]) { display: grid; gap: 4px; }
   .hero, .two, .grid3, .steps, .band .wrap, .cta, .split, footer .cols { grid-template-columns: 1fr; }
   .visual img, .photo { height: 320px; }
   .cta { padding: 28px; }
