@@ -1,7 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { formatDate, posts } from "../../lib/posts";
-const [lead, ...rest] = posts;
+const [lead] = posts;
 const hub = [
   ["#briefing", "Owner briefing", "A note every two weeks, written to the limits that were current that week."],
   ["/limits", "2024–2026 IRS limits", "Deferrals, annual additions, compensation cap, and the defined-benefit dollar limit."],
@@ -46,14 +46,5 @@ const hub = [
       </div>
     </section>
   )}
-  <section class="wrap grid3" style="padding-bottom:64px;">
-    {rest.map((post) => (
-      <article class="panel">
-        <a href={`/insights/${post.slug}`}><img src={post.image} alt="" style="height:180px;width:100%;object-fit:cover;border-radius:16px;" /></a>
-        <p class="kicker" style="margin-top:12px;">{formatDate(post.date)}</p>
-        <h3><a href={`/insights/${post.slug}`}>{post.title}</a></h3>
-        <p>{post.description}</p>
-      </article>
-    ))}
-  </section>
+  <p class="wrap" style="padding-bottom:64px;"><a href="/insights/archive">Earlier briefings</a></p>
 </Base>

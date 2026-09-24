@@ -45,6 +45,12 @@ export const pages: Record<string, PageSeo> = {
     description:
       "IRS limits, deadlines, and a briefing every two weeks for self-employed owners considering a cash balance or defined benefit plan.",
   },
+  "/insights/archive": {
+    crumb: "Briefing archive",
+    title: "Owner Briefing Archive | Sterling Pension Group",
+    description:
+      "Every Sterling Pension Group briefing since September 2024, one note every two weeks, listed by date.",
+  },
   "/self-employed": {
     crumb: "Self-employed",
     title: "Self-Employed Cash Balance Plans | Sterling Pension Group",

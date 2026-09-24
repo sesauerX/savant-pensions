@@ -1,0 +1,23 @@
+---
+import Base from "../../layouts/Base.astro";
+import { formatDate, posts } from "../../lib/posts";
+---
+<Base title="Owner briefing archive | Sterling Pension Group" description="Every Sterling Pension Group briefing since September 2024, listed by date.">
+  <section class="wrap page">
+    <p class="kicker">Owner briefing</p>
+    <h1>Earlier briefings.</h1>
+    <p class="lede">One note every two weeks since September 2024. The <a href="/insights">insights hub</a> is the guides, limits, and deadlines.</p>
+  </section>
+  <section class="wrap" style="padding-bottom:64px;">
+    <ul style="list-style:none;padding:0;margin:0;">
+      {posts.map((post) => (
+        <li style="border-top:1px solid var(--line);padding:14px 0;">
+          <a href={`/insights/${post.slug}`}>
+            <span class="kicker">{formatDate(post.date)}</span>
+            <strong style="display:block;margin-top:4px;">{post.title}</strong>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Base>
