@@ -2,10 +2,11 @@ import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-const TO = (process.env.CONTACT_TO || "info@savantpensions.com")
+const TO = (process.env.CONTACT_TO || "sesauer@gmail.com")
   .split(",")
   .map((item) => item.trim())
   .filter(Boolean);
+const FROM = process.env.CONTACT_FROM || "Sterling Pension Group <onboarding@resend.dev>";
 
 export const POST: APIRoute = async ({ request }) => {
   let payload: Record<string, unknown>;
@@ -48,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Sterling Pension Group <notifications@sterlingpensiongroup.com>",
+      from: FROM,
       to: TO,
       reply_to: email,
       subject: `Consultation request from ${name}`,
