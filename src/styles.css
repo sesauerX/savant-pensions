@@ -204,7 +204,7 @@ nav.desk a[aria-current="page"] { color: var(--sterling); border-bottom-color: v
 .section p + p { margin-top: 14px; }
 .section h2 + p, .section h2 + ul { margin-top: 14px; }
 .section ul { padding-left: 22px; display: flex; flex-direction: column; gap: 8px; color: var(--body); margin-top: 14px; }
-.section p a:not(.btn):not(.text-link), .section li a:not(.btn) { color: var(--bright-text); font-weight: 600; }
+.section p a:not(.btn):not(.text-link):not(.info-card a), .section li a:not(.btn) { color: var(--bright-text); font-weight: 600; }
 
 /* Grids */
 .grid3, .grid4, .two, .steps { display: grid; gap: 24px; }
