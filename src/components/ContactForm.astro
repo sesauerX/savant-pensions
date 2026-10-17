@@ -9,12 +9,21 @@
   </div>
   <div class="field"><label for="c-msg">What would you like to explore?</label><textarea id="c-msg" name="message" rows="5"></textarea></div>
   <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
+  <input type="hidden" name="page" />
+  <input type="hidden" name="form_started" />
   <button class="btn primary" type="submit" style="align-self:flex-start">Request a complimentary call</button>
   <p id="thanks" class="form-note ok" role="status" hidden>Thank you. We’ll be in touch. Or call +1 (860) 590-7172.</p>
   <p id="form-error" class="form-note err" role="alert" hidden></p>
 </form>
 <script>
-  document.getElementById("contact")?.addEventListener("submit", async (e) => {
+  const contactForm = document.getElementById("contact") as HTMLFormElement | null;
+  const startedAt = String(Date.now());
+  const stamp = (form: HTMLFormElement) => {
+    (form.elements.namedItem("page") as HTMLInputElement).value = location.href;
+    (form.elements.namedItem("form_started") as HTMLInputElement).value = startedAt;
+  };
+  if (contactForm) stamp(contactForm);
+  contactForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const form = e.currentTarget as HTMLFormElement;
     const button = form.querySelector("button")!;
@@ -38,6 +47,7 @@
       }
       thanks.hidden = false;
       form.reset();
+      stamp(form);
     } catch {
       error.textContent = "We could not send that. Email info@savantpensions.com.";
       error.hidden = false;

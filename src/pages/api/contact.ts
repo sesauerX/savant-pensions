@@ -1,12 +1,7 @@
 import type { APIRoute } from "astro";
+import { EMAIL_RE, clean, configured, looksLikeSpam, sendAdminEmail, sourcePage } from "../../lib/notify";
 
 export const prerender = false;
-
-const TO = (process.env.CONTACT_TO || "sesauer@gmail.com")
-  .split(",")
-  .map((item) => item.trim())
-  .filter(Boolean);
-const FROM = process.env.CONTACT_FROM || "Sterling Pension Group <onboarding@resend.dev>";
 
 export const POST: APIRoute = async ({ request }) => {
   let payload: Record<string, unknown>;
@@ -16,48 +11,42 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ ok: false, error: "Send a name, email, and message." }, { status: 400 });
   }
 
-  if (typeof payload.company_website === "string" && payload.company_website.trim()) {
+  if (looksLikeSpam(payload)) {
     return Response.json({ ok: true });
   }
 
-  const name = String(payload.name ?? "").trim();
-  const email = String(payload.email ?? "").trim();
-  const phone = String(payload.phone ?? "").trim();
-  const message = String(payload.message ?? "").trim();
+  const name = clean(payload.name, 200);
+  const email = clean(payload.email, 254);
+  const phone = clean(payload.phone, 40);
+  const message = String(payload.message ?? "").replace(/\r\n/g, "\n").trim();
 
-  if (name.length < 2 || name.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || message.length > 5000) {
+  if (
+    name.length < 2 ||
+    name.length > 120 ||
+    !EMAIL_RE.test(email) ||
+    message.length > 5000 ||
+    (phone && !/^[0-9+().\-\s]{0,40}$/.test(phone))
+  ) {
     return Response.json({ ok: false, error: "Check the name and email, then try again." }, { status: 400 });
   }
 
-  const key = process.env.RESEND_API_KEY;
-  if (!key) {
+  if (!configured()) {
     return Response.json({ ok: false, error: "The notification service is not configured yet." }, { status: 503 });
   }
 
-  const text = [
-    `Name: ${name}`,
-    `Email: ${email}`,
-    `Phone: ${phone || "not given"}`,
-    "",
-    message || "(no message)",
-  ].join("\n");
-
-  const sent = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: FROM,
-      to: TO,
-      reply_to: email,
-      subject: `Consultation request from ${name}`,
-      text,
-    }),
+  const sent = await sendAdminEmail({
+    subject: "New contact enquiry – Sterling Pension Group",
+    fields: [
+      ["Name", name],
+      ["Email", email],
+      ["Phone", phone],
+      ["Message", message ? `\n${message}` : ""],
+    ],
+    page: sourcePage(payload, request),
+    replyTo: email,
   });
 
-  if (!sent.ok) {
+  if (!sent) {
     return Response.json(
       { ok: false, error: "We could not send that just now. Call +1 (860) 590-7172 or email info@savantpensions.com." },
       { status: 502 },

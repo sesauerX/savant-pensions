@@ -12,6 +12,7 @@ import Hero from "../components/Hero.astro";
       <div class="field"><label for="age">Owner age</label><input class="calc-input" id="age" type="number" value="52" min="25" max="80" inputmode="numeric" /></div>
       <div class="field"><label for="income">Estimated earned income</label><div class="affix"><span aria-hidden="true">$</span><input class="calc-input" id="income" type="number" value="350000" min="0" inputmode="numeric" /></div></div>
       <div class="field"><label for="emps">Employees (approx.)</label><input class="calc-input" id="emps" type="number" value="3" min="0" inputmode="numeric" /></div>
+      <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
       <button class="btn primary" type="submit">Estimate contribution room</button>
     </form>
     <section class="result" aria-label="Estimate">
@@ -49,9 +50,31 @@ import Hero from "../components/Hero.astro";
     const room = estimate();
     document.getElementById("out")!.textContent = "Illustrative contribution potential: about $" + room.toLocaleString() + " depending on your facts.";
   };
+  const started = Date.now();
+  // Admin notification for each estimate the visitor asks for. Fire and forget:
+  // the page behaves the same whether or not it is delivered.
+  const notify = (room: number) => {
+    const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+    fetch("/api/calculator", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        age: val("age"),
+        income: val("income"),
+        employees: val("emps"),
+        estimate: room,
+        result: document.getElementById("out")!.textContent,
+        page: location.href,
+        form_started: started,
+        company_website: (form as HTMLFormElement).querySelector<HTMLInputElement>("[name=company_website]")!.value,
+      }),
+    }).catch(() => {});
+  };
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
     run();
+    notify(estimate());
   });
   form?.addEventListener("input", run);
   // The figure shows for the default inputs; the sentence appears once the visitor acts.
