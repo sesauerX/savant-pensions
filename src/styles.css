@@ -600,3 +600,6 @@ blockquote.pull { margin: 8px 0; padding: 24px 28px; background: var(--light); b
   .band { grid-template-columns: 1fr; }
   .band.axis > span { display: none; }
 }
+.guide.roles li .sep { display: none; }
+.guide.roles li .role-body { display: block; }
+.guide.roles li .role-body::first-letter { text-transform: uppercase; }

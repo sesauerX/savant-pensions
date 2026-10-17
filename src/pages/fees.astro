@@ -1,6 +1,11 @@
 ---
 import GuidePage from "../components/GuidePage.astro";
 import { resources } from "../lib/nav";
+// Role cards: the bold role becomes the card label. A comma that only joined the
+// label to the sentence is kept in the markup but hidden, so the copy is unchanged.
+const roleHtml = (src: string) =>
+  src.replace(/<li><strong>([^<]+)<\/strong>(,?)\s*([\s\S]*?)<\/li>/g, (_m, label, comma, rest) =>
+    `<li><strong>${label}</strong>${comma ? '<span class="sep">,</span>' : ""} <span class="role-body">${rest}</span></li>`);
 const html = '<p>A cash balance plan has more vendors than a SEP. Mixing their fees into one “the plan costs 1 percent” story is how owners overpay, or underbuy the certification they legally need.</p>\n<ul>\n<li><strong>Sterling, as TPA</strong>, handles design support, documents, census work, annual administration, and filing coordination. We are not an actuarial firm.</li>\n<li><strong>An independent Enrolled Actuary</strong> certifies the valuation and signs Schedule SB when the filing requires it. That is a separate professional, with a separate fee.</li>\n<li><strong>The recordkeeper or trustee</strong> holds the assets. Investment costs sit here. A cash balance interest credit is a plan promise; investing the trust like a personal brokerage account can fight that promise.</li>\n<li><strong>Your CPA</strong> takes the deduction on the return. We do not replace that signature.</li>\n</ul>\n<p>We do not publish a universal price because census size and whether a 401(k) is paired with the pension change the work. Ask for a written scope. The <a href="https://www.irs.gov/retirement-plans/form-5500-corner">Form 5500 corner</a> shows the filing you are paying to get right. PBGC premiums, if the plan is covered, are another line; coverage is explained by <a href="https://www.pbgc.gov/prac/other-guidance/coverage">PBGC</a>, not by a rule of thumb. When you want a scope conversation, <a href="/contact">start here</a>. The ongoing work is described under <a href="/administration">administration</a>.</p>';
 ---
 <GuidePage
@@ -9,7 +14,7 @@ const html = '<p>A cash balance plan has more vendors than a SEP. Mixing their f
   kicker="Fees"
   h1="Pension plan administration fees."
   lede="Administration, actuarial certification, and investments are three different bills."
-  html={html}
+  html={roleHtml(html)}
   bodyClass="roles"
   nav={resources}
 >
