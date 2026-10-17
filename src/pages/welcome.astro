@@ -1,0 +1,108 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+// "A note from Polo": copy verbatim from the welcome-page design (Welcome.dc.html),
+// straight quotes and British spelling included.
+const points = [
+  ["Plain English.", "If we use a term you don't know, that's on us, not you."],
+  ["A real person.", "You'll talk to people who know your plan, not a ticket number."],
+  ["Straight answers,", "including the ones that don't earn us anything."],
+];
+const person = {
+  name: "Polo Delicana",
+  jobTitle: "CEO",
+  image: "https://sterlingpensiongroup.com/images/team/polo.jpg",
+};
+---
+<Base image="/images/team/polo.jpg" person={person}>
+  <Hero
+    variant="letter-hero"
+    crumbs={[{ href: "/about", label: "About" }, { label: "A note from Polo" }]}
+    kicker="A note from our CEO"
+    title="Hello. You found the pension page. Brave choice."
+  />
+
+  <section class="wrap letter-section">
+    <figure class="portrait">
+      <div class="frame">
+        <img src="/images/team/polo.jpg" alt="Polo Delicana, CEO of Sterling Pension Group" width="912" height="1181" fetchpriority="high" decoding="async" />
+      </div>
+      <figcaption><strong>Polo Delicana</strong><br />CEO, Sterling Pension Group</figcaption>
+    </figure>
+
+    <article class="letter">
+      <p class="lead">Nobody has ever said, "I can't wait to curl up tonight with something about defined benefit plans." Yet here you are. I'm grateful, and a little impressed.</p>
+      <p>I'm Polo Delicana, and I run Sterling Pension Group. I have been working in the pension admin space since 2015 so I can honestly say I have seen it all.</p>
+      <p>Here's what I've learned from sitting across the table from business owners. You built something real, usually with long hours, missed dinners and a few years where you paid everyone except yourself. Then one day you look up and realise your own retirement has been waiting patiently at the back of the queue. If that's you, you're in very good company, and you're not as late as it feels.</p>
+      <p>Pension rules were written by people who believe a sentence shouldn't end before page four. Our job is to translate. We'll tell you what a plan can do for your business, what it will ask of you each year, and who signs what. And if a plan isn't right for you yet, we'll say so plainly. Some of our best conversations end with "not this year."</p>
+
+      <p class="expect">What you can expect from us:</p>
+      <ul class="points">
+        {points.map(([lead, rest]) => (
+          <li><span class="dash" aria-hidden="true"></span><span><strong>{lead}</strong> {rest}</span></li>
+        ))}
+      </ul>
+
+      <p>We genuinely enjoy the paperwork: census files, deadlines, Form 5500. Someone has to, and it might as well be the people who find it oddly satisfying.</p>
+      <p class="last">If any of this sounds useful, the first conversation is complimentary and has no script. Bring your questions, your numbers or just your curiosity.</p>
+
+      <div class="signoff">
+        <span class="warmly">Warmly,</span>
+        <img class="signature" src="/images/team/polo-signature.svg" alt="" width="220" height="64" />
+        <div class="name"><strong>Polo Delicana</strong><span>CEO, Sterling Pension Group</span></div>
+      </div>
+
+      <div class="closing">
+        <a class="btn primary" href="/contact">Request a complimentary call</a>
+        <span class="or-call">or call <a href="tel:+18605907172">+1 (860) 590-7172</a></span>
+      </div>
+    </article>
+  </section>
+</Base>
+
+<style>
+  .hero.letter-hero :global(.hero-inner) { padding-top: 88px; padding-bottom: 96px; gap: 18px; }
+  .hero.letter-hero :global(h1) { font-size: 56px; max-width: 860px; }
+
+  .letter-section { display: flex; gap: 80px; align-items: flex-start; justify-content: center; padding-top: 96px; padding-bottom: 120px; }
+  .portrait { margin: 0; flex: none; width: 340px; position: sticky; top: 116px; }
+  .portrait .frame { aspect-ratio: 4 / 5; border-radius: 12px; overflow: hidden; background: var(--light); }
+  .portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+  .portrait figcaption { margin-top: 14px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .portrait figcaption strong { color: var(--navy); font-weight: 700; }
+
+  .letter { flex: 1 1 auto; max-width: 700px; min-width: 0; font-size: 19px; line-height: 1.75; color: var(--body); }
+  .letter p { margin: 0 0 1.2em; }
+  .letter .lead { font-size: 23px; line-height: 1.6; color: var(--navy); font-weight: 500; }
+  .letter .expect { margin: 1.8em 0 0.6em; color: var(--navy); font-weight: 700; }
+  .letter .last { margin-bottom: 2em; }
+  .points { list-style: none; margin: 0 0 1.8em; padding: 0; border-top: 1px solid var(--border); }
+  .points li { display: flex; gap: 16px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .points .dash { flex: none; width: 14px; height: 3px; background: var(--gold); transform: translateY(-5px); }
+  .points strong { color: var(--navy); font-weight: 700; }
+
+  .signoff { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .signoff .warmly { color: var(--navy); }
+  .signature { display: block; width: 220px; height: auto; margin: 4px 0 2px; }
+  .signoff .name { line-height: 1.5; }
+  .signoff .name strong { display: block; color: var(--navy); font-weight: 800; }
+  .signoff .name span { font-size: 0.88em; color: var(--muted); }
+
+  .closing { margin-top: 48px; padding-top: 40px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 16px 24px; }
+  .closing .btn { min-height: 56px; padding: 0 30px; white-space: nowrap; }
+  .or-call { font-size: 16px; color: var(--body); }
+  .or-call a { color: var(--bright-text); font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .or-call a:hover { text-decoration: underline; }
+
+  @media (max-width: 759px) {
+    .hero.letter-hero :global(.hero-inner) { padding-top: 44px; padding-bottom: 48px; }
+    .hero.letter-hero :global(h1) { font-size: 34px; }
+    .letter-section { flex-direction: column; gap: 28px; padding-top: 40px; padding-bottom: 64px; }
+    .portrait { width: 100%; position: static; }
+    .letter { font-size: 17px; }
+    .letter .lead { font-size: 20px; }
+    .signature { width: 190px; }
+    .closing { flex-direction: column; align-items: stretch; }
+    .closing .btn { width: 100%; }
+  }
+</style>

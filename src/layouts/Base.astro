@@ -25,6 +25,8 @@ if (path.startsWith("/the-brief/") && props.crumb) {
   crumbs.push({ name: "The Brief", url: `${SITE}/the-brief` });
   crumbs.push({ name: props.crumb, url: canonical });
 } else if (path !== "/" && seo) {
+  const parent = seo.parent ? pages[seo.parent] : undefined;
+  if (parent) crumbs.push({ name: parent.crumb, url: `${SITE}${seo.parent}` });
   crumbs.push({ name: seo.crumb, url: canonical });
 }
 
@@ -90,6 +92,15 @@ if (type === "article") {
     author: { "@id": `${SITE}/#organization` },
     publisher: { "@id": `${SITE}/#organization` },
     mainEntityOfPage: canonical,
+  });
+}
+
+if (props.person) {
+  graph.push({
+    "@type": "Person",
+    "@id": `${canonical}#person`,
+    ...props.person,
+    worksFor: { "@id": `${SITE}/#organization` },
   });
 }
 

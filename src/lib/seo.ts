@@ -1,6 +1,6 @@
 export const SITE = "https://sterlingpensiongroup.com";
 
-export type PageSeo = { title: string; description: string; crumb: string };
+export type PageSeo = { title: string; description: string; crumb: string; parent?: string };
 
 export const pages: Record<string, PageSeo> = {
   "/": {
@@ -44,6 +44,13 @@ export const pages: Record<string, PageSeo> = {
     title: "The Brief: Pension Notes for Business Owners | Sterling Pension Group",
     description:
       "A note every two weeks since September 2024 for owners considering a cash balance or defined benefit plan, written to the limits current that week.",
+  },
+  "/welcome": {
+    crumb: "A note from Polo",
+    parent: "/about",
+    title: "A note from Polo | Sterling Pension Group",
+    description:
+      'Nobody has ever said, "I can\'t wait to curl up tonight with something about defined benefit plans."',
   },
   "/resources": {
     crumb: "Resources",

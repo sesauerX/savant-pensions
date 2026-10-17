@@ -6,7 +6,9 @@ import Pic from "../components/Pic.astro";
 ---
 <Base>
 
-<Hero photo="about-hero" crumbs={[{ label: "About" }]} kicker="About Sterling Pension Group" title="A sharper view of what your retirement plan can do." lede="Sterling Pension Group LLC is a West Hartford-based retirement plan consulting and third-party administration firm. We help business owners make more confident decisions about Defined Benefit and Cash Balance Plans." />
+<Hero photo="about-hero" crumbs={[{ label: "About" }]} kicker="About Sterling Pension Group" title="A sharper view of what your retirement plan can do." lede="Sterling Pension Group LLC is a West Hartford-based retirement plan consulting and third-party administration firm. We help business owners make more confident decisions about Defined Benefit and Cash Balance Plans.">
+  <a class="ceo-link" href="/welcome">A note from our CEO →</a>
+</Hero>
 
 <section class="wrap section stack-lg">
   <p class="big-quote">Our work is intentionally focused: understand the business, explain the plan, coordinate the specialists, and stay close to the details over time.</p>
@@ -60,6 +62,8 @@ import Pic from "../components/Pic.astro";
 
 </Base>
 <style>
+  .ceo-link { align-self: flex-start; margin-top: 6px; display: inline-flex; align-items: center; gap: 8px; color: #F2B33D; font-size: 16px; font-weight: 700; text-decoration: none; border-bottom: 2px solid rgba(242, 179, 61, 0.45); padding-bottom: 3px; }
+  .ceo-link:hover { border-bottom-color: #F2B33D; }
   /* IMG-20 placeholder until a real photo of the West Hartford office is supplied. */
   .office-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--gradient-hero-plain); box-shadow: none; }
   .office-placeholder .plate { background: #fff; color: var(--sterling); font-weight: 800; font-size: 28px; letter-spacing: 0.14em; padding: 8px 18px 7px 20px; border-bottom: 4px solid var(--gold); line-height: 1.1; }
