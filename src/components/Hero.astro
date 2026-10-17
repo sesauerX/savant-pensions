@@ -34,7 +34,7 @@ const cls = ["hero", image || photo ? "has-photo" : "", overlap ? "overlap" : ""
         {crumbs.map((c: { href?: string; label: string }, i: number) => (
           <>
             <span aria-hidden="true">›</span>
-            {c.href && i < crumbs.length - 1 ? <a href={c.href}>{c.label}</a> : <span aria-current={i === crumbs.length - 1 ? "page" : undefined}>{c.label}</span>}
+            {c.href ? <a href={c.href}>{c.label}</a> : <span aria-current={i === crumbs.length - 1 ? "page" : undefined}>{c.label}</span>}
           </>
         ))}
       </nav>

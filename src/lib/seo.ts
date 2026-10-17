@@ -39,17 +39,17 @@ export const pages: Record<string, PageSeo> = {
     description:
       "Talk with Sterling Pension Group about Defined Benefit or Cash Balance administration. Call (860) 590-7172 or send compensation and a census.",
   },
-  "/insights": {
-    crumb: "Insights",
-    title: "Pension Insights for Business Owners | Sterling Pension Group",
+  "/the-brief": {
+    crumb: "The Brief",
+    title: "The Brief: Pension Notes for Business Owners | Sterling Pension Group",
     description:
-      "IRS limits, deadlines, and a briefing every two weeks for self-employed owners considering a cash balance or defined benefit plan.",
+      "A note every two weeks since September 2024 for owners considering a cash balance or defined benefit plan, written to the limits current that week.",
   },
-  "/insights/archive": {
-    crumb: "Briefing archive",
-    title: "Owner Briefing Archive | Sterling Pension Group",
+  "/resources": {
+    crumb: "Resources",
+    title: "Pension Plan Resources for Business Owners | Sterling Pension Group",
     description:
-      "Every Sterling Pension Group briefing since September 2024, one note every two weeks, listed by date.",
+      "Guides, IRS limits, deadlines, fees, and a contribution calculator for owners considering a cash balance or defined benefit plan.",
   },
   "/self-employed": {
     crumb: "Self-employed",

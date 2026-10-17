@@ -1,0 +1,63 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+// Guides, reference and tools only. Blog posts live in The Brief, never here.
+const icon = {
+  doc: "M7 3h7l5 5v13H7zM14 3v5h5M10 13h6M10 17h6",
+  table: "M3 5h18v14H3zM3 10h18M9 10v9",
+  cal: "M3 5h18v16H3zM3 10h18M8 3v4M16 3v4",
+  calc: "M6 3h12v18H6zM9 7h6M9 12h.01M12 12h.01M15 12h.01M9 16h.01M12 16h.01M15 16h.01",
+  help: "M12 21a9 9 0 100-18 9 9 0 000 18zM9.5 9a2.5 2.5 0 015 .5c0 1.5-2.5 2-2.5 3.5M12 17h.01",
+};
+const groups = [
+  { eyebrow: "Guides", title: "Is this plan right for you?", alt: false, items: [
+    ["/compare", "Compare SEP, 401(k), pension", "What changes once a SEP or solo 401(k) is already full.", icon.doc, "Read guide"],
+    ["/not-a-fit", "When it is not a fit", "Income, staff, and timing cases where this plan should wait.", icon.doc, "Read guide"],
+    ["/staff-cost", "Staff cost", "Why the census, not a slogan, decides what the owner keeps.", icon.doc, "Read guide"],
+    ["/plan-lifecycle", "After the plan exists", "A soft year, a new hire, a practice sale, and termination.", icon.doc, "Read guide"],
+    ["/faq", "FAQs", "Questions owners ask before they send a census.", icon.help, "Read FAQs"],
+  ] },
+  { eyebrow: "Reference", title: "Limits, dates and costs", alt: true, items: [
+    ["/limits", "2024–2026 IRS limits", "Deferrals, annual additions, compensation cap, and the defined-benefit dollar limit.", icon.table, "View limits"],
+    ["/illustrations", "Illustrative contributions", "Age-based ranges, labeled as illustrations, not IRS caps.", icon.table, "View ranges"],
+    ["/calendar", "Deadline calendar", "Form 5500, minimum funding, and the tax-return date.", icon.cal, "View calendar"],
+    ["/fees", "Fees and who does what", "Administrator, enrolled actuary, trustee, and CPA.", icon.table, "View fees"],
+  ] },
+  { eyebrow: "Tools", title: "Run the numbers", alt: false, items: [
+    ["/calculator", "Tax savings calculator", "A first sketch of contribution room. Not a quote.", icon.calc, "Open calculator"],
+  ] },
+];
+---
+<Base>
+  <Hero crumbs={[{ label: "Resources" }]} title="Resources" lede="Guides, limits, and deadlines." />
+
+  {groups.map((g) => (
+    <section class={g.alt ? "alt" : ""}>
+      <div class="wrap section stack-lg">
+        <div class="section-head"><p class="kicker">{g.eyebrow}</p><h2>{g.title}</h2></div>
+        <div class="resource-grid">
+          {g.items.map(([href, t, d, path, cta]) => (
+            <a class="panel resource" href={href}>
+              <span class="icon-circle gold"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={path} /></svg></span>
+              <h3>{t}</h3>
+              <p>{d}</p>
+              <span class="cta-text">{cta} →</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+
+  <section class="wrap cta-section"><div class="cta">
+    <div><h2>Schedule a consultation</h2><p>Send compensation and a roster. We’ll say if a design is worth it.</p></div>
+    <a class="btn gold" href="/contact">Free consultation</a>
+  </div></section>
+</Base>
+<style>
+  .resource-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)); gap: 20px; }
+  .resource h3 { font-size: 19px; line-height: 1.3; }
+  .resource p { font-size: 15px; line-height: 1.6; }
+  .resource .icon-circle { width: 52px; height: 52px; }
+  .resource .cta-text { margin-top: auto; font-size: 14px; font-weight: 800; color: var(--bright-text); }
+</style>

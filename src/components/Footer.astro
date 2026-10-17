@@ -1,7 +1,6 @@
 ---
 import Icon from "./Icon.astro";
-// Column structure from the design. Paths are the site's real routes; the blog
-// stays at /insights and the reference pages stay at their existing URLs.
+// Column structure and labels from the design's navigation.json.
 const cols: [string, [string, string][]][] = [
   ["Plans", [
     ["/defined-benefit", "Defined Benefit Plans"],
@@ -16,17 +15,8 @@ const cols: [string, [string, string][]][] = [
     ["/consultants", "Consultants"],
   ]],
   ["Learn", [
-    ["/insights", "Owner briefing"],
-    ["/limits", "2024–2026 IRS limits"],
-    ["/compare", "Compare SEP, 401(k), pension"],
-    ["/illustrations", "Illustrative contributions"],
-    ["/not-a-fit", "When it is not a fit"],
-    ["/staff-cost", "Staff cost"],
-    ["/calendar", "Deadline calendar"],
-    ["/fees", "Fees and who does what"],
-    ["/plan-lifecycle", "After the plan exists"],
-    ["/calculator", "Tax savings calculator"],
-    ["/faq", "FAQs"],
+    ["/the-brief", "The Brief"],
+    ["/resources", "Resources"],
   ]],
   ["Company", [
     ["/services", "Services"],

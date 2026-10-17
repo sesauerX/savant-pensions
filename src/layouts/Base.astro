@@ -18,8 +18,8 @@ const canonical = `${SITE}${path === "/" ? "/" : path}`;
 const ogImage = new URL(image, SITE).href;
 
 const crumbs = [{ name: "Home", url: `${SITE}/` }];
-if (path.startsWith("/insights/") && props.crumb) {
-  crumbs.push({ name: "Insights", url: `${SITE}/insights` });
+if (path.startsWith("/the-brief/") && props.crumb) {
+  crumbs.push({ name: "The Brief", url: `${SITE}/the-brief` });
   crumbs.push({ name: props.crumb, url: canonical });
 } else if (path !== "/" && seo) {
   crumbs.push({ name: seo.crumb, url: canonical });
@@ -37,7 +37,6 @@ const graph: Record<string, unknown>[] = [
     description:
       "Independent third-party administrator for Defined Benefit and Cash Balance plans used by business owners.",
     telephone: "+1-860-590-7172",
-    email: "info@savantpensions.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "15 N Main St #100",

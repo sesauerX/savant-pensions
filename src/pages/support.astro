@@ -8,11 +8,27 @@ import Icon from "../components/Icon.astro";
 <Hero crumbs={[{ label: "Client support" }]} title="Client support" lede="Work with the people who know your plan." />
 
 <section class="wrap section">
-  <div class="grid3">
-    <a class="panel" href="tel:+18605907172"><span class="icon-circle"><Icon name="phone" size={26} /></span><strong style="font-size:18px">+1 (860) 590-7172</strong></a>
-    <a class="panel" href="mailto:info@savantpensions.com"><span class="icon-circle"><Icon name="mail" size={26} /></span><strong style="font-size:18px">info@savantpensions.com</strong></a>
-    <div class="panel"><span class="icon-circle"><Icon name="pin" size={26} /></span><p style="color:var(--navy);font-weight:700;font-size:18px">15 N Main St #100, West Hartford, CT 06107</p></div>
+  <div class="section-head split-head">
+    <div>
+      <p class="kicker">Client support</p>
+      <h2>Work with the people who know your plan.</h2>
+    </div>
+    <div class="support-cards">
+      <a class="support-card" href="tel:+18605907172"><span class="label">Call</span><strong>+1 (860) 590-7172</strong></a>
+      <a class="support-card" href="/contact"><span class="label">Write to us</span><strong>Use the contact form</strong></a>
+    </div>
   </div>
+  <p class="support-address"><Icon name="pin" size={20} />15 N Main St #100, West Hartford, CT 06107</p>
 </section>
 
 </Base>
+<style>
+  .support-cards { flex: 1 1 380px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px; }
+  .support-card { background: var(--light); border-radius: var(--radius-card); padding: 22px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--navy); transition: box-shadow .2s ease, transform .2s ease; }
+  .support-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+  .support-card .label { font-size: 13px; font-weight: 700; color: var(--muted); }
+  .support-card strong { font-size: 18px; }
+  .support-address { display: flex; gap: 10px; align-items: center; font-weight: 600; color: var(--navy) !important; }
+  .support-address :global(svg) { color: var(--sterling); flex: none; }
+  @media (prefers-reduced-motion: reduce) { .support-card, .support-card:hover { transform: none; transition: none; } }
+</style>

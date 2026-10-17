@@ -188,13 +188,6 @@
   "height": 1152,
   "alt": "Two clinic owners going through their plan with an advisor"
  },
- "about-office": {
-  "src": "/images/site/about-office-1536.webp",
-  "srcset": "/images/site/about-office-1536.webp 1536w, /images/site/about-office-1024.webp 1024w, /images/site/about-office-640.webp 640w",
-  "width": 1536,
-  "height": 1152,
-  "alt": ""
- },
  "contact": {
   "src": "/images/site/contact-1536.webp",
   "srcset": "/images/site/contact-1536.webp 1536w, /images/site/contact-1024.webp 1024w, /images/site/contact-640.webp 640w",

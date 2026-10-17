@@ -29,12 +29,12 @@ import Pic from "../components/Pic.astro";
 </section>
 
 <section class="wrap section"><div class="split">
-  <Pic class="photo" name="about-office" sizes="(min-width: 760px) 50vw, 100vw" />
+  <div class="photo office-placeholder" aria-hidden="true"><span class="plate">STERLING</span><span class="sub">WEST HARTFORD, CT</span></div>
   <div>
     <p class="kicker">Our home base</p>
     <div class="info-card">
       <p class="row"><Icon name="pin" size={20} /><span><strong>West Hartford, Connecticut</strong><br />15 N Main St #100<br />West Hartford, CT 06107<br />Serving business owners and professional practices throughout the United States from our West Hartford headquarters.</span></p>
-      <p class="row"><Icon name="phone" size={20} /><span><a href="tel:+18605907172">+1 (860) 590-7172</a><br /><a href="mailto:info@savantpensions.com">info@savantpensions.com</a></span></p>
+      <p class="row"><Icon name="phone" size={20} /><span><a href="tel:+18605907172">+1 (860) 590-7172</a></span></p>
     </div>
   </div>
 </div></section>
@@ -59,3 +59,9 @@ import Pic from "../components/Pic.astro";
 </div></section>
 
 </Base>
+<style>
+  /* IMG-20 placeholder until a real photo of the West Hartford office is supplied. */
+  .office-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--gradient-hero-plain); box-shadow: none; }
+  .office-placeholder .plate { background: #fff; color: var(--sterling); font-weight: 800; font-size: 28px; letter-spacing: 0.14em; padding: 8px 18px 7px 20px; border-bottom: 4px solid var(--gold); line-height: 1.1; }
+  .office-placeholder .sub { font-size: 12px; font-weight: 700; letter-spacing: 0.2em; color: var(--on-navy); }
+</style>

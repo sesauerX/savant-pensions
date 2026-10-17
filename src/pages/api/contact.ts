@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!sent) {
     return Response.json(
-      { ok: false, error: "We could not send that just now. Call +1 (860) 590-7172 or email info@savantpensions.com." },
+      { ok: false, error: "We could not send that just now. Call +1 (860) 590-7172." },
       { status: 502 },
     );
   }

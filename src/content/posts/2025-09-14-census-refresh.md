@@ -39,7 +39,7 @@ Ownership changes need a date. A partner who crossed 5 percent, or who dropped b
 
 ## Why the model has to wait
 
-An Enrolled Actuary values the census you send. If you send last year's, you receive last year's plan with this year's label. The minimum and the maximum will look precise because valuation software is precise. Precision is not accuracy. We would rather delay a model by two weeks than deliver a precise answer to the wrong facts. The [fall design window](/insights/fall-window-2025) is still open for a first-year 2025 plan only if the census starts now. A model requested tomorrow morning, for a meeting tomorrow afternoon, will be a model of whatever incomplete file was already in the drawer.
+An Enrolled Actuary values the census you send. If you send last year's, you receive last year's plan with this year's label. The minimum and the maximum will look precise because valuation software is precise. Precision is not accuracy. We would rather delay a model by two weeks than deliver a precise answer to the wrong facts. The [fall design window](/the-brief/fall-window-2025) is still open for a first-year 2025 plan only if the census starts now. A model requested tomorrow morning, for a meeting tomorrow afternoon, will be a model of whatever incomplete file was already in the drawer.
 
 Illustrations should say, on the page, the census date and the compensation basis. "Data as of March" is not a shameful label. It is an honest one. A September decision needs a September label. The [illustrations](/illustrations) you rely on should be replaceable. If you cannot bear to replace them, you are attached to a number rather than to a plan. Numbers move when a 28-year-old becomes eligible. Plans are supposed to notice.
 

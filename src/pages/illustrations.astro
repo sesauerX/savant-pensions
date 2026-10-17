@@ -2,10 +2,17 @@
 import GuidePage from "../components/GuidePage.astro";
 import { resources } from "../lib/nav";
 const html = '<p>People want a table. Here is one, labeled the only honest way: <strong>illustrative 2026 ranges, not IRS limits and not a Sterling quote.</strong> They assume durable compensation near the <strong>$360,000</strong> cap, a retirement age around 62, a fixed interest credit, and no expensive staff. Change any of those and the deposit moves.</p>\n<ul>\n<li>Around age 40: often a six-figure credit, commonly discussed in a <strong>$100,000 to $140,000</strong> illustrative band.</li>\n<li>Around age 50: often nearer <strong>$180,000 to $230,000</strong>, illustrative.</li>\n<li>Around age 55: often <strong>$240,000 to $290,000</strong>, illustrative.</li>\n<li>Around age 60: sometimes above <strong>$300,000</strong>, illustrative, because fewer years remain under the <strong>$290,000</strong> benefit ceiling.</li>\n</ul>\n<p>The benefit ceiling itself is statutory. The deposit is not. Confirm the ceiling on the <a href="https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-defined-benefit-plan-benefit-limits">IRS page</a> and the paired 401(k) limits in <a href="https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500">IR-2025-111</a>. A worked comparison with a SEP is on <a href="/compare">compare</a>. The <a href="/calculator">calculator</a> on this site is a conversation starter with the same warning. For a number you can hand a CPA, we need a census and an Enrolled Actuary. <a href="/contact">That is the next step</a>.</p>';
+const pct = (v: number) => `${((v / 350000) * 100).toFixed(2)}%`;
+const bands = [
+  { age: 40, from: 100000, to: 140000, label: "$100,000–$140,000" },
+  { age: 50, from: 180000, to: 230000, label: "$180,000–$230,000" },
+  { age: 55, from: 240000, to: 290000, label: "$240,000–$290,000" },
+  { age: 60, from: 300000, to: 350000, label: "Sometimes above $300,000", open: true },
+];
 ---
 <GuidePage
   title="What an age table is, and is not. | Sterling Pension Group"
-  crumbs={[{ href: "/insights", label: "Insights" }, { label: "Illustrations" }]}
+  crumbs={[{ href: "/resources", label: "Resources" }, { label: "Illustrations" }]}
   kicker="Illustrations"
   h1="Illustrative cash balance contributions."
   lede="These ranges are sketches. Your number comes from a census and an actuary."
@@ -13,4 +20,21 @@ const html = '<p>People want a table. Here is one, labeled the only honest way: 
   bodyClass=""
   nav={resources}
 >
+  <figure slot="before-body" class="bands">
+    <figcaption><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9A6400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2zM12 10v5M12 18v.5" /></svg><span><strong>Illustrative 2026 ranges</strong>, not IRS limits and not a Sterling quote. Annual deposit by owner age.</span></figcaption>
+    <div role="img" aria-label="Illustrative bands: age 40, $100,000 to $140,000; age 50, $180,000 to $230,000; age 55, $240,000 to $290,000; age 60, sometimes above $300,000.">
+      {bands.map((b) => (
+        <div class="band" aria-hidden="true">
+          <strong>Around age {b.age}</strong>
+          <div class="track"><div class={`fill${b.open ? " open" : ""}`} style={`left:${pct(b.from)};width:${pct(b.to - b.from)}`}></div></div>
+          <span>{b.label}</span>
+        </div>
+      ))}
+      <div class="band axis" aria-hidden="true">
+        <span></span>
+        <div class="ticks"><span style="left:0">$0</span><span style="left:28.57%">$100k</span><span style="left:57.14%">$200k</span><span style="left:85.71%">$300k</span></div>
+        <span></span>
+      </div>
+    </div>
+  </figure>
 </GuidePage>

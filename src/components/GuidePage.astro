@@ -36,6 +36,7 @@ const path = Astro.url.pathname.replace(/\/$/, "");
 
   <div class="wrap with-aside">
     <article class="main-col">
+      <slot name="before-body" />
       <div class={`guide ${bodyClass}`} set:html={body} />
       <slot name="after-body" />
     </article>

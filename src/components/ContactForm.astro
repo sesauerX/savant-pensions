@@ -40,7 +40,7 @@
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok || !body.ok) {
-        error.textContent = body.error || "We could not send that. Email info@savantpensions.com.";
+        error.textContent = body.error || "We could not send that. Call +1 (860) 590-7172.";
         error.hidden = false;
         button.disabled = false;
         return;
@@ -49,7 +49,7 @@
       form.reset();
       stamp(form);
     } catch {
-      error.textContent = "We could not send that. Email info@savantpensions.com.";
+      error.textContent = "We could not send that. Call +1 (860) 590-7172.";
       error.hidden = false;
       button.disabled = false;
     }

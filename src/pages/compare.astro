@@ -5,12 +5,25 @@ const html = '<p>A <strong>SEP IRA</strong> and a <strong>solo 401(k)</strong> a
 ---
 <GuidePage
   title="SEP, solo 401(k), or a pension. | Sterling Pension Group"
-  crumbs={[{ href: "/insights", label: "Insights" }, { label: "Compare" }]}
+  crumbs={[{ href: "/resources", label: "Resources" }, { label: "Compare" }]}
   kicker="Compare"
   h1="SEP, solo 401(k), or a cash balance plan."
   lede="The plan you already have is not the ceiling."
   html={html}
-  bodyClass=""
+  bodyClass="checks"
   nav={resources}
 >
+  <section slot="before-body" class="stack-md">
+    <div class="table-scroll" role="region" aria-label="Plan comparison, 2026" tabindex="0">
+      <table class="compare-table">
+        <thead><tr><th scope="col">2026</th><th scope="col">SEP IRA</th><th scope="col">Solo 401(k)</th><th scope="col">Cash balance / defined benefit</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Plan type</th><td>Defined contribution</td><td>Defined contribution</td><td>Defined benefit</td></tr>
+          <tr><th scope="row">IRS ceiling</th><td><strong>$72,000</strong><br />annual additions</td><td><strong>$72,000</strong><br />annual additions, before catch-up deferrals</td><td><strong>$290,000</strong><br />annual benefit, a retirement annuity, not a deposit</td></tr>
+          <tr><th scope="row">Compensation in the formula</th><td>Stops at $360,000</td><td>Stops at $360,000</td><td>An actuary works backward from the benefit</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="scroll-hint">Swipe to compare all three →</p>
+  </section>
 </GuidePage>

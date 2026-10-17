@@ -8,12 +8,12 @@ const H = heading;
 const year = post.date.slice(0, 4);
 ---
 <article class="post-card" data-title={post.title.toLowerCase()} data-excerpt={post.description.toLowerCase()} data-topic={topic} data-year={year}>
-  <a class="cover" href={`/insights/${post.slug}`} tabindex="-1" aria-hidden="true">
+  <a class="cover" href={`/the-brief/${post.slug}`} tabindex="-1" aria-hidden="true">
     <Pic name={`cover-${post.date}`} alt="" priority={!lazy} sizes="(min-width: 1000px) 400px, (min-width: 760px) 50vw, 100vw" />
   </a>
   <div class="body">
     <div class="meta-row">{topic && <span class="chip">{topic}</span>}<time datetime={post.date}>{formatDate(post.date)}</time></div>
-    <H><a href={`/insights/${post.slug}`}>{post.title}</a></H>
-    <a class="read" href={`/insights/${post.slug}`} aria-label={`Read: ${post.title}`}>Read →</a>
+    <H><a href={`/the-brief/${post.slug}`}>{post.title}</a></H>
+    <a class="read" href={`/the-brief/${post.slug}`} aria-label={`Read: ${post.title}`}>Read →</a>
   </div>
 </article>

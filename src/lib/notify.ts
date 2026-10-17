@@ -2,11 +2,11 @@
 // Configuration comes from the existing project env vars:
 // RESEND_API_KEY, CONTACT_TO (comma-separated) and CONTACT_FROM.
 
-const TO = (process.env.CONTACT_TO || "sesauer@gmail.com")
+const TO = (process.env.CONTACT_TO || "")
   .split(",")
   .map((item) => item.trim())
   .filter(Boolean);
-const FROM = process.env.CONTACT_FROM || "Sterling Pension Group <onboarding@resend.dev>";
+const FROM = process.env.CONTACT_FROM || "";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // Submissions faster than this after the page rendered are treated as bots.
@@ -47,7 +47,7 @@ export function sourcePage(payload: Record<string, unknown>, request: Request) {
 }
 
 export function configured() {
-  return Boolean(process.env.RESEND_API_KEY);
+  return Boolean(process.env.RESEND_API_KEY && FROM && TO.length);
 }
 
 export async function sendAdminEmail(opts: {

@@ -17,7 +17,7 @@ For 2025, the deferral limit is **$23,500**. The age-50 catch-up is **$7,500**. 
 
 None of them tells you what a nurse, a medical assistant, a billing lead, or an employed associate must receive. The **$280,000** figure is a ceiling on an annual pension benefit, explained by the IRS here: [defined benefit plan benefit limits](https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-defined-benefit-plan-benefit-limits). It is not the physician's deposit. A cash balance credit for the physician is actuarial. Until an enrolled actuary values the real census, any physician dollar credit is **illustrative**. Adding **$70,000** to **$280,000** and calling the result "what a doctor can do" is still wrong in a one-physician studio, and it is nonsense in a practice with a floor of clinical staff.
 
-If you are also finishing a 2024 contribution, that year's limits remain the 2024 limits: deferral **$23,000**, catch-up **$7,500**, additions **$69,000**, compensation **$345,000**, benefit limit **$275,000**. Do not restate a 2024 accrual under the 2025 benefit limit because February feels like a new year. The funding conversation for last year is [/insights/spring-funding-2024](/insights/spring-funding-2024).
+If you are also finishing a 2024 contribution, that year's limits remain the 2024 limits: deferral **$23,000**, catch-up **$7,500**, additions **$69,000**, compensation **$345,000**, benefit limit **$275,000**. Do not restate a 2024 accrual under the 2025 benefit limit because February feels like a new year. The funding conversation for last year is [/the-brief/spring-funding-2024](/the-brief/spring-funding-2024).
 
 ## Who is on a medical census
 
@@ -25,7 +25,7 @@ Count every W-2 the practice, and any related employer, will issue. Front desk, 
 
 Employed associates are the fact pattern that most often breaks a one-name illustration. They may earn enough that a token contribution fails nondiscrimination, and they may be young enough that a cash balance credit designed around the owner's age does not fit them. They are still employees until they are owners. If the professional goal is to make them owners, say so at the start. A design built for one owner and then expanded in a handshake is how disputes over who funds the minimum get started.
 
-The general method for building the list is [/insights/census-first](/insights/census-first). Dental offices have a cousin of this problem, hygienists instead of a clinical floor, written up in [/insights/dentists](/insights/dentists). The legal test is the same family of tests. The payroll shape is not identical, so do not borrow a dentist's **illustrative** staff percentage and apply it to a medical group.
+The general method for building the list is [/the-brief/census-first](/the-brief/census-first). Dental offices have a cousin of this problem, hygienists instead of a clinical floor, written up in [/the-brief/dentists](/the-brief/dentists). The legal test is the same family of tests. The payroll shape is not identical, so do not borrow a dentist's **illustrative** staff percentage and apply it to a medical group.
 
 ## Related entities are ordinary in medicine, and they are not optional
 
@@ -35,11 +35,11 @@ Bring the entity chart to the first meeting. Ownership percentages, including fa
 
 ## How the dollars usually have to be split
 
-Where a design works, it is often a [401(k) paired with a cash balance plan](/combo), not a pension alone. The 401(k) holds deferrals and a profit-sharing contribution that can be part of how staff benefits are delivered. The cash balance plan holds the physician's larger credit, if testing allows it. "If" is the load-bearing word. The actuary, not a brochure about combo plans, says whether a particular split passes. The reason pairs are common is [/insights/combo-plan](/insights/combo-plan). Common is not automatic.
+Where a design works, it is often a [401(k) paired with a cash balance plan](/combo), not a pension alone. The 401(k) holds deferrals and a profit-sharing contribution that can be part of how staff benefits are delivered. The cash balance plan holds the physician's larger credit, if testing allows it. "If" is the load-bearing word. The actuary, not a brochure about combo plans, says whether a particular split passes. The reason pairs are common is [/the-brief/combo-plan](/the-brief/combo-plan). Common is not automatic.
 
 Staff cost should be stated in dollars per year, by person or by group, before anyone celebrates an **illustrative** owner credit. A physician who can support a low-six-figure staff cost and a physician who can support a five-figure staff cost are having different meetings. Neither meeting is improved by hiding the cost inside a percentage of a percentage. Ask for the dollar figure. Compare it with what the practice actually spends on raises, benefits, and overtime. If the pension's staff cost crowds out wages the clinic needs in order to stay staffed, the pension is the wrong instrument, even when the owner's personal tax rate is high.
 
-An **illustrative** owner credit in a medical practice is not the solo neighborhood you may have seen in a general age discussion. Age still matters. A 42-year-old physician and a 58-year-old physician with the same countable pay, under the same **$280,000** benefit limit, will not receive the same **illustrative** credit, for the reasons in [/insights/age-shape](/insights/age-shape). Staff can erase that difference or reverse the economics entirely. Do not quote a solo teaching range at a partner meeting. Quote the range the actuary builds on your registers, and keep it labeled **illustrative** until it is a valuation.
+An **illustrative** owner credit in a medical practice is not the solo neighborhood you may have seen in a general age discussion. Age still matters. A 42-year-old physician and a 58-year-old physician with the same countable pay, under the same **$280,000** benefit limit, will not receive the same **illustrative** credit, for the reasons in [/the-brief/age-shape](/the-brief/age-shape). Staff can erase that difference or reverse the economics entirely. Do not quote a solo teaching range at a partner meeting. Quote the range the actuary builds on your registers, and keep it labeled **illustrative** until it is a valuation.
 
 ## Minimum funding is a practice obligation
 

@@ -13,7 +13,7 @@ export function getStaticPaths() {
 
 const { slug } = Astro.params;
 const post = getPost(slug!);
-if (!post) return Astro.redirect("/insights");
+if (!post) return Astro.redirect("/the-brief");
 const topic = topicByDate[post.date];
 const others = posts.filter((item) => item.slug !== post.slug);
 // Same topic first, then the most recent of the rest.
@@ -40,7 +40,7 @@ const seoDescription = clip(post.description, 155);
   headline={post.title}
   crumb={post.title}
 >
-  <Hero crumbs={[{ href: "/insights", label: "Insights" }, { label: post.kicker }]} overlap variant="article-hero">
+  <Hero crumbs={[{ href: "/the-brief", label: "The Brief" }]} overlap variant="article-hero">
     <div class="meta-row on-dark">
       {topic && <span class="chip">{topic}</span>}
       <span class="kicker">{post.kicker} · {formatDate(post.date)}</span>
@@ -59,7 +59,7 @@ const seoDescription = clip(post.description, 155);
   </article>
 
   <section class="alt"><div class="wrap section stack-lg">
-    <div class="section-head"><h2>More from the briefing</h2></div>
+    <div class="section-head"><h2 class="more-head">More from The Brief</h2></div>
     <div class="post-grid">
       {more.map((item) => <PostCard post={item} />)}
     </div>
@@ -68,4 +68,5 @@ const seoDescription = clip(post.description, 155);
 <style>
   .hero.article-hero :global(h1) { max-width: 900px; font-size: clamp(32px, 4.2vw, 52px); }
   .meta-row.on-dark { color: var(--on-navy); }
+  .more-head { font-size: 14px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 </style>

@@ -33,7 +33,7 @@ It does not reduce the gateway or the staff benefit to a percentage of the cap. 
 
 ## Where staff cost actually comes from
 
-It comes from who is eligible. A one-year wait and a **1,000-hour** rule keep a large share of turnover out of the plan. Immediate eligibility brings them in. The document already made this choice. The cap does not remake it in July. If you are hiring, the [hiring briefing](/insights/new-employee) is the census warning. The cost of a new eligible employee is the benefit the formula gives that employee, plus any profit-sharing or gateway the combo requires, plus the effect on whether the owners' credits still pass.
+It comes from who is eligible. A one-year wait and a **1,000-hour** rule keep a large share of turnover out of the plan. Immediate eligibility brings them in. The document already made this choice. The cap does not remake it in July. If you are hiring, the [hiring briefing](/the-brief/new-employee) is the census warning. The cost of a new eligible employee is the benefit the formula gives that employee, plus any profit-sharing or gateway the combo requires, plus the effect on whether the owners' credits still pass.
 
 It comes from the formula. A cash balance plan tested on benefits can direct a larger share of the economic value to an older owner than a flat percentage SEP can. That is the design advantage. The advantage is not zero staff cost. Employees who benefit still receive a real pay credit or a real profit-sharing contribution. A design that shows the owner an **illustrative** six-figure credit and shows staff as an afterthought has not finished the illustration. Ask for the staff line in dollars, on this year's eligible payroll, before you adopt the owner line.
 

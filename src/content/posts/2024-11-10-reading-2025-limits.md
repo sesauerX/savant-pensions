@@ -19,7 +19,7 @@ The employee deferral limit rises from **$23,000** in 2024 to **$23,500** in 202
 
 The defined contribution annual additions limit rises from **$69,000** to **$70,000**. Compensation that plans may count rises from **$345,000** to **$350,000**. The defined benefit annual benefit limit rises from **$275,000** to **$280,000**. Each of those increases is **$5,000**. None of them is a cash balance contribution limit. The benefit-limit concept is explained by the IRS here: [defined benefit plan benefit limits](https://www.irs.gov/retirement-plans/plan-participant-employee/retirement-topics-defined-benefit-plan-benefit-limits).
 
-A new catch-up tier begins in 2025 for participants who are ages 60, 61, 62, or 63. That higher catch-up is **$11,250**. It is not available in 2024. It is not available on a 2024 paycheck just because the announcement exists. How it differs from a pension credit is the subject of [/insights/super-catch-up](/insights/super-catch-up).
+A new catch-up tier begins in 2025 for participants who are ages 60, 61, 62, or 63. That higher catch-up is **$11,250**. It is not available in 2024. It is not available on a 2024 paycheck just because the announcement exists. How it differs from a pension credit is the subject of [/the-brief/super-catch-up](/the-brief/super-catch-up).
 
 ## What did not move
 
@@ -41,7 +41,7 @@ Compensation counted for a 2024 plan year is capped at **$345,000**, not **$350,
 
 A cash balance or traditional defined benefit valuation for the 2024 year is measured against the **$275,000** annual benefit limit, not **$280,000**. Minimum funding for a calendar-year plan is generally due **September 15, 2025**, which is **8.5 months** after the 2024 year-end. That deadline's existence in 2025 does not import 2025 limits into the 2024 valuation. Missing the minimum can mean a **10%** excise tax on Form 5330. The deduction for the 2024 contribution often follows the due date of the 2024 return, including extensions, under IRC 404(a)(6). Your CPA keeps those dates apart. The new COLA table does not merge them.
 
-Use 2025 numbers for decisions that are truly about 2025: next year's deferral election, next year's compensation policy, and the benefit limit the actuary will apply to a 2025 accrual. You can write those decisions down now. You cannot operate them now. The practical bridge is the December briefing, [/insights/december-timing](/insights/december-timing), and the January briefing that will treat the new table as the one that counts, [/insights/limits-in-force](/insights/limits-in-force).
+Use 2025 numbers for decisions that are truly about 2025: next year's deferral election, next year's compensation policy, and the benefit limit the actuary will apply to a 2025 accrual. You can write those decisions down now. You cannot operate them now. The practical bridge is the December briefing, [/the-brief/december-timing](/the-brief/december-timing), and the January briefing that will treat the new table as the one that counts, [/the-brief/limits-in-force](/the-brief/limits-in-force).
 
 ## How a cash balance owner should read the benefit-limit line
 
@@ -53,7 +53,7 @@ The [limits](/limits) page on this site is the place we separate published IRS f
 
 ## What the notice does not decide for you
 
-IR-2024-285 does not decide whether you should adopt a plan for 2024. The adoption timing under the SECURE Act, generally through the filing deadline including extensions, was already the law before this notice. Employee deferrals still cannot be made retroactively through payroll. If you have not started, the notice is not a reason to start on a new 2025 number, and it is not a reason to abandon a 2024 design that still fits. The fit test is unchanged: durable cash flow, a census you will fund, and a minimum contribution you can pay. That test is [/insights/not-a-fit](/insights/not-a-fit). The reason most owner designs are a pair, not a pension alone, is unchanged too, and it is written up in [/insights/combo-plan](/insights/combo-plan).
+IR-2024-285 does not decide whether you should adopt a plan for 2024. The adoption timing under the SECURE Act, generally through the filing deadline including extensions, was already the law before this notice. Employee deferrals still cannot be made retroactively through payroll. If you have not started, the notice is not a reason to start on a new 2025 number, and it is not a reason to abandon a 2024 design that still fits. The fit test is unchanged: durable cash flow, a census you will fund, and a minimum contribution you can pay. That test is [/the-brief/not-a-fit](/the-brief/not-a-fit). The reason most owner designs are a pair, not a pension alone, is unchanged too, and it is written up in [/the-brief/combo-plan](/the-brief/combo-plan).
 
 The notice does not decide PBGC coverage. Coverage remains plan-specific. Many small professional-service employers are exempt when the statutory conditions are met. It is not the case that all small plans are exempt, and a **$5,000** movement in a benefit limit has nothing to do with it. The agency's page is [PBGC coverage](https://www.pbgc.gov/prac/other-guidance/coverage).
 

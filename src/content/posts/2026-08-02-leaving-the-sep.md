@@ -21,7 +21,7 @@ Those figures were announced in [IR-2025-111](https://www.irs.gov/newsroom/401k-
 
 The elective deferral limit of **$24,500**, the catch-up of **$8,000**, and the catch-up of **$11,250** at ages 60 through 63 are 401(k) figures. A SEP IRA does not accept employee deferrals. If someone is describing a "SEP 401(k)," they may mean a 401(k) plan, or they may mean a plan that should be read twice. The IRA limit of **$7,500**, plus a **$1,100** catch-up, is a personal IRA limit. It is not extra SEP room.
 
-SEP contributions are immediately vested. They go to IRAs. Those IRA balances are pre-tax money in the traditional IRA bucket, which is why a backdoor Roth conversion becomes taxable under the pro-rata rule for as long as the SEP IRA holds a balance. The [briefing on why a backdoor Roth is not a pension](/insights/not-a-backdoor-roth) is the companion piece. Leaving the SEP, if you do it, has a distribution question attached. Do not convert or roll the account in the same week you decide you have outgrown the contribution formula.
+SEP contributions are immediately vested. They go to IRAs. Those IRA balances are pre-tax money in the traditional IRA bucket, which is why a backdoor Roth conversion becomes taxable under the pro-rata rule for as long as the SEP IRA holds a balance. The [briefing on why a backdoor Roth is not a pension](/the-brief/not-a-backdoor-roth) is the companion piece. Leaving the SEP, if you do it, has a distribution question attached. Do not convert or roll the account in the same week you decide you have outgrown the contribution formula.
 
 ## Why the percentage becomes the reason to leave
 

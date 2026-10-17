@@ -4,22 +4,22 @@ import Hero from "../../components/Hero.astro";
 import Icon from "../../components/Icon.astro";
 import PostCard from "../../components/PostCard.astro";
 import { posts } from "../../lib/posts";
-import { topics } from "../../lib/topics";
+import { topics, topicByDate } from "../../lib/topics";
+import Pic from "../../components/Pic.astro";
+import { formatDate } from "../../lib/posts";
 const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
+const [latest] = posts;
 ---
-<Base title="Owner briefing archive | Sterling Pension Group" description="Every Sterling Pension Group briefing since September 2024, listed by date.">
-  <Hero crumbs={[{ href: "/insights", label: "Insights" }, { label: "Archive" }]} kicker="Owner briefing" variant="overlap-sm">
-    <h1 slot="title">Earlier briefings.</h1>
-    <p class="lede">One note every two weeks since September 2024. The <a href="/insights">insights hub</a> is the guides, limits, and deadlines.</p>
-  </Hero>
+<Base>
+  <Hero crumbs={[{ label: "The Brief" }]} title="The Brief" lede="A note every two weeks, written to the limits that were current that week." variant="overlap-sm" />
 
   <section class="wrap filter-wrap" aria-label="Filter briefings">
     <div class="filter-card">
       <div class="filter-row">
         <div class="field search">
-          <label for="brief-search" class="sr-only">Search briefings</label>
+          <label for="brief-search" class="sr-only">Search The Brief</label>
           <Icon name="search" size={20} />
-          <input id="brief-search" type="search" placeholder="Search briefings" autocomplete="off" />
+          <input id="brief-search" type="search" placeholder="Search articles" autocomplete="off" />
         </div>
         <div class="field year">
           <label for="brief-year" class="sr-only">Year</label>
@@ -36,6 +36,18 @@ const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
     </div>
   </section>
 
+  <section class="wrap" id="brief-featured" style="padding-top:40px">
+    <article class="featured">
+      <a class="cover" href={`/the-brief/${latest.slug}`} tabindex="-1" aria-hidden="true"><Pic name={`cover-${latest.date}`} alt="" priority sizes="(min-width: 760px) 55vw, 100vw" /><span class="latest-tag">Latest</span></a>
+      <div class="body">
+        <div class="meta-row">{topicByDate[latest.date] && <span class="chip">{topicByDate[latest.date]}</span>}<time datetime={latest.date}>{formatDate(latest.date)}</time></div>
+        <h2><a href={`/the-brief/${latest.slug}`}>{latest.title}</a></h2>
+        <p>{latest.description}</p>
+        <a class="text-link" href={`/the-brief/${latest.slug}`} style="align-self:flex-start">Read article →</a>
+      </div>
+    </article>
+  </section>
+
   <section class="wrap section stack-lg" id="brief-grid" style="padding-top:32px;scroll-margin-top:100px">
     <p class="count-text" id="brief-count" aria-live="polite">{posts.length} briefings</p>
     <div class="post-grid">
@@ -43,6 +55,7 @@ const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
     </div>
     <div class="empty" id="brief-empty" hidden>
       <h2>No posts match</h2>
+      <p>Try a different search, topic or year.</p>
       <button type="button" class="btn secondary" id="brief-clear">Clear filters</button>
     </div>
     <nav class="pager" id="brief-pager" aria-label="Pagination"></nav>
@@ -51,10 +64,13 @@ const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
 <style>
   .hero.overlap-sm :global(.hero-inner) { padding-bottom: clamp(88px, 9vw, 120px); }
   .filter-wrap { position: relative; z-index: 2; margin-top: -56px; }
+  .featured .cover { position: relative; }
+  .latest-tag { position: absolute; left: 20px; top: 20px; z-index: 1; background: var(--gold); color: var(--navy); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; padding: 6px 10px; border-radius: 3px; text-transform: uppercase; }
 </style>
 <script>
   const PER_PAGE = 12;
   const cards = [...document.querySelectorAll<HTMLElement>(".post-card")];
+  const featured = document.getElementById("brief-featured")!;
   const search = document.getElementById("brief-search") as HTMLInputElement;
   const year = document.getElementById("brief-year") as HTMLSelectElement;
   const chips = [...document.querySelectorAll<HTMLButtonElement>(".chips button")];
@@ -86,7 +102,9 @@ const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
 
   const render = (scroll = false) => {
     const q = state.q.trim().toLowerCase();
-    const matches = cards.filter((c) =>
+    const unfiltered = !q && state.topic === "all" && state.year === "all";
+    const pool = unfiltered ? cards.slice(1) : cards;
+    const matches = pool.filter((c) =>
       (!q || c.dataset.title!.includes(q) || c.dataset.excerpt!.includes(q)) &&
       (state.topic === "all" || c.dataset.topic === state.topic) &&
       (state.year === "all" || c.dataset.year === state.year));
@@ -94,11 +112,12 @@ const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
     state.page = Math.min(state.page, pages);
     const start = (state.page - 1) * PER_PAGE;
     const shown = new Set(matches.slice(start, start + PER_PAGE));
+    featured.hidden = !(unfiltered && state.page === 1);
     cards.forEach((c) => (c.hidden = !shown.has(c)));
     chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.topic === state.topic)));
-    count.textContent = matches.length === cards.length && !q
-      ? `${cards.length} briefings`
-      : `${matches.length} of ${cards.length} briefings`;
+    count.textContent = unfiltered
+      ? `${cards.length} articles`
+      : `${matches.length} of ${cards.length} articles`;
     empty.hidden = matches.length > 0;
     pager.innerHTML = "";
     if (pages > 1) {
