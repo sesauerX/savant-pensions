@@ -1,35 +1,61 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
 ---
 <Base title="Calculator | Sterling Pension Group">
 
-<section class="wrap page">
-  <p class="kicker">Tax savings calculator</p>
-  <h1>Cash balance contribution calculator.</h1>
-  <p class="lede">Bring the estimate to a Sterling consultant for a grounded view. Not a quote or tax advice.</p>
+<Hero overlap kicker="Tax savings calculator" title="Cash balance contribution calculator." lede="Bring the estimate to a Sterling consultant for a grounded view. Not a quote or tax advice." />
+
+<section class="wrap overlap-wrap">
+  <div class="calc-card">
+    <form id="calc" aria-label="Contribution estimate" novalidate>
+      <div class="field"><label for="age">Owner age</label><input class="calc-input" id="age" type="number" value="52" min="25" max="80" inputmode="numeric" /></div>
+      <div class="field"><label for="income">Estimated earned income</label><div class="affix"><span aria-hidden="true">$</span><input class="calc-input" id="income" type="number" value="350000" min="0" inputmode="numeric" /></div></div>
+      <div class="field"><label for="emps">Employees (approx.)</label><input class="calc-input" id="emps" type="number" value="3" min="0" inputmode="numeric" /></div>
+      <button class="btn primary" type="submit">Estimate contribution room</button>
+    </form>
+    <section class="result" aria-label="Estimate">
+      <p class="kicker">Illustrative contribution potential</p>
+      <p class="calc-figure" id="figure" aria-hidden="true">—</p>
+      <p class="calc-out" id="out" aria-live="polite"></p>
+      <div class="divider">
+        <h2>Numbers are a starting point.</h2>
+        <p>Age, income, structure, employees, and timeline all change the answer.</p>
+      </div>
+      <a class="btn outline-gold" href="/contact" style="align-self:flex-start">Talk with Sterling</a>
+    </section>
+  </div>
+  <p style="display:flex;flex-wrap:wrap;gap:12px 28px;margin-top:24px">
+    <a class="text-link" href="/illustrations">Illustrative contributions →</a>
+    <a class="text-link" href="/limits">2024–2026 IRS limits →</a>
+  </p>
 </section>
-<section class="section wrap split">
-  <form class="panel" id="calc">
-    <label>Owner age<input id="age" type="number" value="52" min="25" max="80" /></label>
-    <label>Estimated earned income<input id="income" type="number" value="350000" min="0" /></label>
-    <label>Employees (approx.)<input id="emps" type="number" value="3" min="0" /></label>
-    <button class="btn primary" type="submit">Estimate contribution room</button>
-    <p id="out"></p>
-  </form>
-  <div class="panel"><h2>Numbers are a starting point.</h2><p>Age, income, structure, employees, and timeline all change the answer.</p><a class="btn gold" href="/contact">Talk with Sterling</a></div>
-</section>
+
 <script>
-  document.getElementById("calc")?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const age = +document.getElementById("age").value;
-    const income = +document.getElementById("income").value;
-    const emps = +document.getElementById("emps").value;
+  // Calculation unchanged from the previous site.
+  const form = document.getElementById("calc");
+  const estimate = () => {
+    const age = +(document.getElementById("age") as HTMLInputElement).value;
+    const income = +(document.getElementById("income") as HTMLInputElement).value;
+    const emps = +(document.getElementById("emps") as HTMLInputElement).value;
     let room = Math.min(income * 0.4, 250000);
     if (age >= 50) room = Math.min(income * 0.5, 280000);
     if (emps > 5) room *= 0.75;
     room = Math.max(20000, Math.round(room / 1000) * 1000);
-    document.getElementById("out").textContent = "Illustrative contribution potential: about $" + room.toLocaleString() + " depending on your facts.";
+    document.getElementById("figure")!.textContent = "$" + room.toLocaleString();
+    return room;
+  };
+  const run = () => {
+    const room = estimate();
+    document.getElementById("out")!.textContent = "Illustrative contribution potential: about $" + room.toLocaleString() + " depending on your facts.";
+  };
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    run();
   });
+  form?.addEventListener("input", run);
+  // The figure shows for the default inputs; the sentence appears once the visitor acts.
+  estimate();
 </script>
 
 </Base>

@@ -1,0 +1,47 @@
+---
+// Form markup restyled; field names, endpoint and messages are unchanged.
+---
+<form class="form-card" id="contact" aria-label="Request a complimentary call">
+  <div class="field"><label for="c-name">Name</label><input id="c-name" name="name" autocomplete="name" required /></div>
+  <div class="field-row">
+    <div class="field"><label for="c-email">Email</label><input id="c-email" type="email" name="email" autocomplete="email" required /></div>
+    <div class="field"><label for="c-phone">Phone</label><input id="c-phone" type="tel" name="phone" autocomplete="tel" /></div>
+  </div>
+  <div class="field"><label for="c-msg">What would you like to explore?</label><textarea id="c-msg" name="message" rows="5"></textarea></div>
+  <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
+  <button class="btn primary" type="submit" style="align-self:flex-start">Request a complimentary call</button>
+  <p id="thanks" class="form-note ok" role="status" hidden>Thank you. We’ll be in touch. Or call +1 (860) 590-7172.</p>
+  <p id="form-error" class="form-note err" role="alert" hidden></p>
+</form>
+<script>
+  document.getElementById("contact")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    const button = form.querySelector("button")!;
+    const thanks = document.getElementById("thanks")!;
+    const error = document.getElementById("form-error")!;
+    button.disabled = true;
+    error.hidden = true;
+    const data = Object.fromEntries(new FormData(form).entries());
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.ok) {
+        error.textContent = body.error || "We could not send that. Email info@savantpensions.com.";
+        error.hidden = false;
+        button.disabled = false;
+        return;
+      }
+      thanks.hidden = false;
+      form.reset();
+    } catch {
+      error.textContent = "We could not send that. Email info@savantpensions.com.";
+      error.hidden = false;
+      button.disabled = false;
+    }
+  });
+</script>

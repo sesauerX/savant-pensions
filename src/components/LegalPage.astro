@@ -1,0 +1,22 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "./Hero.astro";
+const { title, description, h1, updated, html } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, "");
+const links = [
+  ["/privacy", "Your Privacy"],
+  ["/terms", "Terms of Use"],
+  ["/disclaimer", "Disclaimer"],
+];
+---
+<Base title={title} description={description}>
+  <Hero kicker="Legal" title={h1} lede={updated} />
+  <div class="wrap with-aside">
+    <nav class="legal-nav" aria-label="Legal">
+      {links.map(([href, label]) => <a href={href} aria-current={path === href ? "page" : undefined}>{label}</a>)}
+    </nav>
+    <article class="legal-body">
+      <div class="guide" set:html={html} />
+    </article>
+  </div>
+</Base>

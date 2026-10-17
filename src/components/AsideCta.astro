@@ -1,0 +1,10 @@
+---
+import Icon from "./Icon.astro";
+const { heading, text, button = "Free consultation" } = Astro.props;
+---
+<div class="aside-cta">
+  {heading && <h2>{heading}</h2>}
+  {text && <p>{text}</p>}
+  <a class="btn primary block" href="/contact">{button}</a>
+  <a class="tel" href="tel:+18605907172"><Icon name="phone" size={16} />+1 (860) 590-7172</a>
+</div>

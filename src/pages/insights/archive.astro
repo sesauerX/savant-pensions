@@ -1,23 +1,137 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { formatDate, posts } from "../../lib/posts";
+import Hero from "../../components/Hero.astro";
+import Icon from "../../components/Icon.astro";
+import PostCard from "../../components/PostCard.astro";
+import { posts } from "../../lib/posts";
+import { topics } from "../../lib/topics";
+const years = [...new Set(posts.map((p) => p.date.slice(0, 4)))];
 ---
 <Base title="Owner briefing archive | Sterling Pension Group" description="Every Sterling Pension Group briefing since September 2024, listed by date.">
-  <section class="wrap page">
-    <p class="kicker">Owner briefing</p>
-    <h1>Earlier briefings.</h1>
+  <Hero crumbs={[{ href: "/insights", label: "Insights" }, { label: "Archive" }]} kicker="Owner briefing" variant="overlap-sm">
+    <h1 slot="title">Earlier briefings.</h1>
     <p class="lede">One note every two weeks since September 2024. The <a href="/insights">insights hub</a> is the guides, limits, and deadlines.</p>
+  </Hero>
+
+  <section class="wrap filter-wrap" aria-label="Filter briefings">
+    <div class="filter-card">
+      <div class="filter-row">
+        <div class="field search">
+          <label for="brief-search" class="sr-only">Search briefings</label>
+          <Icon name="search" size={20} />
+          <input id="brief-search" type="search" placeholder="Search briefings" autocomplete="off" />
+        </div>
+        <div class="field year">
+          <label for="brief-year" class="sr-only">Year</label>
+          <select id="brief-year">
+            <option value="all">All years</option>
+            {years.map((y) => <option value={y}>{y}</option>)}
+          </select>
+        </div>
+      </div>
+      <div class="chips" role="group" aria-label="Filter by topic">
+        <button type="button" data-topic="all" aria-pressed="true">All</button>
+        {topics.map((t) => <button type="button" data-topic={t} aria-pressed="false">{t}</button>)}
+      </div>
+    </div>
   </section>
-  <section class="wrap" style="padding-bottom:64px;">
-    <ul style="list-style:none;padding:0;margin:0;">
-      {posts.map((post) => (
-        <li style="border-top:1px solid var(--line);padding:14px 0;">
-          <a href={`/insights/${post.slug}`}>
-            <span class="kicker">{formatDate(post.date)}</span>
-            <strong style="display:block;margin-top:4px;">{post.title}</strong>
-          </a>
-        </li>
-      ))}
-    </ul>
+
+  <section class="wrap section stack-lg" id="brief-grid" style="padding-top:32px;scroll-margin-top:100px">
+    <p class="count-text" id="brief-count" aria-live="polite">{posts.length} briefings</p>
+    <div class="post-grid">
+      {posts.map((post, i) => <PostCard post={post} heading="h2" lazy={i > 5} />)}
+    </div>
+    <div class="empty" id="brief-empty" hidden>
+      <h2>No posts match</h2>
+      <button type="button" class="btn secondary" id="brief-clear">Clear filters</button>
+    </div>
+    <nav class="pager" id="brief-pager" aria-label="Pagination"></nav>
   </section>
 </Base>
+<style>
+  .hero.overlap-sm :global(.hero-inner) { padding-bottom: clamp(88px, 9vw, 120px); }
+  .filter-wrap { position: relative; z-index: 2; margin-top: -56px; }
+</style>
+<script>
+  const PER_PAGE = 12;
+  const cards = [...document.querySelectorAll<HTMLElement>(".post-card")];
+  const search = document.getElementById("brief-search") as HTMLInputElement;
+  const year = document.getElementById("brief-year") as HTMLSelectElement;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>(".chips button")];
+  const count = document.getElementById("brief-count")!;
+  const empty = document.getElementById("brief-empty")!;
+  const pager = document.getElementById("brief-pager")!;
+  const grid = document.getElementById("brief-grid")!;
+  const params = new URLSearchParams(location.search);
+  const state = {
+    q: params.get("q") ?? "",
+    topic: params.get("topic") ?? "all",
+    year: params.get("year") ?? "all",
+    page: Math.max(1, parseInt(params.get("page") ?? "1", 10) || 1),
+  };
+  search.value = state.q;
+  if ([...year.options].some((o) => o.value === state.year)) year.value = state.year;
+  else state.year = "all";
+  if (!chips.some((c) => c.dataset.topic === state.topic)) state.topic = "all";
+
+  const sync = () => {
+    const p = new URLSearchParams();
+    if (state.q) p.set("q", state.q);
+    if (state.topic !== "all") p.set("topic", state.topic);
+    if (state.year !== "all") p.set("year", state.year);
+    if (state.page > 1) p.set("page", String(state.page));
+    const qs = p.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+  };
+
+  const render = (scroll = false) => {
+    const q = state.q.trim().toLowerCase();
+    const matches = cards.filter((c) =>
+      (!q || c.dataset.title!.includes(q) || c.dataset.excerpt!.includes(q)) &&
+      (state.topic === "all" || c.dataset.topic === state.topic) &&
+      (state.year === "all" || c.dataset.year === state.year));
+    const pages = Math.max(1, Math.ceil(matches.length / PER_PAGE));
+    state.page = Math.min(state.page, pages);
+    const start = (state.page - 1) * PER_PAGE;
+    const shown = new Set(matches.slice(start, start + PER_PAGE));
+    cards.forEach((c) => (c.hidden = !shown.has(c)));
+    chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.topic === state.topic)));
+    count.textContent = matches.length === cards.length && !q
+      ? `${cards.length} briefings`
+      : `${matches.length} of ${cards.length} briefings`;
+    empty.hidden = matches.length > 0;
+    pager.innerHTML = "";
+    if (pages > 1) {
+      const btn = (label: string, page: number, opts: { current?: boolean; disabled?: boolean; aria?: string } = {}) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = label;
+        if (opts.aria) b.setAttribute("aria-label", opts.aria);
+        if (opts.current) b.setAttribute("aria-current", "page");
+        b.disabled = !!opts.disabled;
+        b.addEventListener("click", () => { state.page = page; render(true); });
+        pager.append(b);
+      };
+      btn("Prev", state.page - 1, { disabled: state.page === 1, aria: "Previous page" });
+      for (let i = 1; i <= pages; i++) btn(String(i), i, { current: i === state.page, aria: `Page ${i}` });
+      btn("Next", state.page + 1, { disabled: state.page === pages, aria: "Next page" });
+    }
+    sync();
+    if (scroll) grid.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  };
+
+  let t: number | undefined;
+  search.addEventListener("input", () => {
+    clearTimeout(t);
+    t = window.setTimeout(() => { state.q = search.value; state.page = 1; render(); }, 200);
+  });
+  year.addEventListener("change", () => { state.year = year.value; state.page = 1; render(); });
+  chips.forEach((c) => c.addEventListener("click", () => { state.topic = c.dataset.topic!; state.page = 1; render(); }));
+  document.getElementById("brief-clear")!.addEventListener("click", () => {
+    Object.assign(state, { q: "", topic: "all", year: "all", page: 1 });
+    search.value = "";
+    year.value = "all";
+    render();
+  });
+  render();
+</script>

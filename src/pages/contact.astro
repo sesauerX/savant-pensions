@@ -1,60 +1,25 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Icon from "../components/Icon.astro";
+import ContactForm from "../components/ContactForm.astro";
 ---
 <Base title="Contact | Sterling Pension Group">
 
-<section class="wrap page">
-  <p class="kicker">Complimentary first conversation</p>
-  <h1>Contact a pension plan administrator.</h1>
-  <p class="lede">No script. No pressure.</p>
-</section>
-<section class="section wrap split">
-  <div>
-    <p>Sterling Pension Group LLC<br />15 N Main St #100<br />West Hartford, CT 06107</p>
-    <p><a href="tel:+18605907172">+1 (860) 590-7172</a><br /><a href="mailto:info@savantpensions.com">info@savantpensions.com</a></p>
+<Hero overlap kicker="Complimentary first conversation" title="Contact a pension plan administrator." lede="No script. No pressure." />
+
+<section class="wrap overlap-wrap">
+  <div class="contact-grid">
+    <ContactForm />
+    <div class="stack-md" style="gap:20px">
+      <div class="info-card">
+        <h2>Sterling Pension Group LLC</h2>
+        <p class="row"><Icon name="pin" size={20} /><span>15 N Main St #100<br />West Hartford, CT 06107</span></p>
+        <p class="row"><Icon name="phone" size={20} /><span><a href="tel:+18605907172">+1 (860) 590-7172</a><br /><a href="mailto:info@savantpensions.com">info@savantpensions.com</a></span></p>
+      </div>
+      <img class="rounded-photo" src="/images/about.jpg" alt="" width="1600" height="1200" loading="lazy" />
+    </div>
   </div>
-  <form class="panel" id="contact">
-    <label>Name<input name="name" required /></label>
-    <label>Email<input type="email" name="email" required /></label>
-    <label>Phone<input type="tel" name="phone" /></label>
-    <label>What would you like to explore?<textarea name="message" rows="4"></textarea></label>
-    <input name="company_website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true" />
-    <button class="btn primary" type="submit">Request a complimentary call</button>
-    <p id="thanks" hidden>Thank you. We’ll be in touch. Or call +1 (860) 590-7172.</p>
-    <p id="form-error" hidden></p>
-  </form>
 </section>
-<script>
-  document.getElementById("contact")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const button = form.querySelector("button");
-    const thanks = document.getElementById("thanks");
-    const error = document.getElementById("form-error");
-    button.disabled = true;
-    error.hidden = true;
-    const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      const body = await res.json().catch(() => ({}));
-      if (!res.ok || !body.ok) {
-        error.textContent = body.error || "We could not send that. Email info@savantpensions.com.";
-        error.hidden = false;
-        button.disabled = false;
-        return;
-      }
-      thanks.hidden = false;
-      form.reset();
-    } catch {
-      error.textContent = "We could not send that. Email info@savantpensions.com.";
-      error.hidden = false;
-      button.disabled = false;
-    }
-  });
-</script>
 
 </Base>

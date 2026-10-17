@@ -1,0 +1,90 @@
+---
+import Icon from "./Icon.astro";
+const { path } = Astro.props;
+const links = [
+  ["/defined-benefit", "Defined Benefit"],
+  ["/cash-balance", "Cash Balance"],
+  ["/services", "Services"],
+  ["/about", "About"],
+  ["/contact", "Contact"],
+];
+const current = (href: string) => (path === href ? "page" : undefined);
+---
+<header class="site">
+  <div class="wrap bar">
+    <a class="logo" href="/" aria-label="Sterling Pension Group, home">
+      <span class="plate" aria-hidden="true">STERLING</span>
+      <span class="sub" aria-hidden="true">PENSION GROUP</span>
+    </a>
+    <nav class="desk" aria-label="Main">
+      {links.map(([href, label]) => <a href={href} aria-current={current(href)}>{label}</a>)}
+    </nav>
+    <div class="actions">
+      <a class="estimate" href="/calculator">Estimate savings</a>
+      <a class="btn primary sm" href="/contact">Free consultation</a>
+    </div>
+    <button class="menu-btn" type="button" id="menu-btn" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <Icon name="menu" stroke={2.2} class="icon-open" />
+      <Icon name="close" stroke={2.2} class="icon-close" />
+    </button>
+  </div>
+  <div class="mobile-panel" id="mobile-menu">
+    <nav aria-label="Main mobile">
+      {links.map(([href, label]) => (
+        <a href={href} aria-current={current(href)}>{label}<Icon name="chevron" size={18} stroke={2.2} class="gold-icon" /></a>
+      ))}
+    </nav>
+    <div class="stack">
+      <a class="btn primary block" href="/contact">Free consultation</a>
+      <a class="btn outline-gold block" href="/calculator">Estimate savings</a>
+    </div>
+    <a class="tel" href="tel:+18605907172">+1 (860) 590-7172</a>
+  </div>
+</header>
+<style>
+  .mobile-panel :global(.gold-icon) { color: var(--gold); }
+</style>
+<script>
+  const btn = document.getElementById("menu-btn");
+  const panel = document.getElementById("mobile-menu");
+  if (btn && panel) {
+    const focusables = () =>
+      [btn, ...panel.querySelectorAll<HTMLElement>("a[href], button")].filter((el) => el.offsetParent !== null);
+    const setOpen = (open: boolean) => {
+      btn.setAttribute("aria-expanded", String(open));
+      btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+      panel.classList.toggle("open", open);
+      document.body.classList.toggle("menu-open", open);
+    };
+    const isOpen = () => btn.getAttribute("aria-expanded") === "true";
+    btn.addEventListener("click", () => {
+      setOpen(!isOpen());
+      if (isOpen()) panel.querySelector<HTMLElement>("a")?.focus();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (!isOpen()) return;
+      if (e.key === "Escape") {
+        setOpen(false);
+        btn.focus();
+      } else if (e.key === "Tab") {
+        const items = focusables();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+    panel.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("a")) setOpen(false);
+    });
+    window.addEventListener("pageshow", () => setOpen(false));
+    window.matchMedia("(min-width: 1000px)").addEventListener("change", (mq) => {
+      if (mq.matches) setOpen(false);
+    });
+  }
+</script>

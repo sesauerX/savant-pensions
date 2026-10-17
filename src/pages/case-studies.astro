@@ -1,15 +1,12 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
 ---
 <Base>
 
-<section class="wrap page">
-  <p class="kicker">Case studies</p>
-  <h1>The same need for clarity.</h1>
-  <p class="lede">Explore the kinds of questions Sterling helps business owners work through. These examples are representative and are not promises of results.</p>
-</section>
+<Hero crumbs={[{ href: "/services", label: "Services" }, { label: "Case studies" }]} kicker="Case studies" title="The same need for clarity." lede="Explore the kinds of questions Sterling helps business owners work through. These examples are representative and are not promises of results." />
 
-<section class="section wrap grid3">
+<section class="wrap section grid3">
   <article class="panel">
     <p class="kicker">Professional practice</p>
     <h3>A specialist practice builds more retirement capacity</h3>
@@ -30,13 +27,13 @@ import Base from "../layouts/Base.astro";
   </article>
 </section>
 
-<section class="section wrap">
+<section class="alt"><div class="wrap section max-prose">
   <h2>What these examples are not</h2>
   <p>They are not client results, deduction amounts, or a promise that your practice will look like the one in the paragraph. Sterling Pension Group does not publish a contribution as if it were an IRS limit. If a page shows a dollar figure that is not a statutory ceiling, it is illustrative and it depends on facts we state next to it. Change the census and the number changes.</p>
   <p>Your business has its own version of the story. The useful version starts with entity, compensation, and the people on payroll.</p>
-</section>
+</div></section>
 
-<section class="section wrap"><div class="cta">
+<section class="wrap cta-section"><div class="cta">
   <div><h2>Your business has its own version of the story.</h2><p>Bring the facts. We will not retrofit a case study onto them.</p></div>
   <a class="btn gold" href="/contact">Start with your facts</a>
 </div></section>

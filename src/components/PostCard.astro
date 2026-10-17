@@ -1,0 +1,18 @@
+---
+import { formatDate, type Post } from "../lib/posts";
+import { topicByDate } from "../lib/topics";
+const { post, heading = "h3", lazy = true } = Astro.props as { post: Post; heading?: string; lazy?: boolean };
+const topic = topicByDate[post.date];
+const H = heading;
+const year = post.date.slice(0, 4);
+---
+<article class="post-card" data-title={post.title.toLowerCase()} data-excerpt={post.description.toLowerCase()} data-topic={topic} data-year={year}>
+  <a class="cover" href={`/insights/${post.slug}`} tabindex="-1" aria-hidden="true">
+    <img src={post.image} alt="" width="1600" height="900" loading={lazy ? "lazy" : "eager"} decoding="async" />
+  </a>
+  <div class="body">
+    <div class="meta-row">{topic && <span class="chip">{topic}</span>}<time datetime={post.date}>{formatDate(post.date)}</time></div>
+    <H><a href={`/insights/${post.slug}`}>{post.title}</a></H>
+    <a class="read" href={`/insights/${post.slug}`} aria-label={`Read: ${post.title}`}>Read →</a>
+  </div>
+</article>

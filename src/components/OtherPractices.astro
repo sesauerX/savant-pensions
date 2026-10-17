@@ -1,0 +1,23 @@
+---
+import Icon from "./Icon.astro";
+import { industries } from "../lib/nav";
+const { current } = Astro.props;
+const others = industries.filter((i) => i.href !== current);
+---
+<section class="alt"><div class="wrap section stack-lg">
+  <div class="section-head">
+    <p class="kicker">Industries</p>
+    <h2>Other practices we work with</h2>
+  </div>
+  <div class="grid3">
+    {others.map((i) => (
+      <a class="media-card tile" href={i.href}>
+        <div class="media"><img src={i.image} alt="" width="1600" height="900" loading="lazy" /></div>
+        <div class="body"><strong>{i.label}</strong><Icon name="arrow" size={20} stroke={2.2} class="arrow-blue" /></div>
+      </a>
+    ))}
+  </div>
+</div></section>
+<style>
+  :global(.arrow-blue) { color: var(--bright); }
+</style>

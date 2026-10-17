@@ -1,0 +1,76 @@
+---
+import Icon from "./Icon.astro";
+// Column structure from the design. Paths are the site's real routes; the blog
+// stays at /insights and the reference pages stay at their existing URLs.
+const cols: [string, [string, string][]][] = [
+  ["Plans", [
+    ["/defined-benefit", "Defined Benefit Plans"],
+    ["/cash-balance", "Cash Balance Plans"],
+    ["/combo", "401(k) + Cash Balance"],
+    ["/self-employed", "Self-Employed Cash Balance"],
+  ]],
+  ["Industries", [
+    ["/physicians", "Physicians"],
+    ["/dentists", "Dentists"],
+    ["/attorneys", "Law firms"],
+    ["/consultants", "Consultants"],
+  ]],
+  ["Learn", [
+    ["/insights", "Owner briefing"],
+    ["/limits", "2024–2026 IRS limits"],
+    ["/compare", "Compare SEP, 401(k), pension"],
+    ["/illustrations", "Illustrative contributions"],
+    ["/not-a-fit", "When it is not a fit"],
+    ["/staff-cost", "Staff cost"],
+    ["/calendar", "Deadline calendar"],
+    ["/fees", "Fees and who does what"],
+    ["/plan-lifecycle", "After the plan exists"],
+    ["/calculator", "Tax savings calculator"],
+    ["/faq", "FAQs"],
+  ]],
+  ["Company", [
+    ["/services", "Services"],
+    ["/about", "About"],
+    ["/contact", "Contact"],
+    ["/support", "Client Support"],
+  ]],
+  ["Legal", [
+    ["/privacy", "Your Privacy"],
+    ["/terms", "Terms of Use"],
+    ["/disclaimer", "Disclaimer"],
+  ]],
+];
+---
+<footer class="site">
+  <div class="wrap top">
+    <div class="brand-col">
+      <a class="logo reversed" href="/" aria-label="Sterling Pension Group, home" style="align-self:flex-start">
+        <span class="plate" aria-hidden="true">STERLING</span>
+        <span class="sub" aria-hidden="true">PENSION GROUP</span>
+      </a>
+      <p>Premier Defined Benefit and Cash Balance retirement consulting and third-party administration for business owners, independent consultants, and physician practices across the United States.</p>
+      <div class="contact-lines">
+        <span class="row"><Icon name="pin" size={18} /><span>Sterling Pension Group LLC<br />15 N Main St #100<br />West Hartford, CT 06107<br />United States</span></span>
+        <a class="row" href="tel:+18605907172"><Icon name="phone" size={18} />+1 (860) 590-7172</a>
+        <a class="btn primary" href="/contact">Contact us</a>
+      </div>
+    </div>
+    <nav class="cols" aria-label="Footer">
+      {cols.map(([heading, links]) => (
+        <div>
+          <h2>{heading}</h2>
+          {links.map(([href, label]) => <a href={href}>{label}</a>)}
+        </div>
+      ))}
+    </nav>
+  </div>
+  <div class="notice">
+    <p class="wrap"><strong>Professional Practice Notice:</strong> Third-Party Administrator &amp; Defined Benefit / Cash Balance Retirement Consultants. Sterling Pension Group LLC is a pension consulting and third-party administration firm; we are not actuaries. Where mandatory certified actuarial sign-offs are required, Sterling Pension Group collaborates with independent Enrolled Actuaries.</p>
+  </div>
+  <div class="legal-bar">
+    <div class="wrap">
+      <span>© 2026 Sterling Pension Group LLC. All rights reserved.</span>
+      <span>Independent Third-Party Administration</span>
+    </div>
+  </div>
+</footer>

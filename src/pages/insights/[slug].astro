@@ -1,6 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Hero from "../../components/Hero.astro";
+import PostCard from "../../components/PostCard.astro";
+import AsideCta from "../../components/AsideCta.astro";
 import { formatDate, getPost, posts } from "../../lib/posts";
+import { topicByDate } from "../../lib/topics";
 
 export function getStaticPaths() {
   return posts.map((post) => ({ params: { slug: post.slug } }));
@@ -9,7 +13,13 @@ export function getStaticPaths() {
 const { slug } = Astro.params;
 const post = getPost(slug!);
 if (!post) return Astro.redirect("/insights");
-const more = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
+const topic = topicByDate[post.date];
+const others = posts.filter((item) => item.slug !== post.slug);
+// Same topic first, then the most recent of the rest.
+const more = [
+  ...others.filter((item) => topicByDate[item.date] === topic),
+  ...others.filter((item) => topicByDate[item.date] !== topic),
+].slice(0, 3);
 function clip(value: string, max: number) {
   if (value.length <= max) return value;
   const cut = value.slice(0, max - 1);
@@ -29,21 +39,32 @@ const seoDescription = clip(post.description, 155);
   headline={post.title}
   crumb={post.title}
 >
-  <article class="wrap page">
-    <p class="kicker">{post.kicker} · {formatDate(post.date)}</p>
-    <h1>{post.title}</h1>
-    <img class="photo" src={post.image} alt={post.title} style="height:420px;margin-top:20px;" />
-    <div class="briefing" set:html={post.html} />
-  </article>
-  <section class="wrap" style="padding-bottom:48px;">
-    <h2>More from the briefing</h2>
-    <div class="grid3" style="margin-top:16px;">
-      {more.map((item) => (
-        <a class="panel" href={`/insights/${item.slug}`}>
-          <p class="kicker">{formatDate(item.date)}</p>
-          <h3>{item.title}</h3>
-        </a>
-      ))}
+  <Hero crumbs={[{ href: "/insights", label: "Insights" }, { label: post.kicker }]} overlap variant="article-hero">
+    <div class="meta-row on-dark">
+      {topic && <span class="chip">{topic}</span>}
+      <span class="kicker">{post.kicker} · {formatDate(post.date)}</span>
     </div>
-  </section>
+    <h1 slot="title">{post.title}</h1>
+  </Hero>
+
+  <article class="wrap" style="padding-bottom:var(--section-y)">
+    <div class="article-cover" style="position:relative;z-index:2;margin-top:-104px">
+      <img src={post.image} alt={post.title} width="1600" height="900" fetchpriority="high" />
+    </div>
+    <div class="article-body briefing" set:html={post.html} style="margin-top:48px" />
+    <div class="article-body" style="margin-top:48px">
+      <AsideCta heading="Talk with Sterling" />
+    </div>
+  </article>
+
+  <section class="alt"><div class="wrap section stack-lg">
+    <div class="section-head"><h2>More from the briefing</h2></div>
+    <div class="post-grid">
+      {more.map((item) => <PostCard post={item} />)}
+    </div>
+  </div></section>
 </Base>
+<style>
+  .hero.article-hero :global(h1) { max-width: 900px; font-size: clamp(32px, 4.2vw, 52px); }
+  .meta-row.on-dark { color: var(--on-navy); }
+</style>

@@ -1,0 +1,13 @@
+---
+const { path } = Astro.props;
+const plans = [
+  ["/defined-benefit", "Defined Benefit Plans"],
+  ["/cash-balance", "Cash Balance Plans"],
+  ["/combo", "401(k) + Cash Balance"],
+  ["/self-employed", "Self-Employed Cash Balance"],
+];
+---
+<nav class="aside-nav" aria-label="Plans">
+  <h2>Plans</h2>
+  {plans.map(([href, label]) => <a href={href} aria-current={path === href ? "page" : undefined}>{label}</a>)}
+</nav>

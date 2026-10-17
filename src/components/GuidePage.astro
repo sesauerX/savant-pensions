@@ -1,0 +1,52 @@
+---
+// Shared layout for the long-form pages whose copy lives in an HTML string
+// (industries, reference modules, guides). The trailing <img> that those
+// strings end with becomes the hero photo, so the copy itself is untouched.
+import Base from "../layouts/Base.astro";
+import Hero from "./Hero.astro";
+import AsideCta from "./AsideCta.astro";
+
+const {
+  title,
+  kicker,
+  h1,
+  lede,
+  html,
+  crumbs = [],
+  photoHero = false,
+  heroImage,
+  heroButton,
+  asideHeading = "Talk with Sterling",
+  asideText,
+  navTitle = "Resources",
+  nav = [],
+  bodyClass = "",
+} = Astro.props;
+
+const imgMatch = html.match(/\n?<img src="([^"]+)" alt="([^"]*)"[^>]*\/>\s*$/);
+const body = imgMatch ? html.slice(0, imgMatch.index) : html;
+const image = heroImage ?? (photoHero && imgMatch ? imgMatch[1] : undefined);
+const path = Astro.url.pathname.replace(/\/$/, "");
+---
+<Base title={title}>
+  <Hero image={image} crumbs={crumbs} kicker={kicker} title={h1} lede={lede}>
+    {heroButton && <div class="hero-actions"><a class="btn primary" href="/contact">{heroButton}</a></div>}
+  </Hero>
+
+  <div class="wrap with-aside">
+    <article class="main-col">
+      <div class={`guide ${bodyClass}`} set:html={body} />
+      <slot name="after-body" />
+    </article>
+    <aside aria-label="Related">
+      <AsideCta heading={asideHeading} text={asideText} />
+      {nav.length > 0 && (
+        <nav class="aside-nav" aria-label={navTitle}>
+          <h2>{navTitle}</h2>
+          {nav.map(([href, label]: [string, string]) => <a href={href} aria-current={path === href ? "page" : undefined}>{label}</a>)}
+        </nav>
+      )}
+    </aside>
+  </div>
+  <slot />
+</Base>

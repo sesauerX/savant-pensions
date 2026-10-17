@@ -1,0 +1,41 @@
+---
+// Page hero. With `image` it is the photo hero (navy overlay, subject right);
+// without, the plain Sterling gradient. `overlap` leaves room for a card that
+// rides up over the bottom edge (contact form, calculator).
+const {
+  kicker,
+  title,
+  lede,
+  image,
+  imagePosition = "center",
+  crumbs = [],
+  overlap = false,
+  variant = "",
+} = Astro.props;
+const cls = ["hero", image ? "has-photo" : "", overlap ? "overlap" : "", variant].filter(Boolean).join(" ");
+---
+<section class={cls}>
+  {image && (
+    <div class="hero-media">
+      <img src={image} alt="" width="2520" height="1080" fetchpriority="high" decoding="async" style={`object-position:${imagePosition}`} />
+    </div>
+  )}
+  <div class="wrap hero-inner">
+    {crumbs.length > 0 && (
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="/">Home</a>
+        {crumbs.map((c: { href?: string; label: string }, i: number) => (
+          <>
+            <span aria-hidden="true">›</span>
+            {c.href && i < crumbs.length - 1 ? <a href={c.href}>{c.label}</a> : <span aria-current={i === crumbs.length - 1 ? "page" : undefined}>{c.label}</span>}
+          </>
+        ))}
+      </nav>
+    )}
+    {kicker && <p class="kicker">{kicker}</p>}
+    {title && <h1>{title}</h1>}
+    <slot name="title" />
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+</section>

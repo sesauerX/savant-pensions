@@ -1,27 +1,52 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+const items = [
+  ["Who typically considers a Defined Benefit or Cash Balance Plan?", 'Business owners and high-earning professionals with steady cash flow, a meaningful retirement target, and the capacity to make recurring contributions are often the best candidates to explore these strategies. If the income will not last several years, start with <a href="/not-a-fit">when it is not a fit</a>.'],
+  ["Can I keep my 401(k)?", 'Often, a Defined Benefit or Cash Balance Plan can be designed alongside an existing 401(k) arrangement. The right combination depends on your business and employee population. See <a href="/combo">how the pieces work together</a>.'],
+  ["Are contributions required every year?", 'These are structured retirement arrangements, not casual savings accounts. Contributions and funding expectations should be understood before implementation and reviewed with the appropriate professional team. Minimum funding and the tax deduction are not the same date. The <a href="/calendar">calendar</a> separates them.'],
+  ["What information will you need from me?", "We’ll typically discuss age, compensation, business structure, employee census, current retirement plans, cash flow, and the retirement outcome you want to work toward."],
+  ["Is the calculator my contribution?", 'No. Numbers are a starting point. The best next step is a conversation that accounts for your age, income, business structure, employee profile, and timeline. An illustration is not an IRS limit and not a deductible contribution. Read <a href="/illustrations">why</a>.'],
+  ["Are you the actuary?", 'No. Sterling Pension Group is a retirement plan consultant and third-party administrator. We are not an actuarial firm. When a filing requires an Enrolled Actuary’s certification, that work is done by an independent actuary we coordinate with. The split is on <a href="/fees">fees</a>.'],
+];
 ---
 <Base>
 
-<section class="wrap page">
-  <p class="kicker">FAQs & planning tools</p>
-  <h1>What business owners usually want to know first.</h1>
-  <p class="lede">Better questions lead to better retirement decisions. Use the estimate as a conversation starter, then bring your actual facts to a Sterling consultant for a more grounded view.</p>
-  <div class="hero-actions"><a class="btn outline" href="/calculator">Open contribution estimate</a></div>
+<Hero crumbs={[{ label: "FAQs" }]} kicker="FAQs & planning tools" title="What business owners usually want to know first." lede="Better questions lead to better retirement decisions. Use the estimate as a conversation starter, then bring your actual facts to a Sterling consultant for a more grounded view.">
+  <div class="hero-actions"><a class="btn primary" href="/calculator">Open contribution estimate</a></div>
+</Hero>
+
+<section class="wrap section">
+  <div class="faq-list" data-accordion>
+    {items.map(([q, a], i) => (
+      <div class={`faq-item${i === 0 ? " is-open" : ""}`}>
+        <h2>
+          <button type="button" id={`faq-q-${i}`} aria-expanded={i === 0 ? "true" : "false"} aria-controls={`faq-a-${i}`}>
+            <span>{q}</span><span class="sign" aria-hidden="true"></span>
+          </button>
+        </h2>
+        <div class="answer" id={`faq-a-${i}`} role="region" aria-labelledby={`faq-q-${i}`} hidden={i !== 0}>
+          <p set:html={a} />
+        </div>
+      </div>
+    ))}
+  </div>
 </section>
 
-<section class="section wrap" style="display:grid;gap:16px;">
-  <article class="panel"><h2>Who typically considers a Defined Benefit or Cash Balance Plan?</h2><p>Business owners and high-earning professionals with steady cash flow, a meaningful retirement target, and the capacity to make recurring contributions are often the best candidates to explore these strategies. If the income will not last several years, start with <a href="/not-a-fit">when it is not a fit</a>.</p></article>
-  <article class="panel"><h2>Can I keep my 401(k)?</h2><p>Often, a Defined Benefit or Cash Balance Plan can be designed alongside an existing 401(k) arrangement. The right combination depends on your business and employee population. See <a href="/combo">how the pieces work together</a>.</p></article>
-  <article class="panel"><h2>Are contributions required every year?</h2><p>These are structured retirement arrangements, not casual savings accounts. Contributions and funding expectations should be understood before implementation and reviewed with the appropriate professional team. Minimum funding and the tax deduction are not the same date. The <a href="/calendar">calendar</a> separates them.</p></article>
-  <article class="panel"><h2>What information will you need from me?</h2><p>We’ll typically discuss age, compensation, business structure, employee census, current retirement plans, cash flow, and the retirement outcome you want to work toward.</p></article>
-  <article class="panel"><h2>Is the calculator my contribution?</h2><p>No. Numbers are a starting point. The best next step is a conversation that accounts for your age, income, business structure, employee profile, and timeline. An illustration is not an IRS limit and not a deductible contribution. Read <a href="/illustrations">why</a>.</p></article>
-  <article class="panel"><h2>Are you the actuary?</h2><p>No. Sterling Pension Group is a retirement plan consultant and third-party administrator. We are not an actuarial firm. When a filing requires an Enrolled Actuary’s certification, that work is done by an independent actuary we coordinate with. The split is on <a href="/fees">fees</a>.</p></article>
-</section>
-
-<section class="section wrap"><div class="cta">
+<section class="wrap cta-section tight-top"><div class="cta">
   <div><p class="kicker">Let’s talk</p><h2>The first conversation is simple.</h2><p>Tell us a little about what you’re building, what you’re saving for, and where your current plan feels limited.</p></div>
   <a class="btn gold" href="/contact">Request a complimentary conversation</a>
 </div></section>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-accordion] button[aria-controls]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const open = btn.getAttribute("aria-expanded") !== "true";
+      btn.setAttribute("aria-expanded", String(open));
+      document.getElementById(btn.getAttribute("aria-controls")!)!.hidden = !open;
+      btn.closest(".faq-item")?.classList.toggle("is-open", open);
+    });
+  });
+</script>
 
 </Base>

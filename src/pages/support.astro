@@ -1,13 +1,18 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Icon from "../components/Icon.astro";
 ---
 <Base title="Support | Sterling Pension Group">
 
-<section class="wrap page">
-  <h1>Client support</h1>
-  <p class="lede">Work with the people who know your plan.</p>
-  <p><a href="tel:+18605907172">+1 (860) 590-7172</a><br /><a href="mailto:info@savantpensions.com">info@savantpensions.com</a></p>
-  <p>15 N Main St #100, West Hartford, CT 06107</p>
+<Hero crumbs={[{ label: "Client support" }]} title="Client support" lede="Work with the people who know your plan." />
+
+<section class="wrap section">
+  <div class="grid3">
+    <a class="panel" href="tel:+18605907172"><span class="icon-circle"><Icon name="phone" size={26} /></span><strong style="font-size:18px">+1 (860) 590-7172</strong></a>
+    <a class="panel" href="mailto:info@savantpensions.com"><span class="icon-circle"><Icon name="mail" size={26} /></span><strong style="font-size:18px">info@savantpensions.com</strong></a>
+    <div class="panel"><span class="icon-circle"><Icon name="pin" size={26} /></span><p style="color:var(--navy);font-weight:700;font-size:18px">15 N Main St #100, West Hartford, CT 06107</p></div>
+  </div>
 </section>
 
 </Base>

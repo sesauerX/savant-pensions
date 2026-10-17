@@ -1,6 +1,9 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Hero from "../../components/Hero.astro";
+import Icon from "../../components/Icon.astro";
 import { formatDate, posts } from "../../lib/posts";
+import { topicByDate } from "../../lib/topics";
 const [lead] = posts;
 const hub = [
   ["#briefing", "Owner briefing", "A note every two weeks, written to the limits that were current that week."],
@@ -18,33 +21,36 @@ const hub = [
 ];
 ---
 <Base title="Insights | Sterling Pension Group" description="Guides, limits, deadlines, and the owner briefing.">
-  <section class="wrap page">
-    <p class="kicker">Insights</p>
-    <h1>Pension insights for business owners.</h1>
-    <p class="lede">The pages in the footer, in one place.</p>
+  <Hero crumbs={[{ label: "Insights" }]} kicker="Insights" title="Pension insights for business owners." lede="The pages in the footer, in one place." />
+
+  <section class="wrap section">
+    <div class="grid3">
+      {hub.map(([href, label, blurb]) => (
+        <a class="panel" href={href}>
+          <h2>{label}</h2>
+          <p>{blurb}</p>
+          <span class="text-link" aria-hidden="true" style="margin-top:auto"><Icon name="arrow" size={18} stroke={2.2} /></span>
+        </a>
+      ))}
+    </div>
   </section>
-  <section class="wrap grid3" style="padding-bottom:24px;">
-    {hub.map(([href, label, blurb]) => (
-      <a class="panel" href={href}>
-        <h2 style="font-size:22px;">{label}</h2>
-        <p>{blurb}</p>
-      </a>
-    ))}
-  </section>
-  <section id="briefing" class="wrap page">
-    <p class="kicker">Owner briefing</p>
-    <h2>Every two weeks, from September 2024.</h2>
-  </section>
-  {lead && (
-    <section class="wrap split" style="padding-bottom:24px;">
-      <a href={`/insights/${lead.slug}`}><img class="photo" src={lead.image} alt="" style="height:420px;" /></a>
-      <div>
-        <p class="kicker">{formatDate(lead.date)}</p>
-        <h2><a href={`/insights/${lead.slug}`}>{lead.title}</a></h2>
-        <p class="lede">{lead.description}</p>
-        <a class="btn primary" href={`/insights/${lead.slug}`}>Read the briefing</a>
-      </div>
-    </section>
-  )}
-  <p class="wrap" style="padding-bottom:64px;"><a href="/insights/archive">Earlier briefings</a></p>
+
+  <section id="briefing" class="alt"><div class="wrap section stack-lg">
+    <div class="section-head">
+      <p class="kicker">Owner briefing</p>
+      <h2>Every two weeks, from September 2024.</h2>
+    </div>
+    {lead && (
+      <article class="featured">
+        <a class="cover" href={`/insights/${lead.slug}`} tabindex="-1" aria-hidden="true"><img src={lead.image} alt="" width="1600" height="900" loading="lazy" /></a>
+        <div class="body">
+          <div class="meta-row">{topicByDate[lead.date] && <span class="chip">{topicByDate[lead.date]}</span>}<span class="kicker" style="font-size:13px">{formatDate(lead.date)}</span></div>
+          <h2><a href={`/insights/${lead.slug}`}>{lead.title}</a></h2>
+          <p class="lede">{lead.description}</p>
+          <a class="btn secondary" href={`/insights/${lead.slug}`} style="align-self:flex-start">Read the briefing</a>
+        </div>
+      </article>
+    )}
+    <p><a class="text-link" href="/insights/archive">Earlier briefings <Icon name="arrow" size={18} stroke={2.2} /></a></p>
+  </div></section>
 </Base>

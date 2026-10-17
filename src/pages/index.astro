@@ -1,72 +1,103 @@
 ---
 import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import Icon from "../components/Icon.astro";
 ---
 <Base title="Pension Plan Administrator for Business Owners | Sterling Pension Group" description="Sterling Pension Group is a pension plan administrator for business owners. We design and administer Defined Benefit and Cash Balance plans.">
 
-<section class="wrap hero">
-  <div>
-    <p class="kicker">Third-party pension administration</p>
-    <h1>Pension plan administrator for business owners.</h1>
-    <p class="lede">Sterling Pension Group is a third-party pension plan administrator. We design and administer Defined Benefit and Cash Balance plans so owners can move more of today’s income into retirement—without making the process feel complicated.</p>
-    <div class="hero-actions">
-      <a class="btn primary" href="/contact">Find my plan path →</a>
-      <a class="btn outline" href="/calculator">Estimate contribution room</a>
+<Hero variant="home" image="/images/hero.jpg" imagePosition="70% center" kicker="Third-party pension administration" title="Pension plan administrator for business owners." lede="Sterling Pension Group is a third-party pension plan administrator. We design and administer Defined Benefit and Cash Balance plans so owners can move more of today’s income into retirement—without making the process feel complicated.">
+  <div class="hero-actions">
+    <a class="btn primary" href="/contact">Find my plan path →</a>
+    <a class="btn outline" href="/calculator">Estimate contribution room</a>
+  </div>
+</Hero>
+
+<section class="wrap trust" aria-label="Highlights">
+  <div class="strip">
+    <div class="item"><span class="icon-circle sm"><Icon name="check" size={22} stroke={2.4} /></span><strong>Complimentary first conversation</strong></div>
+    <div class="item"><span class="icon-circle sm"><Icon name="check" size={22} stroke={2.4} /></span><strong>Built for owner-led businesses</strong></div>
+    <div class="item"><span class="icon-circle sm"><Icon name="check" size={22} stroke={2.4} /></span><strong>Serving clients nationwide</strong></div>
+    <div class="stat"><span class="kicker">Contribution potential</span><strong>$250k+</strong><em>depending on your facts</em></div>
+  </div>
+</section>
+
+<section class="wrap section">
+  <div class="grid3">
+    <div class="feature"><span class="icon-circle gold"><Icon name="target" size={26} /></span><h3>Strategic plan design</h3><p>for your real business</p></div>
+    <div class="feature"><span class="icon-circle gold"><Icon name="clipboard" size={26} /></span><h3>Clear administration</h3><p>without the runaround</p></div>
+    <div class="feature"><span class="icon-circle gold"><Icon name="calendar" size={26} /></span><h3>Long-term perspective</h3><p>for the life you want</p></div>
+  </div>
+</section>
+
+<section class="alt"><div class="wrap section stack-lg">
+  <div class="section-head split-head">
+    <div>
+      <p class="kicker">Two paths. One bigger picture.</p>
+      <h2>Make more of the income your business creates.</h2>
     </div>
-    <div class="checks"><span>✓ Complimentary first conversation</span><span>✓ Built for owner-led businesses</span><span>✓ Serving clients nationwide</span></div>
+    <p>The right pension arrangement can help you shift more of today’s income toward long-term wealth. We help you understand the trade-offs and move forward with confidence.</p>
   </div>
-  <div class="visual">
-    <img src="/images/hero.jpg" alt="Business owners reviewing a retirement plan in a private office" />
-    <div class="stat"><span>Contribution potential</span><strong>$250k+</strong><em style="font-size:12px;color:#5b6678;font-style:normal;">depending on your facts</em></div>
-  </div>
-</section>
-<section class="band"><div class="wrap">
-  <div><div class="num">01</div><h3>Strategic plan design</h3><p>for your real business</p></div>
-  <div><div class="num">02</div><h3>Clear administration</h3><p>without the runaround</p></div>
-  <div><div class="num">03</div><h3>Long-term perspective</h3><p>for the life you want</p></div>
-</div></section>
-<section class="section wrap">
-  <p class="kicker">Two paths. One bigger picture.</p>
-  <h2>Make more of the income your business creates.</h2>
-  <p class="lede">The right pension arrangement can help you shift more of today’s income toward long-term wealth. We help you understand the trade-offs and move forward with confidence.</p>
-  <div class="two" style="margin-top:28px;">
-    <a class="card" href="/defined-benefit"><img src="/images/plans.jpg" alt="" /><p class="kicker">Plan path 01</p><h3>Defined Benefit Plans</h3><p>A powerful structure for business owners who want predictable retirement value and larger deductible contributions.</p><span>Explore the approach →</span></a>
-    <a class="card" href="/cash-balance"><img src="/images/cash.jpg" alt="" /><p class="kicker">Plan path 02</p><h3>Cash Balance Plans</h3><p>An account-based Defined Benefit structure that makes substantial contributions easier to visualize and track.</p><span>See how it works →</span></a>
-  </div>
-</section>
-<section class="section alt"><div class="wrap">
-  <p class="kicker">Why Sterling</p>
-  <h2>Expertise without the distance.</h2>
-  <div class="grid3" style="margin-top:24px;">
-    <article class="panel"><div class="num">01</div><h3>Designed for higher earners</h3><p>Turn strong business income into a disciplined retirement strategy with room to contribute meaningfully beyond a standard 401(k).</p></article>
-    <article class="panel"><div class="num">02</div><h3>Built around your business</h3><p>We coordinate plan design, documentation, administration, and compliance workflows around the way your company actually operates.</p></article>
-    <article class="panel"><div class="num">03</div><h3>A direct, human partner</h3><p>Work with the people who know your plan—not a call center. We make complex pension decisions easier to understand and act on.</p></article>
+  <div class="two">
+    <a class="media-card" href="/defined-benefit">
+      <div class="media"><img src="/images/plans.jpg" alt="" width="1600" height="900" loading="lazy" /><span class="tag">Plan path 01</span></div>
+      <div class="body">
+        <h3>Defined Benefit Plans</h3>
+        <p>A powerful structure for business owners who want predictable retirement value and larger deductible contributions.</p>
+        <span class="text-link">Explore the approach <Icon name="arrow" size={18} stroke={2.2} /></span>
+      </div>
+    </a>
+    <a class="media-card" href="/cash-balance">
+      <div class="media"><img src="/images/cash.jpg" alt="" width="1600" height="900" loading="lazy" /><span class="tag">Plan path 02</span></div>
+      <div class="body">
+        <h3>Cash Balance Plans</h3>
+        <p>An account-based Defined Benefit structure that makes substantial contributions easier to visualize and track.</p>
+        <span class="text-link">See how it works <Icon name="arrow" size={18} stroke={2.2} /></span>
+      </div>
+    </a>
   </div>
 </div></section>
-<section class="section wrap split">
-  <div>
+
+<section class="wrap section stack-lg">
+  <div class="section-head center">
+    <p class="kicker">Why Sterling</p>
+    <h2>Expertise without the distance.</h2>
+  </div>
+  <div class="grid3">
+    <article class="panel"><span class="icon-circle"><Icon name="layers" size={26} /></span><h3>Designed for higher earners</h3><p>Turn strong business income into a disciplined retirement strategy with room to contribute meaningfully beyond a standard 401(k).</p></article>
+    <article class="panel"><span class="icon-circle"><Icon name="briefcase" size={26} /></span><h3>Built around your business</h3><p>We coordinate plan design, documentation, administration, and compliance workflows around the way your company actually operates.</p></article>
+    <article class="panel"><span class="icon-circle"><Icon name="people" size={26} /></span><h3>A direct, human partner</h3><p>Work with the people who know your plan—not a call center. We make complex pension decisions easier to understand and act on.</p></article>
+  </div>
+</section>
+
+<section class="navy-split">
+  <div class="copy">
     <p class="kicker">Administration that stays ahead</p>
     <h2>The details get handled. You stay in the loop.</h2>
     <p>A well-designed plan only works when the annual details are managed with discipline. Sterling supports the ongoing work behind the scenes—from census data and testing to participant communication and compliance coordination.</p>
-    <ul>
-      <li>Defined Benefit and Cash Balance plan design support</li>
-      <li>Annual administration, testing, and reporting</li>
-      <li>Clear communication with owners, employees, and advisors</li>
-      <li>Coordination with independent Enrolled Actuaries when required</li>
+    <ul class="checklist">
+      <li><Icon name="check" size={22} stroke={2.4} />Defined Benefit and Cash Balance plan design support</li>
+      <li><Icon name="check" size={22} stroke={2.4} />Annual administration, testing, and reporting</li>
+      <li><Icon name="check" size={22} stroke={2.4} />Clear communication with owners, employees, and advisors</li>
+      <li><Icon name="check" size={22} stroke={2.4} />Coordination with independent Enrolled Actuaries when required</li>
     </ul>
-    <a class="btn outline" href="/administration">View TPA & administration services</a>
+    <a class="btn outline-gold" href="/administration" style="align-self:flex-start">View TPA & administration services</a>
   </div>
-  <img class="photo" src="/images/admin.jpg" alt="A team meeting around a conference table" style="height:420px;" />
+  <div class="photo-side"><img src="/images/admin.jpg" alt="A team meeting around a conference table" width="1600" height="1200" loading="lazy" /></div>
 </section>
-<section class="section alt"><div class="wrap">
-  <p class="kicker">A calmer way forward</p>
-  <h2>Simple on the surface. Thoughtful underneath.</h2>
-  <div class="steps" style="margin-top:24px;">
-    <div><p class="num" style="font-size:36px;">01</p><h3>Start with a short conversation</h3><p>We learn how your business is structured and what you want retirement to look like.</p></div>
-    <div><p class="num" style="font-size:36px;">02</p><h3>Model the right plan shape</h3><p>We work through contribution targets, employee considerations, timing, and design trade-offs with your professional advisors.</p></div>
-    <div><p class="num" style="font-size:36px;">03</p><h3>Put the plan to work</h3><p>From documentation and onboarding to annual administration and reporting, Sterling stays close to the details.</p></div>
+
+<section class="alt"><div class="wrap section stack-lg">
+  <div class="section-head center">
+    <p class="kicker">A calmer way forward</p>
+    <h2>Simple on the surface. Thoughtful underneath.</h2>
   </div>
+  <ol class="steps">
+    <li class="step"><span class="step-num" aria-hidden="true">1</span><h3>Start with a short conversation</h3><p>We learn how your business is structured and what you want retirement to look like.</p></li>
+    <li class="step"><span class="step-num" aria-hidden="true">2</span><h3>Model the right plan shape</h3><p>We work through contribution targets, employee considerations, timing, and design trade-offs with your professional advisors.</p></li>
+    <li class="step"><span class="step-num" aria-hidden="true">3</span><h3>Put the plan to work</h3><p>From documentation and onboarding to annual administration and reporting, Sterling stays close to the details.</p></li>
+  </ol>
 </div></section>
-<section class="section wrap"><div class="cta">
+
+<section class="wrap cta-section"><div class="cta">
   <div><p class="kicker">Your next chapter starts here</p><h2>Make the most of the years you’re building toward.</h2><p>Tell us where your business is today. We’ll help you see what a better retirement plan could look like.</p></div>
   <a class="btn gold" href="/contact">Set up a complimentary call</a>
 </div></section>
