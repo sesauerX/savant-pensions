@@ -1,4 +1,7 @@
 ---
+// Self-hosted Plus Jakarta Sans (latin, variable weight); the latin file is preloaded below.
+import "@fontsource-variable/plus-jakarta-sans/wght.css";
+import fontUrl from "@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2?url";
 import "../styles.css";
 import { SITE, faqs, pages } from "../lib/seo";
 import Header from "../components/Header.astro";
@@ -129,8 +132,7 @@ const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": grap
     <link rel="icon" href="/favicon.ico?v=2" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="icon" type="image/png" href="/favicon.png?v=2" sizes="32x32" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
     <meta name="theme-color" content="#0B2545" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- Privacy-friendly analytics by Plausible -->
