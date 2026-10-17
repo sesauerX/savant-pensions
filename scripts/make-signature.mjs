@@ -2,7 +2,7 @@
 //
 //   node scripts/make-signature.mjs [font] [out.svg]
 //
-// font: mrs-saint-delafield (default) | allison | monsieur-la-doulaise | herr-von-muellerhoff
+// font: allison (default, chosen for the site) | mrs-saint-delafield | monsieur-la-doulaise | herr-von-muellerhoff
 // The font is downloaded from the Google Fonts repository (OFL) for this script
 // only; the site never loads it. The output has no <text> and no font dependency.
 // This is a web sign-off, not a legal signature; swap in a real scan at
@@ -17,7 +17,7 @@ const FONTS = {
   "herr-von-muellerhoff": { file: "herrvonmuellerhoff/HerrVonMuellerhoff-Regular.ttf", size: 92, track: -0.06, skew: -6 },
 };
 const NAVY = "#0B2545";
-const name = process.argv[2] ?? "mrs-saint-delafield";
+const name = process.argv[2] ?? "allison";
 const out = process.argv[3] ?? "public/images/team/polo-signature.svg";
 const cfg = FONTS[name];
 if (!cfg) throw new Error(`Unknown font ${name}; use one of ${Object.keys(FONTS).join(", ")}`);
