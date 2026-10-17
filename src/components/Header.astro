@@ -54,7 +54,7 @@ const current = (href: string) => (path === href ? "page" : undefined);
       btn.setAttribute("aria-expanded", String(open));
       btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
       panel.classList.toggle("open", open);
-      document.body.classList.toggle("menu-open", open);
+      document.documentElement.classList.toggle("menu-open", open);
     };
     const isOpen = () => btn.getAttribute("aria-expanded") === "true";
     btn.addEventListener("click", () => {

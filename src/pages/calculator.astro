@@ -51,30 +51,45 @@ import Hero from "../components/Hero.astro";
     document.getElementById("out")!.textContent = "Illustrative contribution potential: about $" + room.toLocaleString() + " depending on your facts.";
   };
   const started = Date.now();
-  // Admin notification for each estimate the visitor asks for. Fire and forget:
-  // the page behaves the same whether or not it is delivered.
-  const notify = (room: number) => {
-    const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
-    fetch("/api/calculator", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        age: val("age"),
-        income: val("income"),
-        employees: val("emps"),
-        estimate: room,
-        result: document.getElementById("out")!.textContent,
-        page: location.href,
-        form_started: started,
-        company_website: (form as HTMLFormElement).querySelector<HTMLInputElement>("[name=company_website]")!.value,
-      }),
-    }).catch(() => {});
+  // Admin notification: at most one per browser session, carrying the last
+  // estimate the visitor asked for. It is sent when they leave the page, so
+  // repeated tweaks do not each send an email. Fire and forget.
+  const SENT_KEY = "spg-calc-notified";
+  let pending: Record<string, unknown> | null = null;
+  const alreadySent = () => {
+    try { return sessionStorage.getItem(SENT_KEY) === "1"; } catch { return false; }
   };
+  const remember = (room: number) => {
+    const val = (id: string) => (document.getElementById(id) as HTMLInputElement).value;
+    pending = {
+      age: val("age"),
+      income: val("income"),
+      employees: val("emps"),
+      estimate: room,
+      result: document.getElementById("out")!.textContent,
+      page: location.href,
+      form_started: started,
+      company_website: (form as HTMLFormElement).querySelector<HTMLInputElement>("[name=company_website]")!.value,
+    };
+  };
+  const flush = () => {
+    if (!pending || alreadySent()) return;
+    const body = JSON.stringify(pending);
+    pending = null;
+    try { sessionStorage.setItem(SENT_KEY, "1"); } catch {}
+    const blob = new Blob([body], { type: "application/json" });
+    if (!navigator.sendBeacon?.("/api/calculator", blob)) {
+      fetch("/api/calculator", { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => {});
+    }
+  };
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flush();
+  });
+  window.addEventListener("pagehide", flush);
   form?.addEventListener("submit", (e) => {
     e.preventDefault();
     run();
-    notify(estimate());
+    remember(estimate());
   });
   form?.addEventListener("input", run);
   // The figure shows for the default inputs; the sentence appears once the visitor acts.

@@ -47,7 +47,7 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-body.menu-open { overflow: hidden; }
+html.menu-open, html.menu-open body { overflow: hidden; }
 img { max-width: 100%; height: auto; display: block; }
 [hidden] { display: none !important; }
 a { color: var(--bright-text); }
@@ -137,10 +137,13 @@ nav.desk a[aria-current="page"] { color: var(--sterling); border-bottom-color: v
 .menu-btn .icon-close { display: none; }
 .menu-btn[aria-expanded="true"] .icon-open { display: none; }
 .menu-btn[aria-expanded="true"] .icon-close { display: block; }
+/* Open menu: a fixed overlay from below the header bar to the bottom of the viewport. */
 .mobile-panel {
   display: none; background: var(--navy); color: #fff;
-  padding: 12px var(--gutter) 32px; flex-direction: column; gap: 24px;
-  max-height: calc(100vh - 68px); max-height: calc(100dvh - 68px); overflow-y: auto;
+  position: fixed; left: 0; right: 0; top: var(--header-h); bottom: 0; z-index: 49;
+  height: calc(100vh - var(--header-h)); height: calc(100dvh - var(--header-h));
+  padding: 12px var(--gutter) max(32px, env(safe-area-inset-bottom)); flex-direction: column; gap: 24px;
+  overflow-y: auto; overscroll-behavior: contain;
 }
 .mobile-panel.open { display: flex; }
 .mobile-panel nav { display: flex; flex-direction: column; }
