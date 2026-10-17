@@ -3,10 +3,11 @@ import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import AsideCta from "../components/AsideCta.astro";
 import PlansNav from "../components/PlansNav.astro";
+import Pic from "../components/Pic.astro";
 ---
 <Base>
 
-<Hero image="/images/plans.jpg" crumbs={[{ label: "401(k) + Cash Balance" }]} kicker="401(k) + Cash Balance" title="Combine everyday flexibility with a bigger retirement objective." lede="Many business owners explore a 401(k) alongside a Cash Balance Plan so the overall retirement strategy can serve both current savings habits and a more ambitious long-term target.">
+<Hero photo="combo-hero" crumbs={[{ label: "401(k) + Cash Balance" }]} kicker="401(k) + Cash Balance" title="Combine everyday flexibility with a bigger retirement objective." lede="Many business owners explore a 401(k) alongside a Cash Balance Plan so the overall retirement strategy can serve both current savings habits and a more ambitious long-term target.">
   <div class="hero-actions"><a class="btn primary" href="/contact">Talk through the combination</a></div>
 </Hero>
 
@@ -49,7 +50,7 @@ import PlansNav from "../components/PlansNav.astro";
       <li>Which advisors should be part of the decision?</li>
     </ul>
   </div>
-  <img class="photo" src="/images/plans.jpg" alt="Contribution comparison visual" width="1600" height="1200" loading="lazy" />
+  <Pic class="photo" name="combo-split" sizes="(min-width: 760px) 50vw, 100vw" />
 </div></section>
 
 <section class="wrap cta-section tight-top"><div class="cta">

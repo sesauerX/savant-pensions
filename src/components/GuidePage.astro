@@ -15,6 +15,7 @@ const {
   crumbs = [],
   photoHero = false,
   heroImage,
+  heroSlot,
   heroButton,
   asideHeading = "Talk with Sterling",
   asideText,
@@ -25,11 +26,11 @@ const {
 
 const imgMatch = html.match(/\n?<img src="([^"]+)" alt="([^"]*)"[^>]*\/>\s*$/);
 const body = imgMatch ? html.slice(0, imgMatch.index) : html;
-const image = heroImage ?? (photoHero && imgMatch ? imgMatch[1] : undefined);
+const image = heroSlot ? undefined : heroImage ?? (photoHero && imgMatch ? imgMatch[1] : undefined);
 const path = Astro.url.pathname.replace(/\/$/, "");
 ---
 <Base title={title}>
-  <Hero image={image} crumbs={crumbs} kicker={kicker} title={h1} lede={lede}>
+  <Hero image={image} photo={heroSlot} crumbs={crumbs} kicker={kicker} title={h1} lede={lede}>
     {heroButton && <div class="hero-actions"><a class="btn primary" href="/contact">{heroButton}</a></div>}
   </Hero>
 

@@ -12,11 +12,11 @@ export const resources: [string, string][] = [
   ["/faq", "FAQs"],
 ];
 
-export const industries: { href: string; label: string; image: string }[] = [
-  { href: "/physicians", label: "Physicians", image: "/images/guides/physicians.jpg" },
-  { href: "/dentists", label: "Dentists", image: "/images/guides/dentists.jpg" },
-  { href: "/attorneys", label: "Law firms", image: "/images/guides/attorneys.jpg" },
-  { href: "/consultants", label: "Consultants", image: "/images/guides/consultants.jpg" },
+export const industries: { href: string; label: string; slot: string }[] = [
+  { href: "/physicians", label: "Physicians", slot: "physicians-card" },
+  { href: "/dentists", label: "Dentists", slot: "dentists-card" },
+  { href: "/attorneys", label: "Law firms", slot: "attorneys-card" },
+  { href: "/consultants", label: "Consultants", slot: "consultants-card" },
 ];
 
 export const services: [string, string][] = [

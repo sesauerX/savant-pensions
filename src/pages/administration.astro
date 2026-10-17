@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
 const items = [
   ["people", "Census and participant data", "Census and participant data coordination, matched to payroll and to the document’s eligibility rules."],
   ["chart", "Testing and reporting", "Annual testing and reporting support, lined up with the independent actuary’s valuation when Schedule SB is required."],
@@ -12,7 +13,7 @@ const items = [
 ---
 <Base>
 
-<Hero image="/images/admin.jpg" crumbs={[{ href: "/services", label: "Services" }, { label: "Administration" }]} kicker="Plan administration & TPA" title="Stay focused on the business. We’ll keep the plan moving." lede="Sterling supports the recurring work that gives a retirement plan its reliability: data collection, participant records, testing coordination, reporting, and clear communication.">
+<Hero photo="admin-hero" crumbs={[{ href: "/services", label: "Services" }, { label: "Administration" }]} kicker="Plan administration & TPA" title="Stay focused on the business. We’ll keep the plan moving." lede="Sterling supports the recurring work that gives a retirement plan its reliability: data collection, participant records, testing coordination, reporting, and clear communication.">
   <div class="hero-actions"><a class="btn primary" href="/contact">Review your current process</a></div>
 </Hero>
 
@@ -32,7 +33,7 @@ const items = [
 </section>
 
 <section class="navy-split">
-  <div class="photo-side"><img src="/images/building.jpg" alt="Pension administration and compliance illustration" width="1600" height="1200" loading="lazy" /></div>
+  <div class="photo-side"><Pic name="admin-clocks" sizes="(min-width: 760px) 50vw, 100vw" /></div>
   <div class="copy">
     <p class="kicker">Three clocks</p>
     <h2>What “annual” actually means</h2>

@@ -5,6 +5,7 @@ import PostCard from "../../components/PostCard.astro";
 import AsideCta from "../../components/AsideCta.astro";
 import { formatDate, getPost, posts } from "../../lib/posts";
 import { topicByDate } from "../../lib/topics";
+import Pic from "../../components/Pic.astro";
 
 export function getStaticPaths() {
   return posts.map((post) => ({ params: { slug: post.slug } }));
@@ -49,7 +50,7 @@ const seoDescription = clip(post.description, 155);
 
   <article class="wrap" style="padding-bottom:var(--section-y)">
     <div class="article-cover" style="position:relative;z-index:2;margin-top:-104px">
-      <img src={post.image} alt={post.title} width="1600" height="900" fetchpriority="high" />
+      <Pic name={`cover-${post.date}`} priority sizes="(min-width: 1100px) 1040px, 100vw" />
     </div>
     <div class="article-body briefing" set:html={post.html} style="margin-top:48px" />
     <div class="article-body" style="margin-top:48px">

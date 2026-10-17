@@ -2,10 +2,11 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
 ---
 <Base title="Pension Plan Administrator for Business Owners | Sterling Pension Group" description="Sterling Pension Group is a pension plan administrator for business owners. We design and administer Defined Benefit and Cash Balance plans.">
 
-<Hero variant="home" image="/images/hero.jpg" imagePosition="70% center" kicker="Third-party pension administration" title="Pension plan administrator for business owners." lede="Sterling Pension Group is a third-party pension plan administrator. We design and administer Defined Benefit and Cash Balance plans so owners can move more of today’s income into retirement—without making the process feel complicated.">
+<Hero variant="home" photo="home-hero" imagePosition="70% center" kicker="Third-party pension administration" title="Pension plan administrator for business owners." lede="Sterling Pension Group is a third-party pension plan administrator. We design and administer Defined Benefit and Cash Balance plans so owners can move more of today’s income into retirement—without making the process feel complicated.">
   <div class="hero-actions">
     <a class="btn primary" href="/contact">Find my plan path →</a>
     <a class="btn outline" href="/calculator">Estimate contribution room</a>
@@ -39,7 +40,7 @@ import Icon from "../components/Icon.astro";
   </div>
   <div class="two">
     <a class="media-card" href="/defined-benefit">
-      <div class="media"><img src="/images/plans.jpg" alt="" width="1600" height="900" loading="lazy" /><span class="tag">Plan path 01</span></div>
+      <div class="media"><Pic name="home-db" sizes="(min-width: 1000px) 600px, 100vw" /><span class="tag">Plan path 01</span></div>
       <div class="body">
         <h3>Defined Benefit Plans</h3>
         <p>A powerful structure for business owners who want predictable retirement value and larger deductible contributions.</p>
@@ -47,7 +48,7 @@ import Icon from "../components/Icon.astro";
       </div>
     </a>
     <a class="media-card" href="/cash-balance">
-      <div class="media"><img src="/images/cash.jpg" alt="" width="1600" height="900" loading="lazy" /><span class="tag">Plan path 02</span></div>
+      <div class="media"><Pic name="home-cb" sizes="(min-width: 1000px) 600px, 100vw" /><span class="tag">Plan path 02</span></div>
       <div class="body">
         <h3>Cash Balance Plans</h3>
         <p>An account-based Defined Benefit structure that makes substantial contributions easier to visualize and track.</p>
@@ -82,7 +83,7 @@ import Icon from "../components/Icon.astro";
     </ul>
     <a class="btn outline-gold" href="/administration" style="align-self:flex-start">View TPA & administration services</a>
   </div>
-  <div class="photo-side"><img src="/images/admin.jpg" alt="A team meeting around a conference table" width="1600" height="1200" loading="lazy" /></div>
+  <div class="photo-side"><Pic name="home-admin" sizes="(min-width: 760px) 50vw, 100vw" /></div>
 </section>
 
 <section class="alt"><div class="wrap section stack-lg">

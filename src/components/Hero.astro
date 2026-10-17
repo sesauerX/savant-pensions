@@ -1,4 +1,5 @@
 ---
+import Pic from "./Pic.astro";
 // Page hero. With `image` it is the photo hero (navy overlay, subject right);
 // without, the plain Sterling gradient. `overlap` leaves room for a card that
 // rides up over the bottom edge (contact form, calculator).
@@ -7,15 +8,21 @@ const {
   title,
   lede,
   image,
+  photo,
   imagePosition = "center",
   crumbs = [],
   overlap = false,
   variant = "",
 } = Astro.props;
-const cls = ["hero", image ? "has-photo" : "", overlap ? "overlap" : "", variant].filter(Boolean).join(" ");
+const cls = ["hero", image || photo ? "has-photo" : "", overlap ? "overlap" : "", variant].filter(Boolean).join(" ");
 ---
 <section class={cls}>
-  {image && (
+  {photo && (
+    <div class="hero-media">
+      <Pic name={photo} sizes="100vw" priority style={`object-position:${imagePosition}`} />
+    </div>
+  )}
+  {image && !photo && (
     <div class="hero-media">
       <img src={image} alt="" width="2520" height="1080" fetchpriority="high" decoding="async" style={`object-position:${imagePosition}`} />
     </div>

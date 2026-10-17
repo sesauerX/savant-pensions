@@ -2,10 +2,11 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
 ---
 <Base>
 
-<Hero image="/images/admin.jpg" crumbs={[{ label: "Services" }]} kicker="Services & third-party administration" title="The strategy matters. So does every detail after it." lede="Sterling Pension Group brings plan design, administration, and professional coordination into one clearer experience for business owners and their advisors.">
+<Hero photo="services-hero" crumbs={[{ label: "Services" }]} kicker="Services & third-party administration" title="The strategy matters. So does every detail after it." lede="Sterling Pension Group brings plan design, administration, and professional coordination into one clearer experience for business owners and their advisors.">
   <div class="hero-actions"><a class="btn primary" href="/contact">Talk through your current plan</a></div>
 </Hero>
 
@@ -19,7 +20,7 @@ import Icon from "../components/Icon.astro";
 </section>
 
 <section class="navy-split">
-  <div class="photo-side"><img src="/images/admin.jpg" alt="Illustration representing pension compliance and TPA governance" width="1600" height="1200" loading="lazy" /></div>
+  <div class="photo-side"><Pic name="services-split" sizes="(min-width: 760px) 50vw, 100vw" /></div>
   <div class="copy">
     <p class="kicker">What we take off your plate</p>
     <h2>A more connected way to manage a complex plan.</h2>

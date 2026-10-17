@@ -2,10 +2,11 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
 ---
 <Base>
 
-<Hero image="/images/about.jpg" crumbs={[{ label: "About" }]} kicker="About Sterling Pension Group" title="A sharper view of what your retirement plan can do." lede="Sterling Pension Group LLC is a West Hartford-based retirement plan consulting and third-party administration firm. We help business owners make more confident decisions about Defined Benefit and Cash Balance Plans." />
+<Hero photo="about-hero" crumbs={[{ label: "About" }]} kicker="About Sterling Pension Group" title="A sharper view of what your retirement plan can do." lede="Sterling Pension Group LLC is a West Hartford-based retirement plan consulting and third-party administration firm. We help business owners make more confident decisions about Defined Benefit and Cash Balance Plans." />
 
 <section class="wrap section stack-lg">
   <p class="big-quote">Our work is intentionally focused: understand the business, explain the plan, coordinate the specialists, and stay close to the details over time.</p>
@@ -24,11 +25,11 @@ import Icon from "../components/Icon.astro";
     <p><strong style="color:#fff">In practice:</strong> you get a clear strategy, a thoughtful administrative partner, and a connected path through the professionals who support your business.</p>
     <p>That split matters when a vendor quotes one number and calls it “the plan.” Design support, documents, census work, and filing coordination sit with Sterling. The valuation and Schedule SB sit with the independent actuary. The deduction sits with your CPA. The assets sit with the trustee or recordkeeper. See <a href="/fees">who does what</a> and <a href="/services">the services</a>.</p>
   </div>
-  <div class="photo-side"><img src="/images/hero.jpg" alt="Business owners reviewing a plan with an advisor" width="1600" height="1200" loading="lazy" /></div>
+  <div class="photo-side"><Pic name="about-role" sizes="(min-width: 760px) 50vw, 100vw" /></div>
 </section>
 
 <section class="wrap section"><div class="split">
-  <img class="photo" src="/images/building.jpg" alt="" width="1600" height="1200" loading="lazy" />
+  <Pic class="photo" name="about-office" sizes="(min-width: 760px) 50vw, 100vw" />
   <div>
     <p class="kicker">Our home base</p>
     <div class="info-card">

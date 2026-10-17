@@ -4,6 +4,7 @@ import Hero from "../../components/Hero.astro";
 import Icon from "../../components/Icon.astro";
 import { formatDate, posts } from "../../lib/posts";
 import { topicByDate } from "../../lib/topics";
+import Pic from "../../components/Pic.astro";
 const [lead] = posts;
 const hub = [
   ["#briefing", "Owner briefing", "A note every two weeks, written to the limits that were current that week."],
@@ -42,7 +43,7 @@ const hub = [
     </div>
     {lead && (
       <article class="featured">
-        <a class="cover" href={`/insights/${lead.slug}`} tabindex="-1" aria-hidden="true"><img src={lead.image} alt="" width="1600" height="900" loading="lazy" /></a>
+        <a class="cover" href={`/insights/${lead.slug}`} tabindex="-1" aria-hidden="true"><Pic name={`cover-${lead.date}`} alt="" sizes="(min-width: 760px) 55vw, 100vw" /></a>
         <div class="body">
           <div class="meta-row">{topicByDate[lead.date] && <span class="chip">{topicByDate[lead.date]}</span>}<span class="kicker" style="font-size:13px">{formatDate(lead.date)}</span></div>
           <h2><a href={`/insights/${lead.slug}`}>{lead.title}</a></h2>

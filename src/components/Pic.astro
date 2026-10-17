@@ -1,0 +1,21 @@
+---
+// Responsive image for a slot in src/lib/images.json (see IMAGES.md).
+import images from "../lib/images.json";
+type Entry = { src: string; srcset: string; width: number; height: number; alt: string };
+const { name, sizes = "100vw", class: cls, priority = false, alt, style } = Astro.props;
+const img = (images as Record<string, Entry>)[name];
+if (!img) throw new Error(`No image for slot "${name}"`);
+---
+<img
+  class={cls}
+  src={img.src}
+  srcset={img.srcset}
+  sizes={sizes}
+  width={img.width}
+  height={img.height}
+  alt={alt ?? img.alt}
+  loading={priority ? "eager" : "lazy"}
+  fetchpriority={priority ? "high" : undefined}
+  decoding="async"
+  style={style}
+/>

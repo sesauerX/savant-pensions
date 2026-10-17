@@ -1,0 +1,583 @@
+{
+ "home-hero": {
+  "src": "/images/site/home-hero-2048.webp",
+  "srcset": "/images/site/home-hero-2048.webp 2048w, /images/site/home-hero-1440.webp 1440w, /images/site/home-hero-960.webp 960w, /images/site/home-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A business owner and her plan administrator reviewing printed pages at a desk by a window"
+ },
+ "home-db": {
+  "src": "/images/site/home-db-1600.webp",
+  "srcset": "/images/site/home-db-1600.webp 1600w, /images/site/home-db-1024.webp 1024w, /images/site/home-db-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A business owner in his sixties reading through a plan binder at his desk"
+ },
+ "home-cb": {
+  "src": "/images/site/home-cb-1600.webp",
+  "srcset": "/images/site/home-cb-1600.webp 1600w, /images/site/home-cb-1024.webp 1024w, /images/site/home-cb-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A design studio owner checking a growing account balance on a tablet"
+ },
+ "home-admin": {
+  "src": "/images/site/home-admin-1536.webp",
+  "srcset": "/images/site/home-admin-1536.webp 1536w, /images/site/home-admin-1024.webp 1024w, /images/site/home-admin-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "Two practice staff sorting files at a back-office table"
+ },
+ "db-hero": {
+  "src": "/images/site/db-hero-2048.webp",
+  "srcset": "/images/site/db-hero-2048.webp 2048w, /images/site/db-hero-1440.webp 1440w, /images/site/db-hero-960.webp 960w, /images/site/db-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "An engineering firm owner reading by his office window"
+ },
+ "cb-hero": {
+  "src": "/images/site/cb-hero-2048.webp",
+  "srcset": "/images/site/cb-hero-2048.webp 2048w, /images/site/cb-hero-1440.webp 1440w, /images/site/cb-hero-960.webp 960w, /images/site/cb-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A clinic owner reviewing her plan balance on a laptop after hours"
+ },
+ "combo-hero": {
+  "src": "/images/site/combo-hero-2048.webp",
+  "srcset": "/images/site/combo-hero-2048.webp 2048w, /images/site/combo-hero-1440.webp 1440w, /images/site/combo-hero-960.webp 960w, /images/site/combo-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A business owner and her CPA comparing two sets of plan documents"
+ },
+ "combo-split": {
+  "src": "/images/site/combo-split-1536.webp",
+  "srcset": "/images/site/combo-split-1536.webp 1536w, /images/site/combo-split-1024.webp 1024w, /images/site/combo-split-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "Two plan folders side by side with a calculator and pen"
+ },
+ "se-hero": {
+  "src": "/images/site/se-hero-2048.webp",
+  "srcset": "/images/site/se-hero-2048.webp 2048w, /images/site/se-hero-1440.webp 1440w, /images/site/se-hero-960.webp 960w, /images/site/se-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A self-employed consultant working in her home office"
+ },
+ "physicians": {
+  "src": "/images/site/physicians-2048.webp",
+  "srcset": "/images/site/physicians-2048.webp 2048w, /images/site/physicians-1440.webp 1440w, /images/site/physicians-960.webp 960w, /images/site/physicians-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "Two physicians and a pension consultant reviewing plan details at a clinic office table"
+ },
+ "physicians-card": {
+  "src": "/images/site/physicians-card-1024.webp",
+  "srcset": "/images/site/physicians-card-1024.webp 1024w, /images/site/physicians-card-640.webp 640w",
+  "width": 1024,
+  "height": 576,
+  "alt": "Two physicians and a pension consultant reviewing plan details at a clinic office table"
+ },
+ "dentists": {
+  "src": "/images/site/dentists-2048.webp",
+  "srcset": "/images/site/dentists-2048.webp 2048w, /images/site/dentists-1440.webp 1440w, /images/site/dentists-960.webp 960w, /images/site/dentists-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A dentist and his practice manager reviewing figures in the practice office"
+ },
+ "dentists-card": {
+  "src": "/images/site/dentists-card-1024.webp",
+  "srcset": "/images/site/dentists-card-1024.webp 1024w, /images/site/dentists-card-640.webp 640w",
+  "width": 1024,
+  "height": 576,
+  "alt": "A dentist and his practice manager reviewing figures in the practice office"
+ },
+ "attorneys": {
+  "src": "/images/site/attorneys-2048.webp",
+  "srcset": "/images/site/attorneys-2048.webp 2048w, /images/site/attorneys-1440.webp 1440w, /images/site/attorneys-960.webp 960w, /images/site/attorneys-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "Two law firm partners of different ages reviewing papers in a conference room"
+ },
+ "attorneys-card": {
+  "src": "/images/site/attorneys-card-1024.webp",
+  "srcset": "/images/site/attorneys-card-1024.webp 1024w, /images/site/attorneys-card-640.webp 640w",
+  "width": 1024,
+  "height": 576,
+  "alt": "Two law firm partners of different ages reviewing papers in a conference room"
+ },
+ "consultants": {
+  "src": "/images/site/consultants-2048.webp",
+  "srcset": "/images/site/consultants-2048.webp 2048w, /images/site/consultants-1440.webp 1440w, /images/site/consultants-960.webp 960w, /images/site/consultants-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "An independent consultant and his spouse reviewing plan paperwork at home"
+ },
+ "consultants-card": {
+  "src": "/images/site/consultants-card-1024.webp",
+  "srcset": "/images/site/consultants-card-1024.webp 1024w, /images/site/consultants-card-640.webp 640w",
+  "width": 1024,
+  "height": 576,
+  "alt": "An independent consultant and his spouse reviewing plan paperwork at home"
+ },
+ "services-hero": {
+  "src": "/images/site/services-hero-2048.webp",
+  "srcset": "/images/site/services-hero-2048.webp 2048w, /images/site/services-hero-1440.webp 1440w, /images/site/services-hero-960.webp 960w, /images/site/services-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A plan administrator talking a client through a binder"
+ },
+ "services-split": {
+  "src": "/images/site/services-split-1536.webp",
+  "srcset": "/images/site/services-split-1536.webp 1536w, /images/site/services-split-1024.webp 1024w, /images/site/services-split-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "A business owner, his CPA and a plan administrator meeting at one table"
+ },
+ "admin-hero": {
+  "src": "/images/site/admin-hero-2048.webp",
+  "srcset": "/images/site/admin-hero-2048.webp 2048w, /images/site/admin-hero-1440.webp 1440w, /images/site/admin-hero-960.webp 960w, /images/site/admin-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A plan administrator working through census data at her desk"
+ },
+ "admin-clocks": {
+  "src": "/images/site/admin-clocks-1536.webp",
+  "srcset": "/images/site/admin-clocks-1536.webp 1536w, /images/site/admin-clocks-1024.webp 1024w, /images/site/admin-clocks-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "An office wall clock above a blank wall calendar"
+ },
+ "compliance-hero": {
+  "src": "/images/site/compliance-hero-2048.webp",
+  "srcset": "/images/site/compliance-hero-2048.webp 2048w, /images/site/compliance-hero-1440.webp 1440w, /images/site/compliance-hero-960.webp 960w, /images/site/compliance-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A business owner and administrator working through an annual review checklist"
+ },
+ "compliance-split": {
+  "src": "/images/site/compliance-split-1536.webp",
+  "srcset": "/images/site/compliance-split-1536.webp 1536w, /images/site/compliance-split-1024.webp 1024w, /images/site/compliance-split-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "Hands filing a document into a tabbed plan binder"
+ },
+ "compliance-navy": {
+  "src": "/images/site/compliance-navy-1536.webp",
+  "srcset": "/images/site/compliance-navy-1536.webp 1536w, /images/site/compliance-navy-1024.webp 1024w, /images/site/compliance-navy-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "An administrator working through a stack of filings under a desk lamp in the evening"
+ },
+ "staff-hero": {
+  "src": "/images/site/staff-hero-2048.webp",
+  "srcset": "/images/site/staff-hero-2048.webp 2048w, /images/site/staff-hero-1440.webp 1440w, /images/site/staff-hero-960.webp 960w, /images/site/staff-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "Dental practice staff in a short team meeting"
+ },
+ "about-hero": {
+  "src": "/images/site/about-hero-2048.webp",
+  "srcset": "/images/site/about-hero-2048.webp 2048w, /images/site/about-hero-1440.webp 1440w, /images/site/about-hero-960.webp 960w, /images/site/about-hero-640.webp 640w",
+  "width": 2048,
+  "height": 878,
+  "alt": "A small professional office in a restored brick building, morning light"
+ },
+ "about-role": {
+  "src": "/images/site/about-role-1536.webp",
+  "srcset": "/images/site/about-role-1536.webp 1536w, /images/site/about-role-1024.webp 1024w, /images/site/about-role-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "Two clinic owners going through their plan with an advisor"
+ },
+ "about-office": {
+  "src": "/images/site/about-office-1536.webp",
+  "srcset": "/images/site/about-office-1536.webp 1536w, /images/site/about-office-1024.webp 1024w, /images/site/about-office-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": ""
+ },
+ "contact": {
+  "src": "/images/site/contact-1536.webp",
+  "srcset": "/images/site/contact-1536.webp 1536w, /images/site/contact-1024.webp 1024w, /images/site/contact-640.webp 640w",
+  "width": 1536,
+  "height": 1152,
+  "alt": "A desk phone, notepad and coffee on an office desk"
+ },
+ "cover-2024-09-01": {
+  "src": "/images/briefing/2024-09-01-1600.webp",
+  "srcset": "/images/briefing/2024-09-01-1600.webp 1600w, /images/briefing/2024-09-01-1024.webp 1024w, /images/briefing/2024-09-01-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A closed notebook and a fallen leaf on an oak desk by an open window"
+ },
+ "cover-2024-09-15": {
+  "src": "/images/briefing/2024-09-15-1600.webp",
+  "srcset": "/images/briefing/2024-09-15-1600.webp 1600w, /images/briefing/2024-09-15-1024.webp 1024w, /images/briefing/2024-09-15-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "An empty chair at an oak desk with a closed umbrella hanging on it"
+ },
+ "cover-2024-09-29": {
+  "src": "/images/briefing/2024-09-29-1600.webp",
+  "srcset": "/images/briefing/2024-09-29-1600.webp 1600w, /images/briefing/2024-09-29-1024.webp 1024w, /images/briefing/2024-09-29-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Two fountain pens side by side on a leather desk blotter"
+ },
+ "cover-2024-10-13": {
+  "src": "/images/briefing/2024-10-13-1600.webp",
+  "srcset": "/images/briefing/2024-10-13-1600.webp 1600w, /images/briefing/2024-10-13-1024.webp 1024w, /images/briefing/2024-10-13-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A wooden card file of blank index cards on an oak desk"
+ },
+ "cover-2024-10-27": {
+  "src": "/images/briefing/2024-10-27-1600.webp",
+  "srcset": "/images/briefing/2024-10-27-1600.webp 1600w, /images/briefing/2024-10-27-1024.webp 1024w, /images/briefing/2024-10-27-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small bowl nested inside a larger one on an oak desk"
+ },
+ "cover-2024-11-10": {
+  "src": "/images/briefing/2024-11-10-1600.webp",
+  "srcset": "/images/briefing/2024-11-10-1600.webp 1600w, /images/briefing/2024-11-10-1024.webp 1024w, /images/briefing/2024-11-10-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A magnifying glass resting on a closed book"
+ },
+ "cover-2024-11-24": {
+  "src": "/images/briefing/2024-11-24-1600.webp",
+  "srcset": "/images/briefing/2024-11-24-1600.webp 1600w, /images/briefing/2024-11-24-1024.webp 1024w, /images/briefing/2024-11-24-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "An open pocket watch beside reading glasses"
+ },
+ "cover-2024-12-08": {
+  "src": "/images/briefing/2024-12-08-1600.webp",
+  "srcset": "/images/briefing/2024-12-08-1600.webp 1600w, /images/briefing/2024-12-08-1024.webp 1024w, /images/briefing/2024-12-08-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A brass desk clock and a sprig of evergreen on a winter morning"
+ },
+ "cover-2024-12-22": {
+  "src": "/images/briefing/2024-12-22-1600.webp",
+  "srcset": "/images/briefing/2024-12-22-1600.webp 1600w, /images/briefing/2024-12-22-1024.webp 1024w, /images/briefing/2024-12-22-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A candle and a cup of tea on a desk at dusk, snow outside"
+ },
+ "cover-2025-01-05": {
+  "src": "/images/briefing/2025-01-05-1600.webp",
+  "srcset": "/images/briefing/2025-01-05-1600.webp 1600w, /images/briefing/2025-01-05-1024.webp 1024w, /images/briefing/2025-01-05-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A new blank planner and a sharpened pencil"
+ },
+ "cover-2025-01-19": {
+  "src": "/images/briefing/2025-01-19-1600.webp",
+  "srcset": "/images/briefing/2025-01-19-1600.webp 1600w, /images/briefing/2025-01-19-1024.webp 1024w, /images/briefing/2025-01-19-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Three hourglasses of different sizes in a row"
+ },
+ "cover-2025-02-02": {
+  "src": "/images/briefing/2025-02-02-1600.webp",
+  "srcset": "/images/briefing/2025-02-02-1600.webp 1600w, /images/briefing/2025-02-02-1024.webp 1024w, /images/briefing/2025-02-02-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A stethoscope coiled beside a closed folder"
+ },
+ "cover-2025-02-16": {
+  "src": "/images/briefing/2025-02-16-1600.webp",
+  "srcset": "/images/briefing/2025-02-16-1600.webp 1600w, /images/briefing/2025-02-16-1024.webp 1024w, /images/briefing/2025-02-16-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A dental mirror on a tray beside a closed folder"
+ },
+ "cover-2025-03-02": {
+  "src": "/images/briefing/2025-03-02-1600.webp",
+  "srcset": "/images/briefing/2025-03-02-1600.webp 1600w, /images/briefing/2025-03-02-1024.webp 1024w, /images/briefing/2025-03-02-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Early daffodils in a small vase beside a sealed envelope"
+ },
+ "cover-2025-03-16": {
+  "src": "/images/briefing/2025-03-16-1600.webp",
+  "srcset": "/images/briefing/2025-03-16-1600.webp 1600w, /images/briefing/2025-03-16-1024.webp 1024w, /images/briefing/2025-03-16-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A sealed kraft envelope and a fountain pen"
+ },
+ "cover-2025-03-30": {
+  "src": "/images/briefing/2025-03-30-1600.webp",
+  "srcset": "/images/briefing/2025-03-30-1600.webp 1600w, /images/briefing/2025-03-30-1024.webp 1024w, /images/briefing/2025-03-30-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Leather-bound books between brass bookends"
+ },
+ "cover-2025-04-13": {
+  "src": "/images/briefing/2025-04-13-1600.webp",
+  "srcset": "/images/briefing/2025-04-13-1600.webp 1600w, /images/briefing/2025-04-13-1024.webp 1024w, /images/briefing/2025-04-13-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small stack of balanced stones on an oak desk"
+ },
+ "cover-2025-04-27": {
+  "src": "/images/briefing/2025-04-27-1600.webp",
+  "srcset": "/images/briefing/2025-04-27-1600.webp 1600w, /images/briefing/2025-04-27-1024.webp 1024w, /images/briefing/2025-04-27-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Two matching coffee cups side by side"
+ },
+ "cover-2025-05-11": {
+  "src": "/images/briefing/2025-05-11-1600.webp",
+  "srcset": "/images/briefing/2025-05-11-1600.webp 1600w, /images/briefing/2025-05-11-1024.webp 1024w, /images/briefing/2025-05-11-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A neat stack of manila folders"
+ },
+ "cover-2025-05-25": {
+  "src": "/images/briefing/2025-05-25-1600.webp",
+  "srcset": "/images/briefing/2025-05-25-1600.webp 1600w, /images/briefing/2025-05-25-1024.webp 1024w, /images/briefing/2025-05-25-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A brass embossing seal beside a face-down sheet of paper"
+ },
+ "cover-2025-06-08": {
+  "src": "/images/briefing/2025-06-08-1600.webp",
+  "srcset": "/images/briefing/2025-06-08-1600.webp 1600w, /images/briefing/2025-06-08-1024.webp 1024w, /images/briefing/2025-06-08-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Four plain envelopes fanned out on a desk"
+ },
+ "cover-2025-06-22": {
+  "src": "/images/briefing/2025-06-22-1600.webp",
+  "srcset": "/images/briefing/2025-06-22-1600.webp 1600w, /images/briefing/2025-06-22-1024.webp 1024w, /images/briefing/2025-06-22-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A seedling growing from a jar of coins"
+ },
+ "cover-2025-07-06": {
+  "src": "/images/briefing/2025-07-06-1600.webp",
+  "srcset": "/images/briefing/2025-07-06-1600.webp 1600w, /images/briefing/2025-07-06-1024.webp 1024w, /images/briefing/2025-07-06-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A glass of iced water beside a stack of sealed envelopes in summer light"
+ },
+ "cover-2025-07-20": {
+  "src": "/images/briefing/2025-07-20-1600.webp",
+  "srcset": "/images/briefing/2025-07-20-1600.webp 1600w, /images/briefing/2025-07-20-1024.webp 1024w, /images/briefing/2025-07-20-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A pencil with a worn eraser and eraser crumbs on a blank sheet"
+ },
+ "cover-2025-08-03": {
+  "src": "/images/briefing/2025-08-03-1600.webp",
+  "srcset": "/images/briefing/2025-08-03-1600.webp 1600w, /images/briefing/2025-08-03-1024.webp 1024w, /images/briefing/2025-08-03-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A wooden document box closed with a brass padlock"
+ },
+ "cover-2025-08-17": {
+  "src": "/images/briefing/2025-08-17-1600.webp",
+  "srcset": "/images/briefing/2025-08-17-1600.webp 1600w, /images/briefing/2025-08-17-1024.webp 1024w, /images/briefing/2025-08-17-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A brass balance scale with level pans"
+ },
+ "cover-2025-08-31": {
+  "src": "/images/briefing/2025-08-31-1600.webp",
+  "srcset": "/images/briefing/2025-08-31-1600.webp 1600w, /images/briefing/2025-08-31-1024.webp 1024w, /images/briefing/2025-08-31-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A bowl of apples and a closed laptop by an open window"
+ },
+ "cover-2025-09-14": {
+  "src": "/images/briefing/2025-09-14-1600.webp",
+  "srcset": "/images/briefing/2025-09-14-1600.webp 1600w, /images/briefing/2025-09-14-1024.webp 1024w, /images/briefing/2025-09-14-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A clipboard with a blank sheet and a pencil"
+ },
+ "cover-2025-09-28": {
+  "src": "/images/briefing/2025-09-28-1600.webp",
+  "srcset": "/images/briefing/2025-09-28-1600.webp 1600w, /images/briefing/2025-09-28-1024.webp 1024w, /images/briefing/2025-09-28-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A ruler, compass and rolled paper on an oak desk"
+ },
+ "cover-2025-10-12": {
+  "src": "/images/briefing/2025-10-12-1600.webp",
+  "srcset": "/images/briefing/2025-10-12-1600.webp 1600w, /images/briefing/2025-10-12-1024.webp 1024w, /images/briefing/2025-10-12-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A ship in a bottle on a desk in autumn light"
+ },
+ "cover-2025-10-26": {
+  "src": "/images/briefing/2025-10-26-1600.webp",
+  "srcset": "/images/briefing/2025-10-26-1600.webp 1600w, /images/briefing/2025-10-26-1024.webp 1024w, /images/briefing/2025-10-26-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A clipped stack of documents with reading glasses on top"
+ },
+ "cover-2025-11-09": {
+  "src": "/images/briefing/2025-11-09-1600.webp",
+  "srcset": "/images/briefing/2025-11-09-1600.webp 1600w, /images/briefing/2025-11-09-1024.webp 1024w, /images/briefing/2025-11-09-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "An open blank ledger under a brass desk lamp"
+ },
+ "cover-2025-11-23": {
+  "src": "/images/briefing/2025-11-23-1600.webp",
+  "srcset": "/images/briefing/2025-11-23-1600.webp 1600w, /images/briefing/2025-11-23-1024.webp 1024w, /images/briefing/2025-11-23-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Blank cards pinned to a cork board on a desk"
+ },
+ "cover-2025-12-07": {
+  "src": "/images/briefing/2025-12-07-1600.webp",
+  "srcset": "/images/briefing/2025-12-07-1600.webp 1600w, /images/briefing/2025-12-07-1024.webp 1024w, /images/briefing/2025-12-07-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A seedling in a glass jar by a frosted window"
+ },
+ "cover-2025-12-21": {
+  "src": "/images/briefing/2025-12-21-1600.webp",
+  "srcset": "/images/briefing/2025-12-21-1600.webp 1600w, /images/briefing/2025-12-21-1024.webp 1024w, /images/briefing/2025-12-21-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small wrapped gift under a lit desk lamp on a winter evening"
+ },
+ "cover-2026-01-04": {
+  "src": "/images/briefing/2026-01-04-1600.webp",
+  "srcset": "/images/briefing/2026-01-04-1600.webp 1600w, /images/briefing/2026-01-04-1024.webp 1024w, /images/briefing/2026-01-04-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A steaming coffee and an open blank notebook on a snowy morning"
+ },
+ "cover-2026-01-18": {
+  "src": "/images/briefing/2026-01-18-1600.webp",
+  "srcset": "/images/briefing/2026-01-18-1600.webp 1600w, /images/briefing/2026-01-18-1024.webp 1024w, /images/briefing/2026-01-18-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small measuring cup full of coffee beans beside a larger empty one"
+ },
+ "cover-2026-02-01": {
+  "src": "/images/briefing/2026-02-01-1600.webp",
+  "srcset": "/images/briefing/2026-02-01-1600.webp 1600w, /images/briefing/2026-02-01-1024.webp 1024w, /images/briefing/2026-02-01-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Two different pairs of reading glasses side by side"
+ },
+ "cover-2026-02-15": {
+  "src": "/images/briefing/2026-02-15-1600.webp",
+  "srcset": "/images/briefing/2026-02-15-1600.webp 1600w, /images/briefing/2026-02-15-1024.webp 1024w, /images/briefing/2026-02-15-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Rain on the window and grey light over a closed folder"
+ },
+ "cover-2026-03-01": {
+  "src": "/images/briefing/2026-03-01-1600.webp",
+  "srcset": "/images/briefing/2026-03-01-1600.webp 1600w, /images/briefing/2026-03-01-1024.webp 1024w, /images/briefing/2026-03-01-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A half-open desk drawer with folders inside"
+ },
+ "cover-2026-03-15": {
+  "src": "/images/briefing/2026-03-15-1600.webp",
+  "srcset": "/images/briefing/2026-03-15-1600.webp 1600w, /images/briefing/2026-03-15-1024.webp 1024w, /images/briefing/2026-03-15-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Two desk clocks showing different times"
+ },
+ "cover-2026-03-29": {
+  "src": "/images/briefing/2026-03-29-1600.webp",
+  "srcset": "/images/briefing/2026-03-29-1600.webp 1600w, /images/briefing/2026-03-29-1024.webp 1024w, /images/briefing/2026-03-29-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A ring of keys beside a closed folder"
+ },
+ "cover-2026-04-12": {
+  "src": "/images/briefing/2026-04-12-1600.webp",
+  "srcset": "/images/briefing/2026-04-12-1600.webp 1600w, /images/briefing/2026-04-12-1024.webp 1024w, /images/briefing/2026-04-12-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A new mug and potted plant at an empty desk"
+ },
+ "cover-2026-04-26": {
+  "src": "/images/briefing/2026-04-26-1600.webp",
+  "srcset": "/images/briefing/2026-04-26-1600.webp 1600w, /images/briefing/2026-04-26-1024.webp 1024w, /images/briefing/2026-04-26-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small brass key on a desk with a closed door behind"
+ },
+ "cover-2026-05-10": {
+  "src": "/images/briefing/2026-05-10-1600.webp",
+  "srcset": "/images/briefing/2026-05-10-1600.webp 1600w, /images/briefing/2026-05-10-1024.webp 1024w, /images/briefing/2026-05-10-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A fountain pen resting on a closed leather folder"
+ },
+ "cover-2026-05-24": {
+  "src": "/images/briefing/2026-05-24-1600.webp",
+  "srcset": "/images/briefing/2026-05-24-1600.webp 1600w, /images/briefing/2026-05-24-1024.webp 1024w, /images/briefing/2026-05-24-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A face-down sheet of paper beside a brass paperweight"
+ },
+ "cover-2026-06-07": {
+  "src": "/images/briefing/2026-06-07-1600.webp",
+  "srcset": "/images/briefing/2026-06-07-1600.webp 1600w, /images/briefing/2026-06-07-1024.webp 1024w, /images/briefing/2026-06-07-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A small bonsai tree on an oak desk"
+ },
+ "cover-2026-06-21": {
+  "src": "/images/briefing/2026-06-21-1600.webp",
+  "srcset": "/images/briefing/2026-06-21-1600.webp 1600w, /images/briefing/2026-06-21-1024.webp 1024w, /images/briefing/2026-06-21-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "Two leather armchairs facing an oak desk"
+ },
+ "cover-2026-07-05": {
+  "src": "/images/briefing/2026-07-05-1600.webp",
+  "srcset": "/images/briefing/2026-07-05-1600.webp 1600w, /images/briefing/2026-07-05-1024.webp 1024w, /images/briefing/2026-07-05-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A glass of water and a closed notebook in midsummer light"
+ },
+ "cover-2026-07-19": {
+  "src": "/images/briefing/2026-07-19-1600.webp",
+  "srcset": "/images/briefing/2026-07-19-1600.webp 1600w, /images/briefing/2026-07-19-1024.webp 1024w, /images/briefing/2026-07-19-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A row of identical mugs on a shelf"
+ },
+ "cover-2026-08-02": {
+  "src": "/images/briefing/2026-08-02-1600.webp",
+  "srcset": "/images/briefing/2026-08-02-1600.webp 1600w, /images/briefing/2026-08-02-1024.webp 1024w, /images/briefing/2026-08-02-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "An open moving box holding a desk lamp and a plant"
+ },
+ "cover-2026-08-16": {
+  "src": "/images/briefing/2026-08-16-1600.webp",
+  "srcset": "/images/briefing/2026-08-16-1600.webp 1600w, /images/briefing/2026-08-16-1024.webp 1024w, /images/briefing/2026-08-16-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A stack of three closed planners"
+ },
+ "cover-2026-08-30": {
+  "src": "/images/briefing/2026-08-30-1600.webp",
+  "srcset": "/images/briefing/2026-08-30-1600.webp 1600w, /images/briefing/2026-08-30-1024.webp 1024w, /images/briefing/2026-08-30-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A navy portfolio, fountain pen, brass desk calendar and coffee on an oak desk"
+ },
+ "cover-2026-09-13": {
+  "src": "/images/briefing/2026-09-13-1600.webp",
+  "srcset": "/images/briefing/2026-09-13-1600.webp 1600w, /images/briefing/2026-09-13-1024.webp 1024w, /images/briefing/2026-09-13-640.webp 640w",
+  "width": 1600,
+  "height": 900,
+  "alt": "A full jar of coins beside an empty jar"
+ }
+}

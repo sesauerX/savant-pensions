@@ -1,5 +1,6 @@
 ---
 import Icon from "./Icon.astro";
+import Pic from "./Pic.astro";
 import { industries } from "../lib/nav";
 const { current } = Astro.props;
 const others = industries.filter((i) => i.href !== current);
@@ -12,7 +13,7 @@ const others = industries.filter((i) => i.href !== current);
   <div class="grid3">
     {others.map((i) => (
       <a class="media-card tile" href={i.href}>
-        <div class="media"><img src={i.image} alt="" width="1600" height="900" loading="lazy" /></div>
+        <div class="media"><Pic name={i.slot} alt="" sizes="(min-width: 1000px) 400px, (min-width: 760px) 50vw, 100vw" /></div>
         <div class="body"><strong>{i.label}</strong><Icon name="arrow" size={20} stroke={2.2} class="arrow-blue" /></div>
       </a>
     ))}

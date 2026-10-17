@@ -2,10 +2,11 @@
 import Base from "../layouts/Base.astro";
 import Hero from "../components/Hero.astro";
 import Icon from "../components/Icon.astro";
+import Pic from "../components/Pic.astro";
 ---
 <Base>
 
-<Hero image="/images/building.jpg" crumbs={[{ href: "/services", label: "Services" }, { label: "Compliance" }]} kicker="Annual compliance review" title="A clear annual review keeps small issues from becoming big ones." lede="Sterling helps business owners and their advisors create a repeatable review process around deadlines, participant data, plan testing, and required professional sign-offs." />
+<Hero photo="compliance-hero" crumbs={[{ href: "/services", label: "Services" }, { label: "Compliance" }]} kicker="Annual compliance review" title="A clear annual review keeps small issues from becoming big ones." lede="Sterling helps business owners and their advisors create a repeatable review process around deadlines, participant data, plan testing, and required professional sign-offs." />
 
 <section class="wrap section"><div class="split">
   <div>
@@ -21,11 +22,11 @@ import Icon from "../components/Icon.astro";
       <li><Icon name="check" size={22} stroke={2.4} />Escalate actuarial certification questions to an independent Enrolled Actuary</li>
     </ul>
   </div>
-  <img class="photo" src="/images/building.jpg" alt="Compliance and plan oversight illustration" width="1600" height="1200" loading="lazy" />
+  <Pic class="photo" name="compliance-split" sizes="(min-width: 760px) 50vw, 100vw" />
 </div></section>
 
 <section class="navy-split">
-  <div class="photo-side"><img src="/images/admin.jpg" alt="" width="1600" height="1200" loading="lazy" /></div>
+  <div class="photo-side"><Pic name="compliance-navy" sizes="(min-width: 760px) 50vw, 100vw" /></div>
   <div class="copy">
     <h2>Three dates, not one “year-end”</h2>
     <p>Owners get into trouble by treating year-end as the only date. Minimum funding, the deduction, and Form 5500 are different obligations. Missing minimum funding can mean a 10 percent excise tax on Form 5330. A deposit that is on time for the deduction can still be late for funding, and the reverse is also true. Your CPA confirms which tax year a deposit lands in. The actuary confirms the minimum and the deductible maximum. Sterling keeps the census and the filing coordinated with both. The plain calendar is <a href="/calendar">here</a>.</p>
