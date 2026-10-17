@@ -572,10 +572,16 @@ blockquote.pull { margin: 8px 0; padding: 24px 28px; background: var(--light); b
 .dates .d-blue { border-left-color: var(--bright); }
 .dates strong { display: block; font-size: 20px; color: var(--navy); }
 .dates span { font-size: 14.5px; color: var(--body); }
-.guide.roles ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 18px; }
-.guide.roles li { background: #fff; border-radius: var(--radius-card); padding: 24px; border-top: 6px solid var(--sterling); box-shadow: var(--shadow-raised); font-size: 15.5px; line-height: 1.65; }
-.guide.roles li:first-child { border-top-color: var(--gold); }
-.guide.roles li > strong:first-child { display: block; margin-bottom: 8px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bright-text); }
+/* /fees role cards: 2x2 in the content column; the first (Sterling) is the navy feature card */
+.guide.roles ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.guide.roles li { background: #fff; border-radius: var(--radius-card); padding: 26px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(11, 37, 69, 0.06); font-size: 15.5px; line-height: 1.65; color: var(--body); }
+.guide.roles li > strong:first-child { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bright-text); }
+.guide.roles li:first-child { background: var(--gradient-feature); color: var(--on-navy-strong); box-shadow: none; }
+.guide.roles li:first-child > strong:first-child { color: var(--gold); }
+@media (max-width: 600px) { .guide.roles ul { grid-template-columns: 1fr; } }
+.guide.roles li .sep { display: none; }
+.guide.roles li .role-body { display: block; }
+.guide.roles li .role-body::first-letter { text-transform: uppercase; }
 .compare-table th[scope="row"] { color: var(--navy); white-space: nowrap; }
 .compare-table td strong { color: var(--navy); font-size: 18px; }
 .compare-table thead th:last-child { background: var(--sterling); }
@@ -600,6 +606,3 @@ blockquote.pull { margin: 8px 0; padding: 24px 28px; background: var(--light); b
   .band { grid-template-columns: 1fr; }
   .band.axis > span { display: none; }
 }
-.guide.roles li .sep { display: none; }
-.guide.roles li .role-body { display: block; }
-.guide.roles li .role-body::first-letter { text-transform: uppercase; }
