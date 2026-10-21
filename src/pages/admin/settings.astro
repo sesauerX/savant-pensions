@@ -1,7 +1,8 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { config, integrationStatus } from "../../lib/cases/config";
-import { EMAIL_TEMPLATES, EMAIL_WORDING_STATUS } from "../../lib/cases/emails";
+import { EMAIL_APPROVAL, EMAIL_TEMPLATES } from "../../lib/cases/emails";
+import { IDENTITY_RETENTION_DAYS, RETENTION_POLICY } from "../../lib/cases/retention";
 
 export const prerender = false;
 
@@ -36,8 +37,16 @@ const status = Object.entries(integrationStatus());
     <p class="small muted">English and German. Documents themselves stay English.</p>
     <table class="t small">
       <thead><tr><th>Email</th><th>English</th><th>German</th></tr></thead>
-      <tbody>{EMAIL_TEMPLATES.map((t) => <tr><td>{t.name}</td><td><span class="badge action">{EMAIL_WORDING_STATUS}</span></td><td><span class="badge action">{EMAIL_WORDING_STATUS}</span></td></tr>)}</tbody>
+      <tbody>{EMAIL_TEMPLATES.map((t) => <tr><td>{t.name}</td>{(["en", "de"] as const).map((l) => <td>{EMAIL_APPROVAL[l].approved ? <span class="badge done">approved</span> : <span class="badge action">pending approval</span>}</td>)}</tr>)}</tbody>
     </table>
+    <p class="small muted" style="margin-top:8px">German: {EMAIL_APPROVAL.de.note}. English: {EMAIL_APPROVAL.en.note}.</p>
+  </div>
+  <div class="card">
+    <h2>Retention</h2>
+    <dl class="kv small">
+      <dt>Case data</dt><dd><b>{RETENTION_POLICY}.</b> Cases are never deleted automatically; "Delete case data" on a case removes it by hand.</dd>
+      <dt>Identity documents</dt><dd>Attachments tagged "Identity document" are deleted {IDENTITY_RETENTION_DAYS} days after the case's details were confirmed (daily check, logged on the case). The file record stays; the scan itself is removed.</dd>
+    </dl>
   </div>
   <div class="card">
     <h2>Webhooks</h2>

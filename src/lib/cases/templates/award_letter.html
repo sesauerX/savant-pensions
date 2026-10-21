@@ -1,8 +1,9 @@
-<!-- template_version: AWD-2026-10-21.2 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending) -->
-<header class="letterhead">
-  <p class="name">{{company_name}}</p>
-  <p class="line">{{principal_office_address_lines|br}}</p>
-  <p class="line">EIN {{ein}}</p>
+<!-- template_version: AWD-2026-10-21.3 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending)
+     Letterhead is generated from case data only (company name, principal office, EIN): the client
+     company's own paper, no Sterling branding. -->
+<header class="co-letterhead">
+  <p class="{{letterhead_name_class}}">{{company_name}}</p>
+  <p class="co-line">{{principal_office_address}} <span class="nowrap">· EIN {{ein}}</span></p>
 </header>
 
 <p>Date: {{award_letter_date}}</p>

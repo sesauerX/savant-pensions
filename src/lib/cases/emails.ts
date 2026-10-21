@@ -6,6 +6,7 @@
 // the English title first with the German name in brackets.
 import { fileById } from "./cases";
 import type { Lang } from "./mail";
+import { config } from "./config";
 import { formatDate, formatDateDe } from "./schema";
 import { FIELD_BY_KEY } from "./schema";
 import { escapeHtml } from "./templates/render";
@@ -24,6 +25,12 @@ export type EmailDraft = {
   text: string;
   attachments: CaseFile[];
   problems: string[];
+};
+
+/** Owner decisions on the wording (21 Oct 2026): German approved, English pending. */
+export const EMAIL_APPROVAL: Record<Lang, { approved: boolean; note: string }> = {
+  de: { approved: true, note: "approved by the owner, 21 Oct 2026 (reply footer and the missing-details reply sentence added afterwards on the owner's instruction)" },
+  en: { approved: false, note: "wording pending owner approval" },
 };
 
 export const EMAIL_TEMPLATES: { kind: EmailKind; name: string }[] = [
@@ -270,8 +277,20 @@ export function buildEmail(c: Case, kind: EmailKind, opts: EmailOptions = {}): E
     const items = (opts.items ?? []).map((k) => FIELD_BY_KEY[k]?.ask?.[lang]).filter(Boolean) as string[];
     if (!items.length) problems.push("Choose at least one missing detail.");
     const blocks: Block[] = de
-      ? ["um Ihre Unterlagen fertigstellen zu können, benötigen wir noch folgende Angaben:", { ul: items }, `Bitte senden Sie uns diese über sterlingpensiongroup.com/contact und geben Sie dabei die Referenz ${ref} an.`]
-      : ["To complete your documents, we still need the following details:", { ul: items }, `Please send them to us through sterlingpensiongroup.com/contact and quote the reference ${ref}.`];
+      ? [
+          "um Ihre Unterlagen fertigstellen zu können, benötigen wir noch folgende Angaben:",
+          { ul: items },
+          config.replyTo()
+            ? `Bitte antworten Sie direkt auf diese E-Mail mit den Angaben und fügen Sie gegebenenfalls Scans bei. Behalten Sie dabei die Referenz ${ref} im Betreff bei.`
+            : `Bitte senden Sie uns diese über sterlingpensiongroup.com/contact und geben Sie dabei die Referenz ${ref} an.`,
+        ]
+      : [
+          "To complete your documents, we still need the following details:",
+          { ul: items },
+          config.replyTo()
+            ? `Please reply to this email with the details and attach any scans. Keep the reference ${ref} in the subject line.`
+            : `Please send them to us through sterlingpensiongroup.com/contact and quote the reference ${ref}.`,
+        ];
     return done(de ? `${ref} – Fehlende Angaben zu Ihrer Pensionsvereinbarung` : `${ref} – Missing details for your pension arrangement`, blocks, []);
   }
 

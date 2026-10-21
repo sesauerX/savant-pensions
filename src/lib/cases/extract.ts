@@ -21,6 +21,7 @@ Rules:
 - state_of_formation is the full US state name.
 - List in "uncertain" every field where any interpretation, conversion or inference was needed, or where sources disagree.
 - List in "missing" the required fields you could not find.
+- List in "identity_documents" the exact file names of attachments that are passport or national identity card scans (not company documents).
 - "notes": a short neutral summary for the reviewer of anything unusual (conflicts, unclear handwriting, missing pages). No personal data beyond what is needed.`;
 
 // Set by Sterling, not by the intake: dates chosen at confirm time, state-law defaults, and the
@@ -40,11 +41,12 @@ function schema() {
   props.notes = { type: "string" };
   props.missing = { type: "array", items: { type: "string" } };
   props.uncertain = { type: "array", items: { type: "string" } };
+  props.identity_documents = { type: "array", items: { type: "string" }, description: "File names of attachments that are passport or national ID scans" };
   return { type: "object", properties: props, required: Object.keys(props), additionalProperties: false };
 }
 
 export type Attachment = { filename: string; contentType: string; bytes: Uint8Array };
-export type ExtractionResult = { fields: Fields; notes: string; missing: string[]; uncertain: string[]; model: string };
+export type ExtractionResult = { fields: Fields; notes: string; missing: string[]; uncertain: string[]; model: string; identityDocuments: string[] };
 
 const SUPPORTED: Record<string, "document" | "image"> = {
   "application/pdf": "document",
@@ -64,6 +66,7 @@ export async function extractFields(email: { from: string; subject: string; text
     const kind = SUPPORTED[a.contentType.toLowerCase()];
     if (!kind || a.bytes.byteLength > 10 * 1024 * 1024 || used > 20 * 1024 * 1024) continue;
     used += a.bytes.byteLength;
+    content.push({ type: "text", text: `Attachment file name: ${a.filename}` });
     content.push({
       type: kind,
       source: { type: "base64", media_type: a.contentType.toLowerCase(), data: Buffer.from(a.bytes).toString("base64") },
@@ -116,6 +119,7 @@ export async function extractFields(email: { from: string; subject: string; text
       missing: list(raw.missing),
       uncertain: list(raw.uncertain),
       model: body.model ?? model,
+      identityDocuments: Array.isArray(raw.identity_documents) ? raw.identity_documents.map(String).slice(0, 20) : [],
     };
   } finally {
     clearTimeout(timer);

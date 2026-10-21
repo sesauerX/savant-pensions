@@ -44,12 +44,17 @@ export function fileAsOptions(c: Case) {
   for (const cert of c.certificates) {
     for (const k of ["cert_notarized", "cert_apostille", "cert_proof"] as const) out.push({ value: `${k}:${cert.no}`, label: `Certificate C${cert.no} – ${FILE_AS[k].label}` });
   }
+  out.push({ value: "identity", label: "Identity document (passport / ID scan)" });
+  out.push({ value: "not_identity", label: "Not an identity document" });
   out.push({ value: "other", label: "Other" });
   return out;
 }
 
-function parseAs(value: string): { as: FileAs; certNo?: number } {
+type Target = { as: FileAs; certNo?: number } | { as: "identity" | "not_identity" };
+
+function parseAs(value: string): Target {
   const [as, no] = value.split(":");
+  if (as === "identity" || as === "not_identity") return { as };
   if (!(as in FILE_AS)) throw new GuardError("Unknown file purpose.");
   const def = FILE_AS[as as FileAs];
   if (def.cert && !Number(no)) throw new GuardError("Choose a certificate.");
@@ -57,13 +62,26 @@ function parseAs(value: string): { as: FileAs; certNo?: number } {
 }
 
 /** Record a stored file under a purpose: sets doc/certificate links and milestones. Runs inside mutateCase. */
-function fileUnder(c: Case, file: CaseFile, target: { as: FileAs; certNo?: number }, by: string) {
+function fileUnder(c: Case, file: CaseFile, target: Target, by: string) {
+  if (target.as === "identity" || target.as === "not_identity") {
+    if (file.deleted) throw new GuardError("This file was already deleted.");
+    if (target.as === "identity") {
+      file.identity = { by, at: nowIso() };
+      addEvent(c, by, `Tagged "${file.name}" as an identity document (deleted 90 days after details are confirmed)`);
+    } else {
+      delete file.identity;
+      addEvent(c, by, `Removed the identity-document tag from "${file.name}"`);
+    }
+    delete file.identitySuggested;
+    return;
+  }
   const def = FILE_AS[target.as];
+  const certNo = "certNo" in target ? target.certNo : undefined;
   file.kind = def.kind;
   if (def.doc) file.doc = def.doc;
   if (def.cert) {
-    const cert = wf.certByNo(c, target.certNo!);
-    if (!cert) throw new GuardError(`Certificate C${target.certNo} not found.`);
+    const cert = wf.certByNo(c, certNo!);
+    if (!cert) throw new GuardError(`Certificate C${certNo} not found.`);
     file.certNo = cert.no;
     if (def.kind === "proof") cert.files.proof = [...new Set([...cert.files.proof, file.id])];
     else cert.files.notarized = [...new Set([...cert.files.notarized, file.id])];
@@ -228,7 +246,7 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
         const f0 = fileById(c0, fileId);
         if (!f0) throw new GuardError("File not found.");
         const bytes = await getFileBytes(f0.path);
-        if (target.as !== "other") checkUpload(bytes);
+        if (!["other", "identity", "not_identity"].includes(target.as)) checkUpload(bytes);
         await mutateCase(caseId, by, (c) => {
           fileUnder(c, fileById(c, fileId)!, target, by);
         });
@@ -240,6 +258,9 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
         const carrier = s(form, "carrier", 40);
         const tracking = s(form, "tracking", 80);
         const shippedAt = s(form, "shipped_at", 10);
+        const setsRaw = s(form, "sets", 3);
+        const sets = setsRaw ? Number(setsRaw) : undefined;
+        if (sets !== undefined && !(Number.isInteger(sets) && sets >= 1 && sets <= 50)) throw new GuardError("Enter the number of sets (1 or more).");
         if (what !== "award" && !certNo) throw new GuardError("Choose what was shipped.");
         if (!CARRIERS.includes(carrier as (typeof CARRIERS)[number])) throw new GuardError("Choose a carrier.");
         if (!tracking) throw new GuardError("Enter the tracking number.");
@@ -249,10 +270,10 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
           const url = trackingUrl(carrier, tracking) ?? (s(form, "tracking_url", 300).startsWith("https://") ? s(form, "tracking_url", 300) : undefined);
           const id = randomId(4);
           const contents: DocKey[] = certNo ? ["certificate"] : ["award_letter"];
-          c.shipments.push({ id, contents, ...(certNo ? { certNo } : {}), carrier, tracking, ...(url ? { trackingUrl: url } : {}), shippedAt });
+          c.shipments.push({ id, contents, ...(certNo ? { certNo } : {}), carrier, tracking, ...(url ? { trackingUrl: url } : {}), shippedAt, ...(sets ? { sets } : {}) });
           if (certNo) wf.certByNo(c, certNo)!.shipments.push(id);
           else setMilestone(c, "award_couriered", by);
-          addEvent(c, by, `Shipment recorded: ${certNo ? `Certificate C${certNo}` : "Award Letter"} via ${carrier}`);
+          addEvent(c, by, `Shipment recorded: ${certNo ? `Certificate C${certNo}` : "Award Letter"}${sets ? `, ${sets} set(s)` : ""} via ${carrier}`);
         });
         return { ok: true, message: "Shipment recorded.", redirect: `/admin/cases/${caseId}${certNo ? `#cert-${certNo}` : "#shipments"}` };
       }

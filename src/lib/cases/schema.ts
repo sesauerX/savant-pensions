@@ -50,7 +50,7 @@ export const FIELDS: FieldDef[] = [
   { key: "apostille_sets", label: "Apostilled original sets", group: "Beneficiary", type: "text", required: false, hint: "Number of sets", ask: { en: "Number of apostilled original sets", de: "Anzahl der apostillierten Originalsätze" } },
   { key: "service_start_date", label: "Service start date", group: "Beneficiary", type: "date", required: true, ask: { en: "Start date of your service to the company", de: "Beginn Ihrer Tätigkeit für die Gesellschaft" } },
   { key: "monthly_amount", label: "Monthly pension (USD)", group: "Pension", type: "amount", required: true },
-  { key: "commencement_date", label: "First payment date", group: "Pension", type: "date", required: true },
+  { key: "commencement_date", label: "First payment date", group: "Pension", type: "date", required: true, hint: "The pension start date, often given as \"Start date\"" },
   { key: "adjustment_date", label: "Annual adjustment date", group: "Pension", type: "text", required: true },
   { key: "adjustment_index", label: "Index", group: "Pension", type: "textarea", required: true },
   { key: "has_survivor", label: "Survivor named?", group: "Survivor", type: "bool", required: true },

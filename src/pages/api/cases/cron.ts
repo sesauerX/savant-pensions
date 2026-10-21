@@ -5,6 +5,7 @@ import { config } from "../../../lib/cases/config";
 import { bearerOk, notFound } from "../../../lib/cases/http";
 import { notifyAdmins } from "../../../lib/cases/mail";
 import { refreshAllSignatures } from "../../../lib/cases/workflow";
+import { purgeIdentityDocuments } from "../../../lib/cases/retention";
 
 export const prerender = false;
 
@@ -14,7 +15,17 @@ export const GET: APIRoute = async ({ request }) => {
   if (!config.enabled()) return notFound();
   if (!bearerOk(request, config.cronSecret())) return new Response("Unauthorized", { status: 401 });
   const started = Date.now();
-  const cases = (await listCases()).filter((e) => e.state === "active" || e.state === "closed");
+  const all = await listCases();
+  // Retention: identity documents 90 days after details were confirmed (every case state).
+  let purged = 0;
+  for (const entry of all) {
+    try {
+      purged += await purgeIdentityDocuments(entry.id);
+    } catch (err) {
+      console.error("[cases] retention failed", entry.id, (err as Error).message);
+    }
+  }
+  const cases = all.filter((e) => e.state === "active" || e.state === "closed");
   let polled = 0;
   const stale: string[] = [];
   for (const entry of cases) {
@@ -44,6 +55,6 @@ export const GET: APIRoute = async ({ request }) => {
   if (stale.length) {
     await notifyAdmins(`Sterling cases: ${stale.length} need attention`, ["These cases have been waiting a while:", ...stale.map((s) => `• ${s}`)], `${config.siteUrl()}/admin`);
   }
-  console.log(`[cases] cron: ${cases.length} active, ${polled} polled, ${stale.length} stale`);
-  return Response.json({ ok: true, active: cases.length, polled, stale: stale.length });
+  console.log(`[cases] cron: ${cases.length} active, ${polled} polled, ${stale.length} stale, ${purged} identity documents deleted`);
+  return Response.json({ ok: true, active: cases.length, polled, stale: stale.length, identityDeleted: purged });
 };

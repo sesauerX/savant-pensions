@@ -24,13 +24,14 @@ export const CLIENT_SIGNED_DOCS: DocKey[] = ["operating_agreement", "written_con
 
 export const certRef = (caseRef: string, no: number) => `${caseRef}-C${no}`;
 
-type DocDef = { n: number; title: string; short: string; src: string; footer: "sterling" | "company" };
+/** sterling: Sterling header/footer/border · company: neutral corporate · letter: the client company's own paper */
+type DocDef = { n: number; title: string; short: string; src: string; footer: "sterling" | "company" | "letter" };
 
 export const DOCS: Record<DocKey, DocDef> = {
   operating_agreement: { n: 1, title: "Operating Agreement", short: "Operating Agreement", src: oaSrc, footer: "company" },
   pension_policy: { n: 2, title: "Corporate Pension Policy", short: "Pension Policy", src: policySrc, footer: "company" },
   written_consent: { n: 3, title: "Written Consent of Sole Member", short: "Written Consent", src: consentSrc, footer: "company" },
-  award_letter: { n: 4, title: "Pension Award Letter", short: "Award Letter", src: awardSrc, footer: "company" },
+  award_letter: { n: 4, title: "Pension Award Letter", short: "Award Letter", src: awardSrc, footer: "letter" },
   certificate: { n: 5, title: "Certificate of Pension Administration", short: "Certificate", src: certSrc, footer: "sterling" },
 };
 
@@ -58,7 +59,7 @@ export class DocumentFieldsError extends Error {
   }
 }
 
-export type BuiltDoc = { doc: DocKey; html: string; footerHtml: string; version: string; title: string };
+export type BuiltDoc = { doc: DocKey; html: string; footerHtml: string; version: string; title: string; border: boolean; author: string };
 
 /** Fill a template and wrap it in a full HTML page. Throws DocumentFieldsError with every missing field. */
 export function buildDocument(
@@ -81,23 +82,25 @@ export function buildDocument(
   const title = `${reference} - ${def.title}`;
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
 <style>${fontFaceCss()}
-${sharedCss}</style></head><body class="${doc === "certificate" ? "cert" : "doc"}">
+${sharedCss}</style></head><body class="${doc === "certificate" ? "cert" : def.footer === "letter" ? "doc letter" : "doc"}">
 ${watermark ? `<div class="watermark">${escapeHtml(WATERMARK_TEXT)}</div>` : ""}
 ${body}
 </body></html>`;
-  const left = def.footer === "sterling" ? STERLING_LINE : `${String(values.company_name)} · Ref: ${reference}`;
+  const company = String(values.company_name);
+  const left = def.footer === "sterling" ? STERLING_LINE : def.footer === "letter" ? company : `${company} · Ref: ${reference}`;
   const right = def.footer === "sterling" ? `Ref: ${reference} · ` : "";
-  const footerHtml = footerTemplate(left, right);
-  return { doc, html, footerHtml, version: templateVersion(def.src), title };
+  const footerHtml = footerTemplate(left, right, def.footer === "letter");
+  return { doc, html, footerHtml, version: templateVersion(def.src), title, border: def.footer !== "letter", author: def.footer === "letter" ? company : "Sterling Pension Group LLC" };
 }
 
-function footerTemplate(left: string, rightPrefix: string) {
+function footerTemplate(left: string, rightPrefix: string, neutral = false) {
   // Chromium renders this in the bottom page margin; classes pageNumber/totalPages are filled in.
   return `<style>${fontFaceCss(["400"])}
-  .f{box-sizing:border-box;width:100%;padding:0 1in 0.62in;font-family:Inter,sans-serif;font-size:7.5pt;color:#5B6776;-webkit-print-color-adjust:exact}
-  .f .row{display:flex;justify-content:space-between;gap:12px;border-top:0.75pt solid #DCE3EC;padding-top:7px}
+  .f{box-sizing:border-box;width:100%;padding:0 1in 0.62in;font-family:Inter,sans-serif;font-size:7.5pt;color:${neutral ? "#666666" : "#5B6776"};-webkit-print-color-adjust:exact}
+  .f .row{display:flex;justify-content:space-between;gap:12px;border-top:0.75pt solid ${neutral ? "#DDDDDD" : "#DCE3EC"};padding-top:7px}
+  .f .l{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .f .r{white-space:nowrap}</style>
-  <div class="f"><div class="row"><span>${escapeHtml(left)}</span><span class="r">${escapeHtml(rightPrefix)}Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div></div>`;
+  <div class="f"><div class="row"><span class="l">${escapeHtml(left)}</span><span class="r">${escapeHtml(rightPrefix)}Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div></div>`;
 }
 
 export type RenderedDoc = { doc: DocKey; certNo?: number; name: string; pdf: Uint8Array; pages: number; version: string };
@@ -128,7 +131,7 @@ export async function renderDocuments(
   }
   if (missing.size) throw new DocumentFieldsError([...missing]);
   const { htmlToPdfBatch } = await import("./pdf");
-  const pdfs = await htmlToPdfBatch(built.map((b) => ({ html: b.html, footerHtml: b.footerHtml, title: b.title })));
+  const pdfs = await htmlToPdfBatch(built.map((b) => ({ html: b.html, footerHtml: b.footerHtml, title: b.title, border: b.border, author: b.author })));
   return built.map((b, i) => ({
     doc: b.doc,
     certNo: b.certNo,

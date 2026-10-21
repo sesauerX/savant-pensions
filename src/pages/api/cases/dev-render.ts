@@ -19,6 +19,7 @@ export const GET: APIRoute = async ({ request, url, cookies }) => {
     survivor: url.searchParams.get("survivor") === "1",
     existing: url.searchParams.get("existing") === "1",
     cents: url.searchParams.get("cents") === "1",
+    long: url.searchParams.get("long") === "1",
   });
   const watermark = url.searchParams.get("watermark") !== "0";
   const withTags = url.searchParams.get("tags") === "1";

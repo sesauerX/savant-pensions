@@ -43,6 +43,20 @@ strong, b { font-weight: 700; color: var(--navy); }
 .letterhead .name { font-weight: 800; color: var(--navy); font-size: 15pt; letter-spacing: -0.01em; margin: 0 0 0.04in; }
 .letterhead .line { font-size: 9.5pt; color: var(--grey); line-height: 1.45; margin: 0; }
 
+/* Generated company letterhead (Award Letter): neutral black/grey, no Sterling colours. */
+.co-letterhead { border-bottom: 0.75pt solid #2B2B2B; padding-bottom: 0.11in; margin-bottom: 0.3in; }
+.co-name { font-weight: 700; font-size: 13pt; letter-spacing: 0.14em; text-transform: uppercase; color: #111111; line-height: 1.25; margin: 0 0 0.05in; text-wrap: balance; }
+.co-name.long { font-size: 11pt; letter-spacing: 0.1em; }
+.co-line { font-size: 8.5pt; color: #5A5A5A; line-height: 1.45; margin: 0; text-wrap: balance; }
+.nowrap { white-space: nowrap; }
+body.letter, body.letter p { color: #1E1E1E; }
+body.letter strong, body.letter b, body.letter h3 { color: #111111; }
+body.letter table.summary th { background: #F3F3F3; color: #111111; }
+body.letter table.summary th, body.letter table.summary td { border-bottom-color: #DDDDDD; }
+body.letter .sig .line { border-top-color: #111111; }
+body.letter .sig .muted { color: #555555; }
+body.letter .watermark { color: rgba(0, 0, 0, 0.06); }
+
 /* Title block */
 .title-block { text-align: center; margin-bottom: 0.22in; }
 /* The certificate follows the reference design: slightly smaller body text. */

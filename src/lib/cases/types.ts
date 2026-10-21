@@ -21,6 +21,12 @@ export type CaseFile = {
   pages?: number;
   /** Certificate issue number (C1, C2…) for certificate files. */
   certNo?: number;
+  /** Tagged by an admin as an identity document (deleted 90 days after details are confirmed). */
+  identity?: { by: string; at: string };
+  /** Extraction thinks this is a passport/ID scan; an admin must confirm the tag. */
+  identitySuggested?: boolean;
+  /** Set when the stored bytes were deleted under the retention rule; the record stays. */
+  deleted?: { at: string; reason: string };
 };
 
 export type DocRecord = { current?: string; signed?: string; notarized?: string[]; history: string[] };
@@ -82,6 +88,8 @@ export type Case = {
     id: string;
     contents: DocKey[];
     certNo?: number;
+    /** Apostilled sets in this parcel (one shipment per notary round holds all sets). */
+    sets?: number;
     carrier: string;
     tracking: string;
     trackingUrl?: string;

@@ -158,6 +158,15 @@ export async function runExtraction(caseId: string, email: { from: string; subje
         if (!uncertain.includes("client_language")) uncertain.push("client_language");
       }
       c.extraction = { model: r.model, at: nowIso(), notes: r.notes, missing: r.missing, uncertain };
+      const suggested = new Set(r.identityDocuments.map((n) => n.trim().toLowerCase()));
+      let tagged = 0;
+      for (const f of c.files) {
+        if (f.kind === "inbound" && !f.identity && suggested.has(f.name.trim().toLowerCase())) {
+          f.identitySuggested = true;
+          tagged++;
+        }
+      }
+      if (tagged) addEvent(c, by, `Extraction suggests ${tagged} attachment(s) are identity documents; confirm with “File as… Identity document”`);
       addEvent(c, by, `Details extracted by ${r.model} (${Object.keys(r.fields).length} fields, ${r.uncertain.length} uncertain)`);
     });
   } catch (err) {
@@ -202,6 +211,46 @@ export function htmlToText(html: string) {
 }
 
 /**
+ * Decide where an inbound email goes:
+ * - a reply from the case's client (sender = member_email, DMARC pass, valid reference) → that case;
+ * - allowlisted, authenticated senders → the referenced case, or a new intake without a reference;
+ * - everything else → the unassigned inbox.
+ */
+export async function routeInbound(
+  e: ReceivedEmail & { received_for?: string[] },
+  atts: { filename: string; contentType: string; bytes: Uint8Array }[],
+): Promise<string> {
+  if (!addressedToUs(e)) {
+    await toInbox(e, atts, "sent to another address");
+    return "inbox:address";
+  }
+  const sender = senderAllowed(e);
+  const ref = findReference(e);
+  const c = ref ? await getCase(ref) : null;
+  const clientEmail = String(c?.fields.member_email ?? "").trim().toLowerCase();
+  if (c && sender.authenticated && clientEmail && sender.from === clientEmail) {
+    await attachEmailToCase(c, e, atts, `client:${sender.from}`);
+    await notifyAdmins(`${c.id}: the client replied`, [`The client replied on case ${c.id} (${atts.length} attachment${atts.length === 1 ? "" : "s"}).`], `${config.siteUrl()}/admin/cases/${c.id}#inbox`);
+    return `client-reply:${c.id}`;
+  }
+  if (!sender.listed || !sender.authenticated) {
+    await toInbox(e, atts, !sender.authenticated ? "sender not authenticated (DMARC)" : ref ? "sender is neither on the allowlist nor the case's client" : "sender not on the allowlist");
+    return "inbox:sender";
+  }
+  if (ref) {
+    if (!c) {
+      await toInbox(e, atts, `unknown reference ${ref}`);
+      return "inbox:unknown-ref";
+    }
+    await attachEmailToCase(c, e, atts, `email:${sender.from}`);
+    await notifyAdmins(`${c.id}: new email on the case`, [`An email was attached to case ${c.id} (${atts.length} attachment${atts.length === 1 ? "" : "s"}).`], `${config.siteUrl()}/admin/cases/${c.id}#inbox`);
+    return `attached:${c.id}`;
+  }
+  const created = await intakeEmail(e, atts, `email:${sender.from}`);
+  return `created:${created.id}`;
+}
+
+/**
  * Process one `email.received` event. The body is always re-fetched from Resend by ID, so a
  * forged webhook cannot inject content. Idempotent per email id.
  */
@@ -216,28 +265,7 @@ export async function processInbound(emailId: string): Promise<string> {
   try {
     const e = (await getReceivedEmail(id)) as ReceivedEmail & { received_for?: string[] };
     const atts = await downloadReceivedAttachments(id);
-    if (!addressedToUs(e)) {
-      await toInbox(e, atts, "sent to another address");
-      return "inbox:address";
-    }
-    const sender = senderAllowed(e);
-    if (!sender.listed || !sender.authenticated) {
-      await toInbox(e, atts, !sender.listed ? "sender not on the allowlist" : "sender not authenticated (DMARC)");
-      return "inbox:sender";
-    }
-    const ref = findReference(e);
-    if (ref) {
-      const c = await getCase(ref);
-      if (!c) {
-        await toInbox(e, atts, `unknown reference ${ref}`);
-        return "inbox:unknown-ref";
-      }
-      await attachEmailToCase(c, e, atts, `email:${sender.from}`);
-      await notifyAdmins(`${c.id}: new email on the case`, [`An email was attached to case ${c.id} (${atts.length} attachment${atts.length === 1 ? "" : "s"}).`], `${config.siteUrl()}/admin/cases/${c.id}#inbox`);
-      return `attached:${c.id}`;
-    }
-    const c = await intakeEmail(e, atts, `email:${sender.from}`);
-    return `created:${c.id}`;
+    return await routeInbound(e, atts);
   } catch (err) {
     // Release the claim so Resend's retry can process it again.
     const { deleteFile } = await import("./store");

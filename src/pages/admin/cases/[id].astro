@@ -53,14 +53,14 @@ const fmtTime = (iso?: string) => (iso ? new Date(iso).toLocaleString("en-US", {
 const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
 const href = (f: CaseFile, dl = false) => `/api/cases/file?case=${cs.id}&file=${f.id}${dl ? "&download=1" : ""}`;
 const file = (fid?: string) => fileById(cs, fid);
-const files = (ids: string[] = []) => ids.map((x) => file(x)).filter(Boolean) as CaseFile[];
+const files = (ids: string[] = []) => ids.map((x) => file(x)).filter((f) => f && !f.deleted) as CaseFile[];
 const fileAs = fileAsOptions(cs);
 
 const inbound = await Promise.all(
   cs.inbound.map(async (i) => ({
     ...i,
     body: (await readJson<{ text?: string; html?: string }>(`cases/${cs.id}/inbound/${i.emailId}.json`).catch(() => null))?.data ?? null,
-    files: files(i.fileIds),
+    files: i.fileIds.map((x) => file(x)).filter(Boolean) as CaseFile[],
   })),
 );
 
@@ -104,6 +104,7 @@ const certificateC1Unsigned = (x: Case) => {
         <span class="muted">· Created {fmtTime(cs.createdAt)} from {cs.source.type}{cs.source.from ? ` (${cs.source.from})` : ""}</span>
       </div>
     </div>
+    <a class="btn secondary" href={`/admin/cases/${cs.id}/archive`} title="Every current and earlier file plus case-summary.pdf. The download is logged.">Download case archive (ZIP)</a>
   </div>
   {cs.state === "on_hold" && <div class="flash err">On hold: {cs.holdReason}</div>}
   {cs.state === "cancelled" && <div class="flash err">This case is cancelled. Data is kept.</div>}
@@ -324,13 +325,14 @@ const certificateC1Unsigned = (x: Case) => {
             </div>
             <div class="step">
               <h3>5. Courier</h3>
-              {cs.shipments.filter((s) => !s.certNo).map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
+              {cs.shipments.filter((s) => !s.certNo).map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.sets ? ` · ${s.sets} set(s)` : ""}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
               <form method="post" action={`/admin/cases/${cs.id}/action`} class="row ship">
                 <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" /><input type="hidden" name="what" value="award" />
                 <select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select>
                 <input name="tracking" placeholder="Tracking number" required />
                 <input type="date" name="shipped_at" value={todayIso()} required />
                 <input name="tracking_url" placeholder="Link (Other carriers)" />
+                <input name="sets" type="number" min="1" value={String(cs.fields.apostille_sets ?? "") || "1"} title="Apostilled sets in this parcel" style="max-width:80px" /><span class="small muted">sets</span>
                 <button class="secondary" type="submit">Add shipment</button>
               </form>
             </div>
@@ -413,13 +415,14 @@ const certificateC1Unsigned = (x: Case) => {
                 </div>
                 <div class="step">
                   <h3>Courier (optional)</h3>
-                  {ships.map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
+                  {ships.map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.sets ? ` · ${s.sets} set(s)` : ""}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
                   <form method="post" action={`/admin/cases/${cs.id}/action`} class="row ship">
                     <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" /><input type="hidden" name="what" value={String(cert.no)} />
                     <select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select>
                     <input name="tracking" placeholder="Tracking number" required />
                     <input type="date" name="shipped_at" value={todayIso()} required />
                     <input name="tracking_url" placeholder="Link (Other carriers)" />
+                    <input name="sets" type="number" min="1" value={String(cs.fields.apostille_sets ?? "") || "1"} title="Apostilled sets in this parcel" style="max-width:80px" /><span class="small muted">sets</span>
                     <button class="secondary" type="submit" disabled={!workable}>Add shipment</button>
                   </form>
                 </div>
@@ -466,10 +469,10 @@ const certificateC1Unsigned = (x: Case) => {
         <h2>Shipments</h2>
         {cs.shipments.length === 0 ? <p class="muted small">None yet. Add them in the Award Letter or certificate panels.</p> : (
           <table class="t small">
-            <thead><tr><th>Contents</th><th>Carrier</th><th>Tracking</th><th>Shipped</th><th>Delivered</th></tr></thead>
+            <thead><tr><th>Contents</th><th>Sets</th><th>Carrier</th><th>Tracking</th><th>Shipped</th><th>Delivered</th></tr></thead>
             <tbody>{cs.shipments.map((s) => (
               <tr>
-                <td>{s.certNo ? `Certificate C${s.certNo}` : "Award Letter"}</td><td>{s.carrier}</td>
+                <td>{s.certNo ? `Certificate C${s.certNo}` : "Award Letter"}</td><td>{s.sets ?? "–"}</td><td>{s.carrier}</td>
                 <td>{s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking}</td>
                 <td>{fmtDate(s.shippedAt)}</td>
                 <td>{s.deliveredAt ? fmtDate(s.deliveredAt) : (
@@ -498,13 +501,16 @@ const certificateC1Unsigned = (x: Case) => {
             </details>
             {e.files.map((f) => (
               <div class="row small attach">
-                <a href={href(f, true)}>{f.name}</a><span class="muted">{size(f.size)} · {f.kind}{f.doc ? ` · ${f.certNo ? `C${f.certNo}` : DOCS[f.doc].short}` : ""}</span>
+                {f.deleted ? <span class="muted"><s>{f.name}</s> deleted {fmtDate(f.deleted.at)} ({f.deleted.reason})</span> : <a href={href(f, true)}>{f.name}</a>}
+                <span class="muted">{size(f.size)} · {f.kind}{f.doc ? ` · ${f.certNo ? `C${f.certNo}` : DOCS[f.doc].short}` : ""}</span>
+                {f.identity && !f.deleted && <span class="badge hold" title={`Tagged by ${f.identity.by}`}>Identity document · deleted 90 days after confirmation</span>}
+                {f.identitySuggested && !f.identity && <span class="badge action">Looks like an identity document: confirm below</span>}
                 <span class="spacer"></span>
-                <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+                {!f.deleted && <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
                   <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="file_as" /><input type="hidden" name="file" value={f.id} /><input type="hidden" name="_back" value="#inbox" />
-                  <select name="as" style="max-width:260px">{fileAs.map((o) => <option value={o.value}>{o.label}</option>)}</select>
+                  <select name="as" style="max-width:260px">{fileAs.map((o) => <option value={o.value} selected={o.value === "identity" && f.identitySuggested && !f.identity}>{o.label}</option>)}</select>
                   <button class="secondary" type="submit">File as…</button>
-                </form>
+                </form>}
               </div>
             ))}
           </div>
@@ -639,7 +645,7 @@ const certificateC1Unsigned = (x: Case) => {
   .asks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0 12px; margin-bottom: 8px; }
   .asks .check { font-weight: 500; margin: 3px 0; }
   .railcerts { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 4px; display: grid; gap: 4px; }
-  .head { margin-bottom: 12px; }
+  .head { margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
   .ref { font-weight: 600; font-size: 16px; }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
   @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }

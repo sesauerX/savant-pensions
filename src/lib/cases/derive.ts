@@ -105,6 +105,8 @@ export function templateValues(
   v.adjustment_index_short = "CPI-U";
   v.show_passport = flags.showPassport;
   v.with_tags = Boolean(flags.withTags);
+  // Long company names get a smaller letterhead line so they wrap at most once.
+  v.letterhead_name_class = String(fields.company_name ?? "").length > 36 ? "co-name long" : "co-name";
   const cert = flags.certificate;
   if (cert) {
     v.is_onboarding = cert.variant === "onboarding";

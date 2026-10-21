@@ -31,9 +31,9 @@ const GOLD = rgb(242 / 255, 179 / 255, 61 / 255);
 const PT = 72; // points per inch
 
 /** Border, hairline and metadata on every page. */
-export async function finishPdf(bytes: Uint8Array, title: string) {
+export async function finishPdf(bytes: Uint8Array, title: string, border = true, author = "Sterling Pension Group LLC") {
   const pdf = await PDFDocument.load(bytes);
-  for (const page of pdf.getPages()) {
+  for (const page of border ? pdf.getPages() : []) {
     const { width, height } = page.getSize();
     const outer = 0.36 * PT;
     const inner = 0.45 * PT;
@@ -41,13 +41,13 @@ export async function finishPdf(bytes: Uint8Array, title: string) {
     page.drawRectangle({ x: inner, y: inner, width: width - 2 * inner, height: height - 2 * inner, borderColor: GOLD, borderWidth: 0.75 });
   }
   pdf.setTitle(title);
-  pdf.setAuthor("Sterling Pension Group LLC");
-  pdf.setCreator("Sterling Pension Group case system");
-  pdf.setProducer("Sterling Pension Group case system");
+  pdf.setAuthor(author);
+  pdf.setCreator(author);
+  pdf.setProducer(author);
   return { pdf: await pdf.save(), pages: pdf.getPageCount() };
 }
 
-export async function htmlToPdfBatch(items: { html: string; footerHtml: string; title: string }[]) {
+export async function htmlToPdfBatch(items: { html: string; footerHtml: string; title: string; border?: boolean; author?: string }[]) {
   const started = Date.now();
   const browser = await launch();
   try {
@@ -66,7 +66,7 @@ export async function htmlToPdfBatch(items: { html: string; footerHtml: string; 
           headerTemplate: "<span></span>",
           footerTemplate: item.footerHtml,
         });
-        out.push(await finishPdf(raw, item.title));
+        out.push(await finishPdf(raw, item.title, item.border ?? true, item.author));
       } finally {
         await page.close();
       }

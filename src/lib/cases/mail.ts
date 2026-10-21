@@ -26,9 +26,19 @@ const FOOTER_NO_REPLY: Record<Lang, string> = {
   en: "This mailbox is not monitored. Please contact us through sterlingpensiongroup.com/contact.",
   de: "Diese E-Mail wurde von einer nicht überwachten Adresse versendet. Bitte kontaktieren Sie uns über sterlingpensiongroup.com/contact.",
 };
+// With SPG_REPLY_TO set, client replies reach the intake address and are filed to the case by reference.
+const FOOTER_REPLY: Record<Lang, string> = {
+  en: "Please reply to this email, keeping the reference in the subject line.",
+  de: "Bitte antworten Sie direkt auf diese E-Mail und behalten Sie die Referenz im Betreff bei.",
+};
 
-function layout(bodyHtml: string, banner?: string, lang: Lang = "en") {
-  const footer = config.replyTo() ? "Sterling Pension Group LLC · 15 N Main St #100, West Hartford, CT 06107, USA" : FOOTER_NO_REPLY[lang];
+/** Footer for client emails; internal emails (notifications, login codes) have none. */
+export function clientFooter(lang: Lang) {
+  return config.replyTo() ? FOOTER_REPLY[lang] : FOOTER_NO_REPLY[lang];
+}
+
+function layout(bodyHtml: string, banner: string | undefined, lang: Lang, clientFacing: boolean) {
+  const footer = clientFacing ? clientFooter(lang) : "";
   return `<!doctype html><html lang="${lang}"><body style="margin:0;background:#F3F6FA;font-family:Helvetica,Arial,sans-serif;color:#1F2D3D">
 ${banner ? `<div style="background:#B42318;color:#fff;padding:10px 16px;font-size:13px;font-weight:bold">${escapeHtml(banner)}</div>` : ""}
 <div style="max-width:620px;margin:0 auto;padding:24px 16px">
@@ -36,12 +46,12 @@ ${banner ? `<div style="background:#B42318;color:#fff;padding:10px 16px;font-siz
 <div style="font-weight:800;color:#0B2545;font-size:15px;letter-spacing:.08em;border-bottom:3px solid #F2B33D;display:inline-block;padding-bottom:4px;margin-bottom:20px">STERLING PENSION GROUP</div>
 <div style="font-size:15px;line-height:1.55">${bodyHtml}</div>
 </div>
-<p style="font-size:12px;color:#5B6776;line-height:1.5;margin:16px 4px">${escapeHtml(footer)}</p>
+${footer ? `<p style="font-size:12px;color:#5B6776;line-height:1.5;margin:16px 4px">${escapeHtml(footer)}</p>` : ""}
 </div></body></html>`;
 }
 
-function textLayout(text: string, banner?: string, lang: Lang = "en") {
-  const footer = config.replyTo() ? "" : `\n\n--\n${FOOTER_NO_REPLY[lang]}`;
+function textLayout(text: string, banner: string | undefined, lang: Lang, clientFacing: boolean) {
+  const footer = clientFacing ? `\n\n--\n${clientFooter(lang)}` : "";
   return `${banner ? `${banner}\n\n` : ""}${text}${footer}`;
 }
 
@@ -101,8 +111,8 @@ export async function sendEmail(opts: {
         ...(opts.clientFacing && config.bcc() ? { bcc: [config.bcc()] } : {}),
         ...(opts.clientFacing && config.replyTo() ? { reply_to: config.replyTo() } : {}),
         subject: opts.subject + suffix,
-        html: layout(opts.html, banner, opts.lang),
-        text: textLayout(opts.text, banner, opts.lang),
+        html: layout(opts.html, banner, opts.lang ?? "en", opts.clientFacing),
+        text: textLayout(opts.text, banner, opts.lang ?? "en", opts.clientFacing),
         ...(groups[i].length ? { attachments: groups[i].map((a) => ({ filename: a.filename, content: b64(a.bytes) })) } : {}),
       }),
     });

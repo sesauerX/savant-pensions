@@ -11,7 +11,13 @@ export function fixtureCertificate(variant: "onboarding" | "payment_history") {
     : { no: 2, variant, certificate_date: "2027-06-03", payments_made: 6, last_payment_date: "2027-05-01" } as const;
 }
 
-export function fixtureFields(variant: { survivor?: boolean; existing?: boolean; cents?: boolean } = {}): Fields {
+export function fixtureFields(variant: { survivor?: boolean; existing?: boolean; cents?: boolean; long?: boolean } = {}): Fields {
+  const long = variant.long
+    ? {
+        company_name: "Example Retirement Income and Family Holdings Administration LLC",
+        principal_office_address: "Suite 1200, Building C, 1234 North Extraordinarily Long Boulevard\nGreater Example Metropolitan Business District\nSheridan, WY 82801-1234, United States of America",
+      }
+    : {};
   return applyDefaults({
     company_name: "Example Holdings LLC",
     state_of_formation: "Wyoming",
@@ -44,5 +50,6 @@ export function fixtureFields(variant: { survivor?: boolean; existing?: boolean;
     fund_amount: "750000",
     signing_date: "2026-11-02",
     award_letter_date: "2026-11-02",
+    ...long,
   });
 }

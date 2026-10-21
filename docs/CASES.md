@@ -13,6 +13,15 @@ Sign in at **sterlingpensiongroup.com/admin** with your email address. You get a
 7. **Later certificates (payment history).** When the client asks for an updated certificate and has sent payment evidence: **Issue new certificate**, enter the certificate date, the number of monthly payments made and the date of the most recent payment, and tick "I have verified these payments against the Designated Fund bank records". Your name and the time are recorded. Upload the evidence to the new issue. Sign it with **Send C{n} for e-signature** (BoldSign, only you sign), or have it notarized instead. Then send it.
 8. **Close** the case when onboarding is done. Certificates can still be issued on a closed case.
 
+## Client replies and files
+
+- Client emails come from noreply@ but replies go to the intake address. A reply from the case's client (their member email, with the reference in the subject) is filed to the case automatically and you are notified. Anything else waits in the unassigned inbox.
+- Partner intakes from noreply@stmcorporate.group create cases automatically.
+- Every client email is copied (BCC) to Pocholo's archive address. Sign-in codes never are.
+- **Identity documents:** in *Inbound emails*, use **File as… Identity document** for passport and ID scans (the system suggests it when an attachment looks like one). Tagged scans are deleted automatically 90 days after the details were confirmed; the case log records it. Nothing else is deleted automatically.
+- **Download case archive (ZIP)** on the case page: every file, current and earlier, plus case-summary.pdf. Each download is logged.
+- Courier: one shipment per notary round holding all apostilled sets; enter the number of sets (prefilled from the case).
+
 ## Rules the system enforces
 
 - C1 (onboarding) must be dated **before** the first payment date; it says no payment has yet fallen due.
