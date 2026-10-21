@@ -1,0 +1,127 @@
+---
+// Layout for the case admin. Not indexed, not linked from the public site.
+import "@fontsource-variable/plus-jakarta-sans/wght.css";
+import { config } from "../lib/cases/config";
+import { csrfToken } from "../lib/cases/auth";
+import type { Flash } from "../lib/cases/http";
+
+interface Props {
+  title: string;
+  flash?: Flash | null;
+  wide?: boolean;
+}
+const { title, flash, wide } = Astro.props;
+const session = Astro.locals.session;
+const csrf = session ? csrfToken(session) : "";
+const live = config.live();
+const approved = config.templatesApproved();
+const path = Astro.url.pathname;
+const nav = [
+  { href: "/admin", label: "Cases" },
+  { href: "/admin/cases/new", label: "New case" },
+  { href: "/admin/inbox", label: "Inbox" },
+  { href: "/admin/settings", label: "Settings" },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>{title} · Sterling admin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+  </head>
+  <body class={wide ? "wide" : ""}>
+    <header class="top">
+      <a class="brand" href="/admin"><img src="/spg-mark.svg" alt="" width="28" height="28" /><span>Sterling <b>cases</b></span></a>
+      {session && (
+        <nav>
+          {nav.map((n) => (
+            <a href={n.href} aria-current={(n.href === "/admin" ? path === "/admin" || path === "/admin/" || path.startsWith("/admin/cases/SPG") : path.startsWith(n.href)) ? "page" : undefined}>{n.label}</a>
+          ))}
+        </nav>
+      )}
+      {session && (
+        <form method="post" action="/admin/logout" class="who">
+          <span>{session.name}</span>
+          <input type="hidden" name="_csrf" value={csrf} />
+          <button type="submit" class="link">Sign out</button>
+        </form>
+      )}
+    </header>
+    {!live && <div class="banner test">TEST MODE · client emails and the client BoldSign signer go to {config.testRecipient() || "(TEST_RECIPIENT not set)"}</div>}
+    {live && !approved && <div class="banner stop">LIVE, but templates are not approved: sending to clients is blocked.</div>}
+    {!approved && <div class="banner draft">Templates pending counsel review · documents carry a DRAFT watermark</div>}
+    <main>
+      {flash && <div class={`flash ${flash.ok ? "ok" : "err"}`} role="status">{flash.message}</div>}
+      <slot />
+    </main>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --navy: #0B2545; --sterling: #13467A; --bright: #1B66CC; --gold: #F2B33D; --light: #F3F6FA;
+    --border: #DCE3EC; --body: #4A5666; --muted: #5B6776; --ice: #E8F0FB; --ok: #0F7B4B; --okbg: #E6F4EC;
+    --warn: #8A5A00; --warnbg: #FFF4D6; --err: #B42318; --errbg: #FDECEA;
+    --font: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; font-family: var(--font); font-size: 14px; line-height: 1.5; color: var(--navy); background: var(--light); }
+  a { color: var(--bright); }
+  h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 15px; margin: 0 0 10px; }
+  h3 { font-size: 13px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  p { margin: 0 0 8px; }
+  .top { display: flex; align-items: center; gap: 20px; background: var(--navy); color: #fff; padding: 10px 20px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 15px; }
+  .brand img { border-radius: 5px; }
+  .top nav { display: flex; gap: 4px; flex: 1; flex-wrap: wrap; }
+  .top nav a { color: #C9D6E6; text-decoration: none; padding: 5px 10px; border-radius: 4px; font-weight: 600; }
+  .top nav a[aria-current="page"], .top nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .who { display: flex; gap: 10px; align-items: center; color: #C9D6E6; margin: 0; }
+  .who .link { color: #fff; }
+  .banner { padding: 6px 20px; font-size: 12.5px; font-weight: 700; }
+  .banner.test { background: var(--warnbg); color: var(--warn); }
+  .banner.draft { background: #EEF1F5; color: var(--muted); font-weight: 600; }
+  .banner.stop { background: var(--errbg); color: var(--err); }
+  main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
+  body.wide main { max-width: 1440px; }
+  .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-weight: 600; }
+  .flash.ok { background: var(--okbg); color: var(--ok); }
+  .flash.err { background: var(--errbg); color: var(--err); }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 14px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12.5px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+  table.t { width: 100%; border-collapse: collapse; }
+  table.t th, table.t td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  table.t th { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  table.t tr:hover td { background: #FAFBFD; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap; background: var(--ice); color: var(--sterling); }
+  .badge.action { background: var(--warnbg); color: var(--warn); }
+  .badge.wait { background: #EEF1F5; color: var(--muted); }
+  .badge.done { background: var(--okbg); color: var(--ok); }
+  .badge.hold { background: #F3E8FF; color: #6B21A8; }
+  .badge.stop { background: var(--errbg); color: var(--err); }
+  button, .btn { font: inherit; font-weight: 700; font-size: 13px; padding: 7px 12px; border-radius: 5px; border: 1px solid var(--sterling); background: var(--sterling); color: #fff; cursor: pointer; text-decoration: none; display: inline-block; line-height: 1.3; }
+  button.secondary, .btn.secondary { background: #fff; color: var(--sterling); }
+  button.danger { background: var(--err); border-color: var(--err); }
+  button.link { background: none; border: 0; padding: 0; color: var(--bright); font-weight: 600; text-decoration: underline; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  input, select, textarea { font: inherit; font-size: 13.5px; padding: 6px 8px; border: 1px solid #C3CEDB; border-radius: 5px; background: #fff; color: var(--navy); width: 100%; }
+  textarea { min-height: 54px; resize: vertical; }
+  label { display: block; font-size: 12.5px; font-weight: 700; color: var(--body); margin-bottom: 3px; }
+  form.inline { display: inline; margin: 0; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px 14px; }
+  .kv { display: grid; grid-template-columns: 160px 1fr; gap: 4px 12px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; }
+  details > summary { cursor: pointer; font-weight: 700; }
+  pre.mail { white-space: pre-wrap; word-break: break-word; background: var(--light); border: 1px solid var(--border); padding: 12px; border-radius: 6px; max-height: 360px; overflow: auto; font-family: inherit; font-size: 13px; }
+  @media (max-width: 700px) { .kv { grid-template-columns: 1fr; } .top { gap: 10px; } }
+</style>

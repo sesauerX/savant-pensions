@@ -10,10 +10,11 @@ async function streamToBytes(stream: ReadableStream<Uint8Array>) {
 }
 
 export async function readJson<T>(path: string): Promise<{ data: T; etag: string } | null> {
-  const res = await get(p(path), { access: "private", useCache: false });
+  // Uncompressed body: compressed responses carry a weak ETag (W/"…") that ifMatch rejects.
+  const res = await get(p(path), { access: "private", useCache: false, headers: { "accept-encoding": "identity" } });
   if (!res || res.statusCode !== 200) return null;
   const text = new TextDecoder().decode(await streamToBytes(res.stream));
-  return { data: JSON.parse(text) as T, etag: res.blob.etag };
+  return { data: JSON.parse(text) as T, etag: res.blob.etag.replace(/^W\//, "") };
 }
 
 /** Write JSON. With `etag`, only if unchanged; with `create`, only if absent. */
@@ -30,17 +31,18 @@ export async function writeJson(path: string, data: unknown, opts: { etag?: stri
 function isConflict(err: unknown) {
   if (err instanceof BlobPreconditionFailedError) return true;
   const msg = String((err as Error)?.message ?? "");
-  return /already exists|precondition/i.test(msg);
+  return /already exists|precondition|conflicting operation|conditional request/i.test(msg);
 }
 
 export class ConflictError extends Error {}
 
 /**
  * Read-modify-write with optimistic concurrency. `fn` gets the current value (or `init()` when
- * absent) and returns the new value. Retries up to 3 times on conflict.
+ * absent) and returns the new value. Retries with backoff on conflict.
  */
 export async function updateJson<T>(path: string, fn: (current: T) => T | Promise<T>, init?: () => T): Promise<T> {
-  for (let attempt = 0; attempt < 4; attempt++) {
+  const ATTEMPTS = 7;
+  for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
     const current = await readJson<T>(path);
     if (!current && !init) throw new Error(`Not found: ${path}`);
     const next = await fn(current ? current.data : init!());
@@ -48,8 +50,8 @@ export async function updateJson<T>(path: string, fn: (current: T) => T | Promis
       await writeJson(path, next, current ? { etag: current.etag } : { create: true });
       return next;
     } catch (err) {
-      if (!isConflict(err) || attempt === 3) throw isConflict(err) ? new ConflictError(`Conflict writing ${path}`) : err;
-      await new Promise((r) => setTimeout(r, 80 + Math.random() * 200));
+      if (!isConflict(err) || attempt === ATTEMPTS - 1) throw isConflict(err) ? new ConflictError(`Conflict writing ${path}`) : err;
+      await new Promise((r) => setTimeout(r, (60 << attempt) * (0.5 + Math.random())));
     }
   }
   throw new ConflictError(`Conflict writing ${path}`);

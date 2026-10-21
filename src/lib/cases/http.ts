@@ -28,7 +28,7 @@ export const ADMIN_HEADERS: Record<string, string> = {
   // Inline styles/scripts are Astro's own; no third-party origins. Frames only for same-origin PDF preview
   // and sandboxed srcdoc email bodies.
   "Content-Security-Policy":
-    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src 'self'; object-src 'self'; frame-ancestors 'self'; form-action 'self'; base-uri 'none'",
+    "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://vercel.com https://*.vercel-storage.com; frame-src 'self'; object-src 'self'; frame-ancestors 'self'; form-action 'self'; base-uri 'none'",
 };
 
 export function applyAdminHeaders(headers: Headers) {
@@ -41,4 +41,22 @@ export function redirect(location: string, status = 303) {
 
 export function clientIp(request: Request) {
   return (request.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "unknown";
+}
+
+/** One-shot flash message carried in a short-lived cookie (keeps messages out of URLs). */
+export type Flash = { ok: boolean; message: string };
+type Cookies = { get(name: string): { value: string } | undefined; set(name: string, value: string, opts: object): void; delete(name: string, opts: object): void };
+export function setFlash(cookies: Cookies, flash: Flash) {
+  cookies.set("spg_flash", Buffer.from(JSON.stringify(flash)).toString("base64url"), { path: "/admin", httpOnly: true, sameSite: "strict", secure: !import.meta.env.DEV, maxAge: 60 });
+}
+export function takeFlash(cookies: Cookies): Flash | null {
+  const v = cookies.get("spg_flash")?.value;
+  if (!v) return null;
+  cookies.delete("spg_flash", { path: "/admin" });
+  try {
+    const f = JSON.parse(Buffer.from(v, "base64url").toString());
+    return { ok: Boolean(f.ok), message: String(f.message ?? "").slice(0, 600) };
+  } catch {
+    return null;
+  }
 }

@@ -1,0 +1,91 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { listCases } from "../../lib/cases/cases";
+import { takeFlash } from "../../lib/cases/http";
+import { COUNTERS, statusBucket } from "../../lib/cases/milestones";
+import { listInbox } from "../../lib/cases/inbound";
+
+export const prerender = false;
+
+const flash = takeFlash(Astro.cookies);
+const all = await listCases();
+const openInbox = (await listInbox().catch(() => [])).filter((i) => i.status === "open").length;
+const filter = Astro.url.searchParams.get("filter") ?? "active";
+const q = (Astro.url.searchParams.get("q") ?? "").trim().toLowerCase();
+
+const FILTERS = [
+  { key: "active", label: "Active" },
+  { key: "waiting_client", label: "Waiting on client" },
+  { key: "waiting_payment", label: "Waiting on payment" },
+  { key: "on_hold", label: "On hold" },
+  { key: "closed", label: "Closed" },
+  { key: "all", label: "All" },
+];
+const bucket = (e: (typeof all)[number]) => statusBucket(e.status, e.state);
+const rows = all
+  .filter((e) => filter === "all" || (filter === "active" ? !["on_hold", "closed"].includes(bucket(e)) : bucket(e) === filter))
+  .filter((e) => !q || [e.id, e.company, e.beneficiary].some((v) => v.toLowerCase().includes(q)));
+const counts = COUNTERS.map((c) => ({ ...c, n: all.filter((e) => e.state === "active" && c.match(e.status)).length }));
+const tone = (e: (typeof all)[number]) =>
+  e.state === "on_hold" ? "hold"
+  : e.state === "cancelled" ? "stop"
+  : e.state === "closed" || e.status === "closed" ? "done"
+  : e.status === "details_confirmed" ? "action"
+  : ["signatures_completed", "first_payment_confirmed"].includes(e.status) ? "wait"
+  : "";
+const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+---
+<AdminLayout title="Cases" flash={flash}>
+  <div class="row" style="margin-bottom:14px">
+    <h1>Cases</h1>
+    <span class="spacer"></span>
+    {openInbox > 0 && <a class="btn secondary" href="/admin/inbox">Unassigned inbox ({openInbox})</a>}
+    <a class="btn" href="/admin/cases/new">New case</a>
+  </div>
+  <div class="counters">
+    {counts.map((c) => (
+      <div class="card counter"><div class="n">{c.n}</div><div class="muted small">{c.label}</div></div>
+    ))}
+  </div>
+  <div class="card">
+    <form class="row" method="get" style="margin-bottom:10px">
+      <div class="tabs">
+        {FILTERS.map((f) => (
+          <a href={`/admin?filter=${f.key}${q ? `&q=${encodeURIComponent(q)}` : ""}`} aria-current={f.key === filter ? "page" : undefined}>{f.label}</a>
+        ))}
+      </div>
+      <span class="spacer"></span>
+      <input type="hidden" name="filter" value={filter} />
+      <input type="search" name="q" value={q} placeholder="Search reference, company or name" style="max-width:280px" />
+    </form>
+    {rows.length === 0 ? (
+      <p class="muted">No cases here.</p>
+    ) : (
+      <div style="overflow-x:auto">
+        <table class="t">
+          <thead><tr><th>Reference</th><th>Company</th><th>Beneficiary</th><th>Status</th><th>Next action</th><th>Updated</th></tr></thead>
+          <tbody>
+            {rows.map((e) => (
+              <tr>
+                <td><a href={`/admin/cases/${e.id}`}><b>{e.id}</b></a></td>
+                <td>{e.company || <span class="muted">–</span>}</td>
+                <td>{e.beneficiary || <span class="muted">–</span>}</td>
+                <td><span class={`badge ${tone(e)}`}>{e.statusLabel}</span></td>
+                <td class="small">{e.next}</td>
+                <td class="small muted" style="white-space:nowrap">{fmt(e.updatedAt)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+</AdminLayout>
+<style>
+  .counters { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 4px; }
+  .counter { padding: 12px 14px; }
+  .counter .n { font-size: 24px; font-weight: 800; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs a { padding: 5px 10px; border-radius: 99px; text-decoration: none; color: var(--body); font-weight: 600; font-size: 13px; }
+  .tabs a[aria-current="page"] { background: var(--navy); color: #fff; }
+</style>

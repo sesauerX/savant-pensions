@@ -1,0 +1,41 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { findUser, logAuthEvent, requestCode, setLoginEmail } from "../../lib/cases/auth";
+import { clientIp, redirect } from "../../lib/cases/http";
+import { sendLoginCode } from "../../lib/cases/mail";
+
+export const prerender = false;
+
+if (Astro.locals.session) return Astro.redirect("/admin");
+
+let error = "";
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const email = String(form.get("email") ?? "").trim().toLowerCase().slice(0, 254);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    error = "Enter a valid email address.";
+  } else {
+    const result = await requestCode(email, clientIp(Astro.request), sendLoginCode);
+    const user = findUser(email);
+    await logAuthEvent(`code requested for ${user ? user.name : "unknown address"}: ${result}`);
+    // Same response whether or not the address has access.
+    setLoginEmail(Astro.cookies, email);
+    return redirect("/admin/login/verify");
+  }
+}
+---
+<AdminLayout title="Sign in">
+  <div class="card login">
+    <h1>Sign in</h1>
+    <p class="muted">We email you a 6-digit code. No password needed.</p>
+    {error && <div class="flash err">{error}</div>}
+    <form method="post">
+      <label for="email">Email address</label>
+      <input id="email" name="email" type="email" autocomplete="email" required autofocus />
+      <button type="submit" style="margin-top:12px;width:100%">Email me a code</button>
+    </form>
+  </div>
+</AdminLayout>
+<style>
+  .login { max-width: 380px; margin: 60px auto; padding: 24px; }
+</style>

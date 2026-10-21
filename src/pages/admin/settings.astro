@@ -1,0 +1,41 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { config, integrationStatus } from "../../lib/cases/config";
+
+export const prerender = false;
+
+const flags: [string, string][] = [
+  ["LIVE_MODE", config.live() ? "true" : "false"],
+  ["TEMPLATES_APPROVED", config.templatesApproved() ? "true" : "false"],
+  ["AWARD_LETTER_SHOW_PASSPORT", config.showPassport() ? "true" : "false"],
+  ["CASES_ENABLED", config.enabled() ? "true" : "false"],
+];
+const values: [string, string][] = [
+  ["Inbound address", config.inboundAddress() || "–"],
+  ["Allowed senders", config.allowedSenders().join(", ") || "–"],
+  ["Client sender", config.clientFrom()],
+  ["Reply-to", config.replyTo() || "none"],
+  ["Archive BCC", config.bcc() || "none"],
+  ["Test recipient", config.testRecipient() || "–"],
+  ["Admin notifications", config.adminNotifyTo().join(", ") || "–"],
+  ["Sterling signer", `${config.spgSignerName()} <${config.spgSignerEmail() || "not set"}>`],
+  ["Claude model", config.anthropicModel()],
+  ["Admin users", config.adminUsers().map((u) => `${u.name} (${u.role})`).join(", ")],
+];
+const status = Object.entries(integrationStatus());
+---
+<AdminLayout title="Settings">
+  <h1>Settings</h1>
+  <p class="muted small">Read-only. Values are set as Vercel environment variables; secrets are never shown.</p>
+  <div class="card"><h2>Mode</h2><dl class="kv">{flags.map(([k, v]) => <><dt>{k}</dt><dd><b>{v}</b></dd></>)}</dl></div>
+  <div class="card"><h2>Configuration</h2><dl class="kv">{values.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
+  <div class="card"><h2>Integrations</h2><dl class="kv">{status.map(([k, ok]) => <><dt>{k}</dt><dd>{ok ? <span class="badge done">configured</span> : <span class="badge stop">missing</span>}</dd></>)}</dl></div>
+  <div class="card">
+    <h2>Webhooks</h2>
+    <dl class="kv small">
+      <dt>Resend</dt><dd>https://sterlingpensiongroup.com/api/cases/inbound (email.received)</dd>
+      <dt>BoldSign</dt><dd>https://sterlingpensiongroup.com/api/cases/boldsign (Completed, Declined, Expired, Revoked)</dd>
+      <dt>Cron</dt><dd>/api/cases/cron daily 07:00 UTC: BoldSign poll and reminders</dd>
+    </dl>
+  </div>
+</AdminLayout>

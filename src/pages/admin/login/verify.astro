@@ -1,0 +1,48 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { clearLoginEmail, findUser, getLoginEmail, logAuthEvent, startSession, verifyCode } from "../../../lib/cases/auth";
+import { redirect } from "../../../lib/cases/http";
+
+export const prerender = false;
+
+if (Astro.locals.session) return Astro.redirect("/admin");
+const email = getLoginEmail(Astro.cookies);
+if (!email) return Astro.redirect("/admin/login");
+
+let error = "";
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const code = String(form.get("code") ?? "").slice(0, 20);
+  const result = await verifyCode(email, code);
+  if (result.ok) {
+    startSession(Astro.cookies, result.user);
+    clearLoginEmail(Astro.cookies);
+    await logAuthEvent(`signed in: ${result.user.name}`);
+    return redirect("/admin");
+  }
+  const user = findUser(email);
+  await logAuthEvent(`failed code for ${user ? user.name : "unknown address"}: ${result.reason}`);
+  error =
+    result.reason === "expired"
+      ? "That code has expired. Request a new one."
+      : result.reason === "locked"
+        ? "Too many wrong attempts. Request a new code."
+        : "That code is not valid.";
+}
+---
+<AdminLayout title="Enter code">
+  <div class="card login">
+    <h1>Check your email</h1>
+    <p class="muted">If this address has access, a code has been sent. It expires in 10 minutes.</p>
+    {error && <div class="flash err">{error}</div>}
+    <form method="post">
+      <label for="code">6-digit code</label>
+      <input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]{6,7}" maxlength="7" required autofocus />
+      <button type="submit" style="margin-top:12px;width:100%">Sign in</button>
+    </form>
+    <p class="small" style="margin-top:14px"><a href="/admin/login">Use a different address or get a new code</a></p>
+  </div>
+</AdminLayout>
+<style>
+  .login { max-width: 380px; margin: 60px auto; padding: 24px; }
+</style>

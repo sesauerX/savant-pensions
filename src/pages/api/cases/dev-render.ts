@@ -28,7 +28,7 @@ export const GET: APIRoute = async ({ request, url, cookies }) => {
   }
   const started = Date.now();
   const [out] = await renderDocuments([doc], fields, FIXTURE_REFERENCE, { watermark });
-  return new Response(out.pdf, {
+  return new Response(out.pdf as BodyInit, {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": `inline; filename="${out.name}"`,

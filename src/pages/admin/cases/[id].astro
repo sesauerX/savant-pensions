@@ -1,0 +1,596 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { csrfToken } from "../../../lib/cases/auth";
+import { fileById, getCase, isCaseId } from "../../../lib/cases/cases";
+import { config } from "../../../lib/cases/config";
+import { confirmDefaults } from "../../../lib/cases/derive";
+import { DOCS, DOC_KEYS, type DocKey } from "../../../lib/cases/documents";
+import { CARRIERS } from "../../../lib/cases/emails";
+import { takeFlash } from "../../../lib/cases/http";
+import { FILE_AS_OPTIONS } from "../../../lib/cases/actions";
+import { MILESTONES, caseStatus } from "../../../lib/cases/milestones";
+import { FIELDS, GROUPS, formatDate, missingFields, todayIso } from "../../../lib/cases/schema";
+import { readJson } from "../../../lib/cases/store";
+import { refreshSignature, fieldProblems } from "../../../lib/cases/workflow";
+import type { Case, CaseFile } from "../../../lib/cases/types";
+
+export const prerender = false;
+
+const id = String(Astro.params.id ?? "");
+if (!isCaseId(id)) return new Response("Not found", { status: 404 });
+let c = await getCase(id);
+if (!c) return new Response("Not found", { status: 404 });
+
+// Poll BoldSign when a pending envelope is viewed (at most every 2 minutes).
+if (c.boldsign && !c.milestones.signatures_completed && !["Declined", "Expired", "Revoked"].includes(c.boldsign.status)) {
+  const last = c.boldsign.lastPolledAt ? Date.parse(c.boldsign.lastPolledAt) : 0;
+  if (Date.now() - last > 120_000) {
+    try {
+      c = await refreshSignature(id, "system (page poll)");
+    } catch (err) {
+      console.error("[cases] page poll failed", id, (err as Error).message);
+    }
+  }
+}
+const cs = c as Case;
+const session = Astro.locals.session!;
+const csrf = csrfToken(session);
+const flash = takeFlash(Astro.cookies);
+const status = caseStatus(cs);
+const m = cs.milestones;
+const confirmed = Boolean(m.details_confirmed);
+const shown = confirmed ? cs.fields : confirmDefaults(cs.fields);
+const missing = new Set(missingFields(shown));
+const uncertain = new Set(cs.extraction?.uncertain ?? []);
+const problems = fieldProblems({ ...cs, fields: shown });
+const active = cs.state === "active";
+
+const fmtDate = (iso?: string) => {
+  if (!iso) return "";
+  try { return formatDate(iso.slice(0, 10)); } catch { return iso; }
+};
+const fmtTime = (iso?: string) => (iso ? new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) + " ET" : "");
+const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
+const href = (f: CaseFile, dl = false) => `/api/cases/file?case=${cs.id}&file=${f.id}${dl ? "&download=1" : ""}`;
+const file = (fid?: string) => fileById(cs, fid);
+const notarized = (doc: DocKey) => (cs.docs[doc].notarized ?? []).map((x) => file(x)).filter(Boolean) as CaseFile[];
+
+// Inbound emails (bodies are untrusted: text shown escaped, HTML only in a sandboxed frame).
+const inbound = await Promise.all(
+  cs.inbound.map(async (i) => ({
+    ...i,
+    body: (await readJson<{ text?: string; html?: string }>(`cases/${cs.id}/inbound/${i.emailId}.json`).catch(() => null))?.data ?? null,
+    files: i.fileIds.map((x) => file(x)).filter(Boolean) as CaseFile[],
+  })),
+);
+
+const bs = cs.boldsign;
+const bsPending = bs && !m.signatures_completed && !["Declined", "Expired", "Revoked"].includes(bs.status);
+const bsBad = bs && ["Declined", "Expired", "Revoked"].includes(bs.status) && !m.signatures_completed;
+const canSend = active && confirmed && m.documents_generated && (!bs || (bsBad && !m.sent_for_signature)) && !m.signatures_completed;
+const sendBlock = config.live() && !config.templatesApproved();
+const dateWarning = bs?.completedAt && bs.signingDatePrinted && bs.completedAt.slice(0, 10) !== bs.signingDatePrinted ? `Documents are dated ${fmtDate(bs.signingDatePrinted)}; signing completed ${fmtDate(bs.completedAt)}.` : "";
+const lastEvents = [...cs.events].reverse();
+const input = (key: string) => {
+  const v = shown[key];
+  return v === undefined ? "" : String(v);
+};
+const fieldClass = (key: string) => [missing.has(key) ? "is-missing" : "", uncertain.has(key) ? "is-uncertain" : ""].join(" ");
+const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+---
+<AdminLayout title={`${cs.id} ${String(cs.fields.company_name ?? "")}`} flash={flash} wide>
+  <div class="head">
+    <div>
+      <div class="muted small"><a href="/admin">Cases</a> / {cs.id}</div>
+      <h1>{String(cs.fields.company_name ?? "") || "New case"} <span class="muted ref">{cs.id}</span></h1>
+      <div class="row small">
+        <span class={`badge ${status.tone}`}>{status.label}</span>
+        <span class="muted">Next: {status.next}</span>
+        <span class="muted">· Created {fmtTime(cs.createdAt)} from {cs.source.type}{cs.source.from ? ` (${cs.source.from})` : ""}</span>
+      </div>
+    </div>
+  </div>
+  {cs.state === "on_hold" && <div class="flash err">On hold: {cs.holdReason}</div>}
+  {cs.state === "cancelled" && <div class="flash err">This case is cancelled. Data is kept.</div>}
+  {dateWarning && <div class="flash err">Date check: {dateWarning} Decide whether to regenerate and resend.</div>}
+
+  <div class="layout">
+    <div class="main">
+      <!-- Details -->
+      <section class="card" id="details">
+        <div class="row"><h2>Details</h2><span class="spacer"></span>
+          {cs.inbound.length > 0 && active && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="rerun_extraction" />
+              <button class="secondary" type="submit" title="Fills empty fields only">Re-run extraction</button>
+            </form>
+          )}
+        </div>
+        {cs.extraction && (
+          <div class="extraction small">
+            {cs.extraction.error ? <p class="err-text">Extraction failed: {cs.extraction.error}. Enter the details manually or re-run.</p> : <p class="muted">Extracted by {cs.extraction.model} on {fmtTime(cs.extraction.at)}. <span class="key uncertain">amber</span> = uncertain, <span class="key missing">red</span> = missing.</p>}
+            {cs.extraction.notes && <p><b>Notes:</b> {cs.extraction.notes}</p>}
+          </div>
+        )}
+        {!confirmed && problems.length > 0 && <p class="small err-text">{problems.join(" · ")}</p>}
+        <details open={!confirmed}>
+          <summary class="small">{confirmed ? `Confirmed ${fmtTime(m.details_confirmed?.at)} by ${m.details_confirmed?.by}. Show / edit fields` : "Fields"}</summary>
+          <form method="post" action={`/admin/cases/${cs.id}/action`} class="fields">
+            <input type="hidden" name="_csrf" value={csrf} />
+            {GROUPS.map((g) => (
+              <fieldset>
+                <legend>{g}</legend>
+                <div class="grid2">
+                  {FIELDS.filter((f) => f.group === g).map((f) => (
+                    <div class={`field ${fieldClass(f.key)} ${f.type === "textarea" ? "wide" : ""}`}>
+                      <label for={`f_${f.key}`}>{f.label}{f.required === true ? " *" : ""}{uncertain.has(f.key) && <span class="tag">check</span>}</label>
+                      {f.type === "bool" ? (
+                        <select id={`f_${f.key}`} name={`f_${f.key}`}>
+                          <option value="" selected={shown[f.key] === undefined}>–</option>
+                          <option value="true" selected={shown[f.key] === true}>Yes</option>
+                          <option value="false" selected={shown[f.key] === false}>No</option>
+                        </select>
+                      ) : f.type === "select" ? (
+                        <select id={`f_${f.key}`} name={`f_${f.key}`}>
+                          <option value="">–</option>
+                          {f.options!.map((o) => <option value={o} selected={input(f.key) === o}>{o}</option>)}
+                        </select>
+                      ) : f.type === "textarea" ? (
+                        <textarea id={`f_${f.key}`} name={`f_${f.key}`} rows="2">{input(f.key)}</textarea>
+                      ) : (
+                        <input id={`f_${f.key}`} name={`f_${f.key}`} type={f.type === "date" ? "date" : f.type === "email" ? "email" : "text"} inputmode={f.type === "amount" ? "decimal" : undefined} value={input(f.key)} placeholder={f.hint ?? ""} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
+            ))}
+            <div class="row sticky">
+              <button type="submit" name="_action" value="save_fields" class="secondary" disabled={!active}>Save</button>
+              {confirmed && m.documents_generated && <label class="check"><input type="checkbox" name="regenerate" value="1" /> Regenerate documents after saving</label>}
+              {!confirmed && <button type="submit" name="_action" value="confirm" disabled={!active}>Confirm details and generate documents</button>}
+              <span class="muted small">Dates print as “{fmtDate(todayIso())}”. Amounts are USD.</span>
+            </div>
+          </form>
+        </details>
+      </section>
+
+      <!-- Documents -->
+      <section class="card" id="documents">
+        <div class="row"><h2>Documents</h2><span class="spacer"></span>
+          {confirmed && active && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate" />
+              <button class="secondary" type="submit">Regenerate 1–4</button>
+            </form>
+          )}
+        </div>
+        <table class="t docs">
+          <thead><tr><th>Document</th><th>Current</th><th>Signed</th><th>Notarized / apostille</th><th>Older</th></tr></thead>
+          <tbody>
+            {DOC_KEYS.map((k) => {
+              const rec = cs.docs[k];
+              const cur = file(rec.current);
+              const signed = file(rec.signed);
+              const older = rec.history.map((x) => file(x)).filter(Boolean) as CaseFile[];
+              return (
+                <tr>
+                  <td><b>{DOCS[k].n}. {DOCS[k].title}</b>{k === "certificate" && !m.first_payment_confirmed && <div class="muted small">Available after the first pension payment is confirmed</div>}</td>
+                  <td>{cur ? <span><a href={href(cur)} target="_blank" rel="noopener">Preview</a> · <a href={href(cur, true)}>Download</a><div class="muted small">{fmtTime(cur.createdAt)} · {cur.templateVersion}</div></span> : <span class="muted">–</span>}</td>
+                  <td>{signed ? <a href={href(signed)} target="_blank" rel="noopener">Signed PDF</a> : <span class="muted">{["operating_agreement", "pension_policy", "written_consent"].includes(k) ? "–" : "n/a (notary)"}</span>}</td>
+                  <td>{notarized(k).length ? notarized(k).map((f) => <div><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> <span class="muted small">({f.kind})</span></div>) : <span class="muted">{["award_letter", "certificate"].includes(k) ? "–" : "n/a"}</span>}</td>
+                  <td>{older.length ? <details><summary class="small">{older.length} older</summary>{older.reverse().map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{fmtTime(f.createdAt)}</a> {f.templateVersion}</div>)}</details> : <span class="muted">–</span>}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {cs.files.some((f) => f.kind === "audit_trail") && <p class="small" style="margin-top:8px">BoldSign audit trail: {cs.files.filter((f) => f.kind === "audit_trail").map((f) => <a href={href(f)} target="_blank" rel="noopener">{f.name}</a>)}</p>}
+      </section>
+
+      <!-- Signing -->
+      <section class="card" id="signing">
+        <h2>E-signature (BoldSign): Operating Agreement, Policy, Consent</h2>
+        {!m.documents_generated ? <p class="muted">Confirm the details to generate the documents first.</p> : (
+          <div>
+            {bs && (
+              <dl class="kv small">
+                <dt>Status</dt><dd><b>{bs.status}</b>{bs.lastPolledAt && <span class="muted"> · checked {fmtTime(bs.lastPolledAt)}</span>}</dd>
+                <dt>Sent</dt><dd>{fmtTime(bs.sentAt)}{bs.redirectedFrom && <span class="muted"> · TEST: client signer redirected from {bs.redirectedFrom}</span>}</dd>
+                {bs.completedAt && (<><dt>Completed</dt><dd>{fmtTime(bs.completedAt)}</dd></>)}
+                <dt>Signers</dt><dd>{(bs.signers ?? []).length ? (bs.signers ?? []).map((s) => <div>{s.order}. {s.name} &lt;{s.email}&gt; – <b>{s.status}</b></div>) : <span class="muted">not polled yet</span>}</dd>
+                <dt>Document id</dt><dd class="muted">{bs.documentId}</dd>
+              </dl>
+            )}
+            <div class="row" style="margin-top:10px">
+              {canSend && (
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="send_signature" />
+                  <button type="submit" disabled={sendBlock}>{bs ? "Resend for signature" : "Send for signature"}</button>
+                </form>
+              )}
+              {bs && !m.signatures_completed && (
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="refresh_signature" />
+                  <button class="secondary" type="submit">Refresh status</button>
+                </form>
+              )}
+              {bsPending && (
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="remind_signature" />
+                  <button class="secondary" type="submit">Send reminder</button>
+                </form>
+              )}
+              {bsPending && (
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline" onsubmit="return confirm('Revoke the envelope? The signers will be told it was withdrawn.')">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="revoke_signature" />
+                  <button class="secondary" type="submit">Revoke</button>
+                </form>
+              )}
+              {bsBad && m.sent_for_signature && (
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="reset_signature" />
+                  <button type="submit">Prepare resend</button>
+                </form>
+              )}
+            </div>
+            {!bs && <p class="small muted" style="margin-top:8px">Signer 1: {String(cs.fields.member_name ?? "")} &lt;{config.live() ? String(cs.fields.member_email ?? "") : `${config.testRecipient()} (TEST, instead of ${String(cs.fields.member_email ?? "")})`}&gt; · Signer 2 (after): {config.spgSignerName()} &lt;{config.spgSignerEmail()}&gt;</p>}
+            {sendBlock && <p class="small err-text">Live mode without approved templates: sending is blocked.</p>}
+          </div>
+        )}
+      </section>
+
+      <!-- Award Letter: notary -->
+      <section class="card" id="award">
+        <h2>Pension Award Letter: notary, apostille, courier</h2>
+        {!m.signatures_completed ? <p class="muted">Available once the corporate documents are signed.</p> : (
+          <div>
+            <div class="steps">
+              <div class="step">
+                <h3>1. Download for notary</h3>
+                {file(cs.docs.award_letter.current) ? <p><a href={href(file(cs.docs.award_letter.current)!, true)}>Award Letter (unsigned PDF)</a> <span class="muted small">dated {fmtDate(String(cs.fields.award_letter_date ?? ""))}</span></p> : <p class="muted">Not generated.</p>}
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate_award" /><input type="hidden" name="_back" value="#award" />
+                  <button class="link" type="submit">Regenerate</button>
+                </form>
+              </div>
+              <div class="step">
+                <h3>2. Meeting</h3>
+                {m.award_notary_meeting && <p class="small">Set: <b>{m.award_notary_meeting.data?.meeting?.replace("T", " ")}</b> {m.award_notary_meeting.data?.notary}</p>}
+                <form method="post" action={`/admin/cases/${cs.id}/action`}>
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="award_letter" /><input type="hidden" name="_back" value="#award" />
+                  <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={m.award_notary_meeting?.data?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={m.award_notary_meeting?.data?.notary ?? ""} /></div></div>
+                  <label class="check"><input type="checkbox" name="move_date" value="1" checked={!notarized("award_letter").length} /> Date the Award Letter on the meeting day and regenerate</label>
+                  <button class="secondary" type="submit">Save meeting</button>
+                </form>
+              </div>
+              <div class="step">
+                <h3>3. Notarized copy and apostille</h3>
+                {notarized("award_letter").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
+                <form class="upload" data-case={cs.id} data-csrf={csrf}>
+                  <select name="as"><option value="award_notarized">Notarized copy</option><option value="award_apostille">Apostille</option></select>
+                  <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
+                  <button class="secondary" type="submit">Upload</button>
+                  <span class="status small muted"></span>
+                </form>
+                <p class="small muted">Or forward the notary’s email to {config.inboundAddress() || "the inbound address"} with {cs.id} in the subject, then use “File as…” below.</p>
+              </div>
+              <div class="step">
+                <h3>4. Email e-copies (B)</h3>
+                <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=B`}>Preview email B</a>
+                {m.award_ecopies_emailed && <span class="small muted"> Sent {fmtTime(m.award_ecopies_emailed.at)}</span>}
+              </div>
+              <div class="step">
+                <h3>5. Courier</h3>
+                <p class="small">{cs.shipments.filter((s) => s.contents.includes("award_letter")).map((s) => `${s.carrier} ${s.tracking} (${fmtDate(s.shippedAt)})`).join("; ") || "Not shipped yet."} <a href="#shipments">Add shipment</a></p>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <!-- Payment and certificate -->
+      <section class="card" id="certificate">
+        <h2>First payment and Certificate</h2>
+        {!m.first_payment_confirmed ? (
+          <div>
+            <p class="muted small">The certificate states the pension “has been paid monthly since” the commencement date, so it is only available after the first payment.</p>
+            <form method="post" action={`/admin/cases/${cs.id}/action`}>
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="confirm_payment" /><input type="hidden" name="_back" value="#certificate" />
+              <div class="grid2"><div><label>Date of the first payment</label><input type="date" name="first_payment_date" value={String(cs.fields.first_payment_date ?? "")} required /></div></div>
+              <label class="check"><input type="checkbox" name="confirm" value="1" required /> I confirm the pension payment was made from the Designated Fund</label>
+              <button type="submit" disabled={!m.signatures_completed || !active}>Confirm first payment</button>
+              {!m.signatures_completed && <span class="small muted"> (after signing)</span>}
+            </form>
+            {m.signatures_completed && (
+              <form class="upload" data-case={cs.id} data-csrf={csrf} style="margin-top:10px">
+                <input type="hidden" name="as" value="payment_proof" />
+                <span class="small">Optional bank proof:</span>
+                <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" required />
+                <button class="secondary" type="submit">Upload proof</button>
+                <span class="status small muted"></span>
+              </form>
+            )}
+          </div>
+        ) : (
+          <div class="steps">
+            <div class="step">
+              <h3>Payment</h3>
+              <p class="small">First payment {fmtDate(String(cs.fields.first_payment_date ?? ""))}, confirmed by {m.first_payment_confirmed.by}.</p>
+              {cs.files.filter((f) => f.kind === "proof").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a></div>)}
+            </div>
+            <div class="step">
+              <h3>1. Certificate</h3>
+              {file(cs.docs.certificate.current) ? <p><a href={href(file(cs.docs.certificate.current)!, true)}>Certificate (unsigned PDF)</a> <span class="muted small">dated {fmtDate(String(cs.fields.certificate_date ?? ""))}</span></p> : <p class="muted">Not generated.</p>}
+              <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate_certificate" /><input type="hidden" name="_back" value="#certificate" />
+                <input type="date" name="certificate_date" value={String(cs.fields.certificate_date ?? "")} style="max-width:170px" />
+                <button class="secondary" type="submit">Generate</button>
+              </form>
+            </div>
+            <div class="step">
+              <h3>2. Meeting</h3>
+              {m.certificate_notary_meeting && <p class="small">Set: <b>{m.certificate_notary_meeting.data?.meeting?.replace("T", " ")}</b> {m.certificate_notary_meeting.data?.notary}</p>}
+              <form method="post" action={`/admin/cases/${cs.id}/action`}>
+                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="certificate" /><input type="hidden" name="_back" value="#certificate" />
+                <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={m.certificate_notary_meeting?.data?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={m.certificate_notary_meeting?.data?.notary ?? ""} /></div></div>
+                <label class="check"><input type="checkbox" name="move_date" value="1" checked={!notarized("certificate").length} /> Date the certificate on the meeting day and regenerate</label>
+                <button class="secondary" type="submit">Save meeting</button>
+              </form>
+            </div>
+            <div class="step">
+              <h3>3. Notarized copy and apostille</h3>
+              {notarized("certificate").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
+              <form class="upload" data-case={cs.id} data-csrf={csrf}>
+                <select name="as"><option value="cert_notarized">Notarized copy</option><option value="cert_apostille">Apostille</option></select>
+                <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
+                <button class="secondary" type="submit">Upload</button>
+                <span class="status small muted"></span>
+              </form>
+            </div>
+            <div class="step">
+              <h3>4. Email certificate and full set (C)</h3>
+              <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=C`}>Preview email C</a>
+              {m.final_pack_emailed && <span class="small muted"> Sent {fmtTime(m.final_pack_emailed.at)}</span>}
+            </div>
+            <div class="step">
+              <h3>5. Courier</h3>
+              <p class="small">{cs.shipments.filter((s) => s.contents.includes("certificate")).map((s) => `${s.carrier} ${s.tracking} (${fmtDate(s.shippedAt)})`).join("; ") || "Not shipped yet."} <a href="#shipments">Add shipment</a></p>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <!-- Emails -->
+      <section class="card" id="emails">
+        <div class="row"><h2>Emails to the client</h2><span class="spacer"></span>
+          {m.signatures_completed && <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=A`}>{m.signed_pack_emailed ? "Resend A" : "Preview A"}</a>}
+          <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=B`}>B</a>
+          <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=C`}>C</a>
+          {cs.shipments.length > 0 && <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=tracking`}>Tracking update</a>}
+        </div>
+        {cs.emails.length === 0 ? <p class="muted">None sent yet.</p> : (
+          <table class="t small">
+            <thead><tr><th>Sent</th><th>Email</th><th>To</th><th>Attachments</th></tr></thead>
+            <tbody>{[...cs.emails].reverse().map((e) => (
+              <tr><td style="white-space:nowrap">{fmtTime(e.sentAt)}</td><td><b>{e.kind}</b> {e.subject}</td><td>{e.to.join(", ")}{e.redirectedFrom && <div class="muted">TEST, for {e.redirectedFrom.join(", ")}</div>}</td><td>{(e.attachments ?? []).length}</td></tr>
+            ))}</tbody>
+          </table>
+        )}
+      </section>
+
+      <!-- Shipments -->
+      <section class="card" id="shipments">
+        <h2>Shipments</h2>
+        {cs.shipments.length > 0 && (
+          <table class="t small">
+            <thead><tr><th>Contents</th><th>Carrier</th><th>Tracking</th><th>Shipped</th><th>Delivered</th></tr></thead>
+            <tbody>{cs.shipments.map((s) => (
+              <tr>
+                <td>{s.contents.map((d) => DOCS[d].short).join(", ")}</td><td>{s.carrier}</td>
+                <td>{s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking}</td>
+                <td>{fmtDate(s.shippedAt)}</td>
+                <td>{s.deliveredAt ? fmtDate(s.deliveredAt) : (
+                  <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+                    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="shipment_delivered" /><input type="hidden" name="shipment" value={s.id} />
+                    <input type="date" name="delivered_at" value={todayIso()} style="max-width:150px" /><button class="secondary" type="submit">Delivered</button>
+                  </form>
+                )}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+        <form method="post" action={`/admin/cases/${cs.id}/action`} style="margin-top:10px">
+          <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" />
+          <div class="row small" style="margin-bottom:6px">Contents:
+            <label class="check"><input type="checkbox" name="contents" value="award_letter" checked={!m.award_couriered} /> Award Letter</label>
+            <label class="check"><input type="checkbox" name="contents" value="certificate" checked={Boolean(m.award_couriered && m.first_payment_confirmed)} disabled={!m.first_payment_confirmed} /> Certificate</label>
+          </div>
+          <div class="grid2">
+            <div><label>Carrier</label><select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select></div>
+            <div><label>Tracking number</label><input name="tracking" required /></div>
+            <div><label>Shipped</label><input type="date" name="shipped_at" value={todayIso()} required /></div>
+            <div><label>Tracking link (Other carriers)</label><input name="tracking_url" placeholder="https://…" /></div>
+          </div>
+          <p class="small muted">Ships to: {String(cs.fields.beneficiary_address ?? "–")}</p>
+          <button class="secondary" type="submit" disabled={!active}>Add shipment</button>
+        </form>
+      </section>
+
+      <!-- Inbox -->
+      <section class="card" id="inbox">
+        <h2>Inbound emails</h2>
+        {inbound.length === 0 ? <p class="muted">None.</p> : inbound.map((e) => (
+          <div class="mailbox">
+            <div class="row small"><b>{e.subject || "(no subject)"}</b><span class="muted">from {e.from} · {fmtTime(e.receivedAt)}</span></div>
+            <details>
+              <summary class="small">Show text</summary>
+              <pre class="mail">{e.body?.text || "(no text part)"}</pre>
+              {e.body?.html && <details><summary class="small">Show HTML (sandboxed, no scripts or remote images)</summary><iframe sandbox="" srcdoc={e.body.html} class="mailframe" title="Email HTML"></iframe></details>}
+            </details>
+            {e.files.map((f) => (
+              <div class="row small attach">
+                <a href={href(f, true)}>{f.name}</a><span class="muted">{size(f.size)} · {f.kind}{f.doc ? ` · ${DOCS[f.doc].short}` : ""}</span>
+                <span class="spacer"></span>
+                <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="file_as" /><input type="hidden" name="file" value={f.id} /><input type="hidden" name="_back" value="#inbox" />
+                  <select name="as" style="max-width:220px">{FILE_AS_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}</select>
+                  <button class="secondary" type="submit">File as…</button>
+                </form>
+              </div>
+            ))}
+          </div>
+        ))}
+        <details style="margin-top:10px">
+          <summary class="small">Upload another file to this case</summary>
+          <form class="upload" data-case={cs.id} data-csrf={csrf} style="margin-top:8px">
+            <select name="as">{FILE_AS_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}</select>
+            <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
+            <button class="secondary" type="submit">Upload</button>
+            <span class="status small muted"></span>
+          </form>
+        </details>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="card">
+        <h2>Progress</h2>
+        <ol class="rail">
+          {MILESTONES.map((ms) => {
+            const done = cs.milestones[ms.key];
+            const current = status.key === ms.key;
+            return <li class={done ? "done" : current ? "current" : ""}><span class="dot"></span><span><b>{ms.label}</b>{done && <div class="muted small">{fmtTime(done.at)} · {done.by}</div>}</span></li>;
+          })}
+        </ol>
+      </section>
+      <section class="card" id="notes">
+        <h2>Notes</h2>
+        <form method="post" action={`/admin/cases/${cs.id}/action`}>
+          <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notes" />
+          <textarea name="notes" rows="5">{cs.notes}</textarea>
+          <button class="secondary" type="submit" style="margin-top:6px">Save notes</button>
+        </form>
+      </section>
+      <section class="card">
+        <h2>Case</h2>
+        <div class="stack">
+          {cs.state === "active" && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="hold" />
+              <input name="reason" placeholder="Reason for hold" required style="flex:1" /><button class="secondary" type="submit">Hold</button>
+            </form>
+          )}
+          {cs.state === "on_hold" && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`}><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="resume" /><button type="submit">Resume</button></form>
+          )}
+          {cs.state === "active" && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`} onsubmit="return confirm('Close this case?')"><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="close" /><button class="secondary" type="submit">Close case</button></form>
+          )}
+          {(cs.state === "closed" || cs.state === "cancelled") && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`}><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="reopen" /><button class="secondary" type="submit">Reopen</button></form>
+          )}
+          {cs.state !== "cancelled" && (
+            <form method="post" action={`/admin/cases/${cs.id}/action`} onsubmit="return confirm('Cancel this case? No data is deleted.')"><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="cancel" /><button class="secondary" type="submit">Cancel case</button></form>
+          )}
+          <details>
+            <summary class="small err-text">Delete case data…</summary>
+            <form method="post" action={`/admin/cases/${cs.id}/action`} style="margin-top:6px">
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="delete_case" />
+              <p class="small">Permanently removes every file and record of this case. Type <b>{cs.id}</b> to confirm.</p>
+              <input name="confirm" autocomplete="off" required />
+              <button class="danger" type="submit" style="margin-top:6px">Delete permanently</button>
+            </form>
+          </details>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Event log</h2>
+        <ul class="log">{lastEvents.map((e) => <li><div class="muted small">{fmtTime(e.at)} · {e.by}</div>{e.text}</li>)}</ul>
+      </section>
+    </aside>
+  </div>
+</AdminLayout>
+
+<script>
+  import { put } from "@vercel/blob/client";
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form.upload")) {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const status = form.querySelector<HTMLElement>(".status");
+      const button = form.querySelector<HTMLButtonElement>("button");
+      const input = form.querySelector<HTMLInputElement>('input[type="file"]')!;
+      const as = (form.querySelector<HTMLSelectElement | HTMLInputElement>('[name="as"]')!).value;
+      const caseId = form.dataset.case!;
+      const csrf = form.dataset.csrf!;
+      const say = (t: string) => status && (status.textContent = t);
+      if (!input.files?.length) return;
+      if (button) button.disabled = true;
+      try {
+        for (const file of Array.from(input.files)) {
+          if (file.size > 25 * 1024 * 1024) throw new Error(`${file.name} is larger than 25 MB.`);
+          say(`Uploading ${file.name}…`);
+          const tokenRes = await fetch(`/admin/cases/${caseId}/upload-token`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ csrf, name: file.name, type: file.type, size: file.size }),
+          });
+          const t = await tokenRes.json();
+          if (!tokenRes.ok) throw new Error(t.error || "Upload refused.");
+          await put(t.pathname, file, { access: "private", token: t.token, contentType: file.type, multipart: file.size > 8 * 1024 * 1024 });
+          const body = new URLSearchParams({ _csrf: csrf, _action: "register_upload", path: t.path, name: file.name, as });
+          const reg = await fetch(`/admin/cases/${caseId}/action`, { method: "POST", body });
+          if (!reg.ok) throw new Error("Could not record the upload.");
+        }
+        say("Done.");
+        location.reload();
+      } catch (err) {
+        say((err as Error).message);
+        if (button) button.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .head { margin-bottom: 12px; }
+  .ref { font-weight: 600; font-size: 16px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }
+  @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+  fieldset { border: 0; border-top: 1px solid var(--border); padding: 10px 0 4px; margin: 6px 0 0; }
+  legend { font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-right: 8px; }
+  .field.wide { grid-column: span 2; }
+  @media (max-width: 700px) { .field.wide { grid-column: auto; } }
+  .field.is-uncertain input, .field.is-uncertain select, .field.is-uncertain textarea { border-color: #E0A100; background: #FFFBEB; }
+  .field.is-missing input, .field.is-missing select, .field.is-missing textarea { border-color: #E5484D; background: #FFF5F5; }
+  .tag { margin-left: 6px; font-size: 10.5px; background: var(--warnbg); color: var(--warn); padding: 1px 6px; border-radius: 99px; }
+  .key { padding: 0 5px; border-radius: 3px; }
+  .key.uncertain { background: #FFFBEB; border: 1px solid #E0A100; }
+  .key.missing { background: #FFF5F5; border: 1px solid #E5484D; }
+  .err-text { color: var(--err); }
+  .sticky { position: sticky; bottom: 0; background: #fff; padding: 10px 0 2px; border-top: 1px solid var(--border); margin-top: 8px; }
+  .check { display: inline-flex; gap: 6px; align-items: center; font-weight: 600; margin: 6px 12px 6px 0; }
+  .check input { width: auto; }
+  .steps { display: grid; gap: 4px; }
+  .step { border-top: 1px dashed var(--border); padding-top: 4px; }
+  .step:first-child { border-top: 0; }
+  form.upload { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  form.upload select { max-width: 200px; }
+  form.upload input[type="file"] { max-width: 280px; border: 0; padding: 0; }
+  .mailbox { border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+  .attach { border-top: 1px solid var(--border); padding-top: 6px; margin-top: 6px; }
+  .mailframe { width: 100%; height: 360px; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
+  .rail { list-style: none; padding: 0; margin: 0; }
+  .rail li { display: flex; gap: 8px; padding: 4px 0; font-size: 12.5px; color: var(--muted); }
+  .rail li b { font-weight: 600; }
+  .rail .dot { flex: 0 0 10px; height: 10px; border-radius: 50%; border: 2px solid #C3CEDB; margin-top: 4px; }
+  .rail li.done { color: var(--navy); }
+  .rail li.done .dot { background: var(--ok); border-color: var(--ok); }
+  .rail li.current { color: var(--navy); }
+  .rail li.current .dot { border-color: var(--gold); background: var(--gold); }
+  .stack { display: grid; gap: 8px; }
+  .log { list-style: none; padding: 0; margin: 0; max-height: 480px; overflow: auto; font-size: 12.5px; }
+  .log li { padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .docs td { font-size: 13px; }
+</style>

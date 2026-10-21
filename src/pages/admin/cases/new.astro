@@ -1,0 +1,47 @@
+---
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { csrfOk, csrfToken } from "../../../lib/cases/auth";
+import { addEvent, createCase, mutateCase, setMilestone } from "../../../lib/cases/cases";
+import { applyDefaults } from "../../../lib/cases/derive";
+import { runExtraction } from "../../../lib/cases/inbound";
+import { redirect, setFlash } from "../../../lib/cases/http";
+
+export const prerender = false;
+
+const session = Astro.locals.session!;
+let error = "";
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  if (!csrfOk(session, form.get("_csrf"))) {
+    error = "Your form expired. Try again.";
+  } else {
+    const text = String(form.get("text") ?? "").trim().slice(0, 60000);
+    const c = await createCase({ source: { type: "manual" }, fields: applyDefaults({}) }, session.name);
+    await mutateCase(c.id, session.name, (cc) => {
+      setMilestone(cc, "received", session.name);
+      if (text) addEvent(cc, session.name, "Intake text pasted for extraction");
+    });
+    if (text) {
+      const done = await runExtraction(c.id, { from: "(pasted by admin)", subject: "Manual intake", text }, [], session.name);
+      setFlash(Astro.cookies, done.extraction?.error ? { ok: false, message: `Case ${c.id} created; extraction failed, enter the details manually.` } : { ok: true, message: `Case ${c.id} created from the pasted text. Review every field.` });
+    } else {
+      setFlash(Astro.cookies, { ok: true, message: `Case ${c.id} created.` });
+    }
+    return redirect(`/admin/cases/${c.id}`);
+  }
+}
+---
+<AdminLayout title="New case">
+  <div class="muted small"><a href="/admin">Cases</a> / new</div>
+  <h1>New case</h1>
+  {error && <div class="flash err">{error}</div>}
+  <div class="card" style="max-width:760px">
+    <p>Creates a case for an intake that did not arrive by email. A reference number is assigned at once.</p>
+    <form method="post">
+      <input type="hidden" name="_csrf" value={csrfToken(session)} />
+      <label for="text">Optional: paste the intake details (Claude fills the fields; you review them)</label>
+      <textarea id="text" name="text" rows="12" placeholder="Company, member, beneficiary, pension, survivor, fund…"></textarea>
+      <div class="row" style="margin-top:10px"><button type="submit">Create case</button><span class="muted small">Leave empty to start with a blank form.</span></div>
+    </form>
+  </div>
+</AdminLayout>

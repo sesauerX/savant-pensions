@@ -54,7 +54,6 @@ export function applyDefaults(fields: Fields): Fields {
   if (empty("beneficiary_address") && f.member_address) f.beneficiary_address = f.member_address;
   if (empty("adjustment_date")) f.adjustment_date = DEFAULT_ADJUSTMENT_DATE;
   if (empty("adjustment_index")) f.adjustment_index = DEFAULT_ADJUSTMENT_INDEX;
-  if (f.has_survivor === undefined) f.has_survivor = false;
   return f;
 }
 

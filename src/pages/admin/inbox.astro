@@ -1,0 +1,68 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import { csrfOk, csrfToken } from "../../lib/cases/auth";
+import { config } from "../../lib/cases/config";
+import { getInboxEmail, listInbox } from "../../lib/cases/inbound";
+import { redirect, setFlash, takeFlash } from "../../lib/cases/http";
+import { runInboxAction } from "../../lib/cases/actions";
+
+export const prerender = false;
+
+const session = Astro.locals.session!;
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  if (!csrfOk(session, form.get("_csrf"))) {
+    setFlash(Astro.cookies, { ok: false, message: "Your form expired. Try again." });
+    return redirect("/admin/inbox");
+  }
+  const result = await runInboxAction(form, session);
+  setFlash(Astro.cookies, { ok: result.ok, message: result.message });
+  return redirect(result.ok && result.redirect ? result.redirect : "/admin/inbox");
+}
+const flash = takeFlash(Astro.cookies);
+const csrf = csrfToken(session);
+const show = Astro.url.searchParams.get("show") === "all" ? "all" : "open";
+const items = (await listInbox()).filter((i) => show === "all" || i.status === "open");
+const opened = Astro.url.searchParams.get("email");
+const body = opened ? await getInboxEmail(opened) : null;
+const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+---
+<AdminLayout title="Unassigned inbox" flash={flash}>
+  <div class="row"><h1>Unassigned inbox</h1><span class="spacer"></span>
+    <a href={show === "all" ? "/admin/inbox" : "/admin/inbox?show=all"}>{show === "all" ? "Show open only" : "Show handled too"}</a>
+  </div>
+  <p class="muted small">Mail to {config.inboundAddress() || "the inbound address"} from senders not on the allowlist, without DMARC pass, or with an unknown reference. Nothing here created a case or was sent to Claude.</p>
+  {items.length === 0 ? <div class="card"><p class="muted">Nothing here.</p></div> : items.map((i) => (
+    <div class="card">
+      <div class="row"><b>{i.subject || "(no subject)"}</b><span class="muted small">from {i.from} · {fmt(i.receivedAt)}</span><span class="spacer"></span><span class="badge wait">{i.reason}</span>{i.status !== "open" && <span class="badge done">{i.status}{i.caseId ? ` ${i.caseId}` : ""}</span>}</div>
+      {i.files.length > 0 && <p class="small">Attachments: {i.files.map((f) => <a href={`/api/cases/file?inbox=${encodeURIComponent(i.emailId)}&file=${f.id}&download=1`} style="margin-right:8px">{f.name}</a>)}</p>}
+      {opened === i.emailId && body ? (
+        <pre class="mail">{body.text || "(no text part)"}</pre>
+      ) : (
+        <a class="small" href={`/admin/inbox?email=${encodeURIComponent(i.emailId)}${show === "all" ? "&show=all" : ""}`}>Show text</a>
+      )}
+      {i.status === "open" ? (
+        <div class="row" style="margin-top:10px">
+          <form method="post" class="inline" onsubmit="return confirm('Create a case from this email? Claude will extract the details.')">
+            <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="create_case" /><input type="hidden" name="email" value={i.emailId} />
+            <button type="submit">Create case</button>
+          </form>
+          <form method="post" class="row">
+            <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="attach" /><input type="hidden" name="email" value={i.emailId} />
+            <input name="case" placeholder="SPG-2026-0001" pattern="SPG-\d{4}-\d{4}" required style="max-width:160px" />
+            <button class="secondary" type="submit">Attach to case</button>
+          </form>
+          <form method="post" class="inline">
+            <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="dismiss" /><input type="hidden" name="email" value={i.emailId} />
+            <button class="secondary" type="submit">Dismiss</button>
+          </form>
+        </div>
+      ) : (
+        <form method="post" class="inline">
+          <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="reopen" /><input type="hidden" name="email" value={i.emailId} />
+          <button class="link" type="submit">Reopen</button>
+        </form>
+      )}
+    </div>
+  ))}
+</AdminLayout>
