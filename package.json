@@ -6,7 +6,8 @@
     "dev": "astro dev --host 0.0.0.0",
     "build": "astro build",
     "preview": "astro preview",
-    "test": "node --test tests/*.test.ts"
+    "test": "node --test tests/*.test.ts",
+    "test:prod": "node scripts/check-admin-origin.mjs"
   },
   "dependencies": {
     "@astrojs/vercel": "^9.0.5",

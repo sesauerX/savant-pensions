@@ -22,7 +22,8 @@ export const ADMIN_HEADERS: Record<string, string> = {
   "Cache-Control": "no-store",
   "X-Frame-Options": "DENY",
   "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "no-referrer",
+  // same-origin, not no-referrer: with no-referrer browsers send "Origin: null" on form POSTs.
+  "Referrer-Policy": "same-origin",
   "X-Robots-Tag": "noindex, nofollow",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   // Inline styles/scripts are Astro's own; no third-party origins. Frames only for same-origin PDF preview
@@ -33,6 +34,32 @@ export const ADMIN_HEADERS: Record<string, string> = {
 
 export function applyAdminHeaders(headers: Headers) {
   for (const [k, v] of Object.entries(ADMIN_HEADERS)) headers.set(k, v);
+}
+
+const SITE_ORIGINS = ["https://sterlingpensiongroup.com", "https://www.sterlingpensiongroup.com"];
+
+function originOf(value: string | null) {
+  if (!value || value === "null") return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+/** Origins allowed to POST to /admin. Never derived from request.url (wrong behind the proxy). */
+export function originAllowed(origin: string) {
+  if (SITE_ORIGINS.includes(origin)) return true;
+  const extra = originOf(process.env.CASES_SITE_URL ?? null);
+  if (extra && origin === extra) return true;
+  if (import.meta.env.DEV) return /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  return false;
+}
+
+/** Same-site check for state-changing admin requests: Origin, or Referer when Origin is absent. */
+export function requestFromOurSite(request: Request) {
+  const origin = originOf(request.headers.get("origin")) ?? originOf(request.headers.get("referer"));
+  return origin !== null && originAllowed(origin);
 }
 
 export function redirect(location: string, status = 303) {

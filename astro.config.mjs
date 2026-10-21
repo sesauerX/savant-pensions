@@ -16,6 +16,10 @@ export default defineConfig({
   vite: {
     ssr: { external: ["@sparticuz/chromium", "puppeteer-core"] },
   },
+  // Astro's own origin check compares against the internal URL behind Vercel's proxy and rejects
+  // every form POST. /admin uses its own allowlist check (src/lib/cases/http.ts) plus CSRF tokens;
+  // webhooks are verified by signature.
+  security: { checkOrigin: false },
   // Inline the (small) stylesheet so first paint does not wait on a CSS request.
   build: { inlineStylesheets: "always" },
   // Old /insights URLs are redirected by src/pages/insights/[...path].ts.

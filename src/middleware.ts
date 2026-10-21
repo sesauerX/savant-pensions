@@ -3,7 +3,7 @@
 import { defineMiddleware } from "astro:middleware";
 import { config } from "./lib/cases/config";
 import { getSession } from "./lib/cases/auth";
-import { applyAdminHeaders, notFound, redirect } from "./lib/cases/http";
+import { applyAdminHeaders, notFound, redirect, requestFromOurSite } from "./lib/cases/http";
 
 const PUBLIC_ADMIN = new Set(["/admin/login", "/admin/login/verify"]);
 
@@ -16,10 +16,10 @@ export const onRequest = defineMiddleware(async (ctx, next) => {
   if (!config.enabled() && !import.meta.env.DEV) return notFound();
   if (!isAdmin) return next(); // webhook/cron/file endpoints authenticate themselves
 
-  // Same-origin check for every state-changing request (CSRF tokens are checked per action too).
+  // Origin allowlist for every state-changing admin request, including the login forms that have
+  // no session yet. Signed-in actions also need a CSRF token. Webhooks returned above.
   if (ctx.request.method !== "GET" && ctx.request.method !== "HEAD") {
-    const origin = ctx.request.headers.get("origin");
-    if (!origin || origin !== ctx.url.origin) {
+    if (!requestFromOurSite(ctx.request)) {
       return new Response("Forbidden", { status: 403, headers: { "Cache-Control": "no-store" } });
     }
   }
