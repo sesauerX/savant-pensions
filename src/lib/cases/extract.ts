@@ -11,7 +11,7 @@ Rules:
 - Extract only what is stated. If a value is not stated, or is given as "not on our file", "not given", "tbd" or similar, return an empty string and list the field in "missing". Never guess.
 - Intake emails often come from a partner firm and address Pocholo (Sterling's CEO). The client is the LLC's sole member, usually also the beneficiary ("member and beneficiary"). Partner-firm addresses, signatures and phone numbers are not client data.
 - Yes/no fields are "yes", "no" or "" (unknown). existing_llc is "no" when the LLC is described as newly formed for this engagement (e.g. formed in the last few weeks); "" if unclear.
-- Put useful facts that have no field (visa target country, number of apostilled sets, open items, phone number) briefly in "notes".
+- Put useful facts that have no field (visa target country, number of apostilled sets, open items, phone number) briefly in "notes". The annual adjustment terms are set by the plan; mention them in notes only if the email states something other than CPI-U each 1 January.
 - Never guess or reconstruct identifiers: EIN, passport number, state filing number. Copy them exactly as written, or return an empty string.
 - Dates: return ISO YYYY-MM-DD. If only part of a date is given, return an empty string and list the field as uncertain.
 - Amounts: plain numbers in US dollars without symbols or separators, e.g. 2500 or 2500.50. If the currency is not USD, return an empty string and explain in notes.
@@ -23,11 +23,15 @@ Rules:
 - List in "missing" the required fields you could not find.
 - "notes": a short neutral summary for the reviewer of anything unusual (conflicts, unclear handwriting, missing pages). No personal data beyond what is needed.`;
 
+// Set by Sterling, not by the intake: dates chosen at confirm time, state-law defaults, and the
+// plan-wide adjustment terms (fixed in the Policy template, counsel to confirm).
+const NOT_EXTRACTED = ["signing_date", "award_letter_date", "certificate_date", "first_payment_date", "llc_act", "secretary_of_state", "adjustment_date", "adjustment_index"];
+
 /** JSON schema for the result. Structured outputs allow few union types, so "not stated" is an empty string. */
 function schema() {
   const props: Record<string, unknown> = {};
   for (const f of FIELDS) {
-    if (["signing_date", "award_letter_date", "certificate_date", "first_payment_date", "llc_act", "secretary_of_state"].includes(f.key)) continue;
+    if (NOT_EXTRACTED.includes(f.key)) continue;
     props[f.key] =
       f.type === "bool"
         ? { type: "string", enum: ["yes", "no", ""], description: f.label }
