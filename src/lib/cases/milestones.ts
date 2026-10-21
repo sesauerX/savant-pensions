@@ -4,21 +4,15 @@ import type { Case } from "./types";
 export const MILESTONES = [
   { key: "received", label: "Received", next: "Review the extracted details", auto: true },
   { key: "details_confirmed", label: "Details confirmed", next: "Review and confirm details", auto: false },
-  { key: "documents_generated", label: "Documents generated", next: "Generate documents", auto: true },
+  { key: "documents_generated", label: "Documents 1–4 and certificate C1 generated", next: "Generate documents", auto: true },
   { key: "sent_for_signature", label: "Sent for signature", next: "Send for signature", auto: false },
-  { key: "signatures_completed", label: "Signatures completed", next: "Waiting for signatures", auto: true },
+  { key: "signatures_completed", label: "Signatures completed (5 documents)", next: "Waiting for signatures", auto: true },
   { key: "signed_pack_emailed", label: "Signed pack emailed (A)", next: "Email signed documents (A)", auto: true },
   { key: "award_notary_meeting", label: "Award: notary meeting", next: "Book the Award Letter notary meeting", auto: false },
   { key: "award_notarized", label: "Award: notarized", next: "Upload the notarized Award Letter", auto: false },
   { key: "award_ecopies_emailed", label: "Award: e-copies emailed (B)", next: "Email Award Letter e-copies (B)", auto: false },
   { key: "award_couriered", label: "Award: couriered", next: "Enter Award Letter courier tracking", auto: false },
-  { key: "first_payment_confirmed", label: "First payment confirmed", next: "Waiting for the first pension payment", auto: false },
-  { key: "certificate_generated", label: "Certificate generated", next: "Generate the certificate", auto: true },
-  { key: "certificate_notary_meeting", label: "Certificate: notary meeting", next: "Book the certificate notary meeting", auto: false },
-  { key: "certificate_notarized", label: "Certificate: notarized", next: "Upload the notarized certificate", auto: false },
-  { key: "final_pack_emailed", label: "Final pack emailed (C)", next: "Email certificate and full set (C)", auto: false },
-  { key: "certificate_couriered", label: "Certificate: couriered", next: "Enter certificate courier tracking", auto: false },
-  { key: "closed", label: "Closed", next: "Close the case", auto: false },
+  { key: "closed", label: "Closed", next: "Issue payment certificates as needed, or close", auto: false },
 ] as const;
 
 export type MilestoneKey = (typeof MILESTONES)[number]["key"];
@@ -35,7 +29,7 @@ export function currentMilestone(c: Pick<Case, "milestones">): MilestoneKey | nu
 
 export type StatusInfo = { key: string; label: string; next: string; tone: "info" | "wait" | "action" | "done" | "hold" | "stop" };
 
-const WAITING: MilestoneKey[] = ["signatures_completed", "first_payment_confirmed"];
+const WAITING: MilestoneKey[] = ["signatures_completed"];
 
 export function caseStatus(c: Pick<Case, "milestones" | "state">): StatusInfo {
   if (c.state === "cancelled") return { key: "cancelled", label: "Cancelled", next: "–", tone: "stop" };
@@ -43,6 +37,8 @@ export function caseStatus(c: Pick<Case, "milestones" | "state">): StatusInfo {
   const m = currentMilestone(c);
   if (!m || c.state === "closed") return { key: "closed", label: "Closed", next: "–", tone: "done" };
   const def = MILESTONE_BY_KEY[m];
+  // Onboarding done: the case stays open for later payment certificates until it is closed.
+  if (m === "closed") return { key: "onboarding_complete", label: "Onboarding complete", next: def.next, tone: "wait" };
   return { key: m, label: statusLabel(m), next: def.next, tone: WAITING.includes(m) ? "wait" : m === "details_confirmed" ? "action" : "info" };
 }
 
@@ -59,13 +55,7 @@ function statusLabel(m: MilestoneKey) {
     case "award_notarized": return "Awaiting notary (Award)";
     case "award_ecopies_emailed": return "Award e-copies to send";
     case "award_couriered": return "Award courier pending";
-    case "first_payment_confirmed": return "Awaiting 1st payment";
-    case "certificate_generated": return "Certificate to generate";
-    case "certificate_notary_meeting":
-    case "certificate_notarized": return "Awaiting notary (Certificate)";
-    case "final_pack_emailed": return "Final pack to send";
-    case "certificate_couriered": return "Certificate courier pending";
-    case "closed": return "Ready to close";
+    case "closed": return "Onboarding complete";
   }
 }
 
@@ -74,7 +64,7 @@ export function statusBucket(status: string, state: string) {
   if (state === "on_hold") return "on_hold";
   if (state === "closed" || state === "cancelled" || status === "closed") return "closed";
   if (status === "signatures_completed") return "waiting_client";
-  if (status === "first_payment_confirmed") return "waiting_payment";
+  if (status === "onboarding_complete") return "waiting_payment";
   return "active";
 }
 
@@ -84,9 +74,9 @@ export const COUNTERS = [
   {
     key: "notary",
     label: "Awaiting notary",
-    match: (s: string) => ["award_notary_meeting", "award_notarized", "certificate_notary_meeting", "certificate_notarized"].includes(s),
+    match: (s: string) => ["award_notary_meeting", "award_notarized"].includes(s),
   },
-  { key: "payment", label: "Awaiting 1st payment", match: (s: string) => s === "first_payment_confirmed" },
+  { key: "payment", label: "Onboarding complete", match: (s: string) => s === "onboarding_complete" },
 ];
 
 export class GuardError extends Error {}

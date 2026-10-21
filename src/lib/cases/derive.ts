@@ -7,7 +7,7 @@ import {
   todayIso,
   type Fields,
 } from "./schema";
-import { amountToWords, formatAmount } from "./words";
+import { amountToWords, formatAmount, integerToWords } from "./words";
 
 // Defaults for the LLC Act and the filing office (spec §6.4). Counsel to confirm; editable per case.
 const KNOWN_STATES = [
@@ -52,6 +52,7 @@ export function applyDefaults(fields: Fields): Fields {
     f.beneficiary_surname = f.beneficiary_name.trim().split(/\s+/).pop();
   }
   if (empty("beneficiary_address") && f.member_address) f.beneficiary_address = f.member_address;
+  if (empty("client_language")) f.client_language = "en";
   if (empty("adjustment_date")) f.adjustment_date = DEFAULT_ADJUSTMENT_DATE;
   if (empty("adjustment_index")) f.adjustment_index = DEFAULT_ADJUSTMENT_INDEX;
   return f;
@@ -75,7 +76,18 @@ function oneLine(value: string) {
  * plus `*_words`, `reference` and the short index name. Empty fields stay absent so
  * the renderer can report them.
  */
-export function templateValues(fields: Fields, reference: string, flags: { showPassport: boolean }) {
+export type CertificateValues = {
+  variant: "onboarding" | "payment_history";
+  certificate_date: string;
+  payments_made?: number;
+  last_payment_date?: string;
+};
+
+export function templateValues(
+  fields: Fields,
+  reference: string,
+  flags: { showPassport: boolean; withTags?: boolean; certificate?: CertificateValues },
+) {
   const v: Record<string, string | boolean> = { reference };
   for (const def of FIELDS) {
     const raw = fields[def.key];
@@ -92,5 +104,18 @@ export function templateValues(fields: Fields, reference: string, flags: { showP
   }
   v.adjustment_index_short = "CPI-U";
   v.show_passport = flags.showPassport;
+  v.with_tags = Boolean(flags.withTags);
+  const cert = flags.certificate;
+  if (cert) {
+    v.is_onboarding = cert.variant === "onboarding";
+    v.certificate_date = formatDate(cert.certificate_date);
+    if (cert.variant === "payment_history") {
+      if (cert.payments_made) {
+        v.payments_made = String(cert.payments_made);
+        v.payments_made_words = integerToWords(cert.payments_made);
+      }
+      if (cert.last_payment_date) v.last_payment_date = formatDate(cert.last_payment_date);
+    }
+  }
   return v;
 }

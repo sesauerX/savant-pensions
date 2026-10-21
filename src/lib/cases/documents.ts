@@ -8,17 +8,21 @@ import sharedCss from "./templates/shared.css?raw";
 import logoSvg from "../../../public/logo.svg?raw";
 import { fontFaceCss } from "./fonts";
 import { MissingFieldsError, escapeHtml, renderTemplate, templateVersion } from "./templates/render";
-import { templateValues } from "./derive";
+import { templateValues, type CertificateValues } from "./derive";
 import type { Fields } from "./schema";
 import { config } from "./config";
 
 export type DocKey = "operating_agreement" | "pension_policy" | "written_consent" | "award_letter" | "certificate";
 
 export const DOC_KEYS: DocKey[] = ["operating_agreement", "pension_policy", "written_consent", "award_letter", "certificate"];
-/** Documents signed through BoldSign, in envelope order. */
-export const BOLDSIGN_DOCS: DocKey[] = ["operating_agreement", "pension_policy", "written_consent"];
-/** Documents generated at confirm time (the certificate waits for the first payment). */
+/** Main BoldSign envelope, in order: documents 1–4 plus certificate C1. */
+export const ENVELOPE_DOCS: DocKey[] = ["operating_agreement", "pension_policy", "written_consent", "award_letter", "certificate"];
+/** Documents 1–4 (certificates are separate numbered issues). */
 export const INITIAL_DOCS: DocKey[] = ["operating_agreement", "pension_policy", "written_consent", "award_letter"];
+/** The client signs these; Sterling signs all envelope documents. */
+export const CLIENT_SIGNED_DOCS: DocKey[] = ["operating_agreement", "written_consent"];
+
+export const certRef = (caseRef: string, no: number) => `${caseRef}-C${no}`;
 
 type DocDef = { n: number; title: string; short: string; src: string; footer: "sterling" | "company" };
 
@@ -33,8 +37,8 @@ export const DOCS: Record<DocKey, DocDef> = {
 export const WATERMARK_TEXT = "DRAFT – PENDING COUNSEL REVIEW";
 const STERLING_LINE = "Sterling Pension Group LLC · 15 N Main St #100, West Hartford, CT 06107, USA";
 
-export function docFileName(reference: string, doc: DocKey) {
-  return `${reference} - ${DOCS[doc].n} ${DOCS[doc].title}.pdf`;
+export function docFileName(reference: string, doc: DocKey, certNo?: number) {
+  return `${reference} - ${DOCS[doc].n} ${DOCS[doc].title}${certNo ? ` C${certNo}` : ""}.pdf`;
 }
 
 export function docVersion(doc: DocKey) {
@@ -61,10 +65,11 @@ export function buildDocument(
   doc: DocKey,
   fields: Fields,
   reference: string,
-  opts: { watermark?: boolean } = {},
+  opts: { watermark?: boolean; withTags?: boolean; certificate?: CertificateValues } = {},
 ): BuiltDoc {
   const def = DOCS[doc];
-  const values = templateValues(fields, reference, { showPassport: config.showPassport() });
+  if (doc === "certificate" && !opts.certificate) throw new Error("A certificate needs its issue details");
+  const values = templateValues(fields, reference, { showPassport: config.showPassport(), withTags: opts.withTags, certificate: opts.certificate });
   let body: string;
   try {
     body = renderTemplate(def.src, values, { logo: logoSvg }, doc);
@@ -95,21 +100,27 @@ function footerTemplate(left: string, rightPrefix: string) {
   <div class="f"><div class="row"><span>${escapeHtml(left)}</span><span class="r">${escapeHtml(rightPrefix)}Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div></div>`;
 }
 
-export type RenderedDoc = { doc: DocKey; name: string; pdf: Uint8Array; pages: number; version: string };
+export type RenderedDoc = { doc: DocKey; certNo?: number; name: string; pdf: Uint8Array; pages: number; version: string };
+export type RenderItem = DocKey | { doc: DocKey; withTags?: boolean; certNo?: number; certificate?: CertificateValues };
 
-/** Render several documents to PDF in one Chromium session. */
+/**
+ * Render several documents to PDF in one Chromium session. `reference` is the case reference;
+ * certificates print their own issue reference ({case}-C{n}).
+ */
 export async function renderDocuments(
-  docs: DocKey[],
+  items: RenderItem[],
   fields: Fields,
   reference: string,
   opts: { watermark?: boolean } = {},
 ): Promise<RenderedDoc[]> {
   // Validate every document first so one call reports all missing fields.
   const missing = new Set<string>();
-  const built: BuiltDoc[] = [];
-  for (const doc of docs) {
+  const built: (BuiltDoc & { certNo?: number })[] = [];
+  for (const raw of items) {
+    const item = typeof raw === "string" ? { doc: raw } : raw;
+    const ref = item.doc === "certificate" && item.certNo ? certRef(reference, item.certNo) : reference;
     try {
-      built.push(buildDocument(doc, fields, reference, opts));
+      built.push({ ...buildDocument(item.doc, fields, ref, { ...opts, withTags: item.withTags, certificate: item.certificate }), certNo: item.certNo });
     } catch (err) {
       if (err instanceof DocumentFieldsError) err.missing.forEach((m) => missing.add(m));
       else throw err;
@@ -120,7 +131,8 @@ export async function renderDocuments(
   const pdfs = await htmlToPdfBatch(built.map((b) => ({ html: b.html, footerHtml: b.footerHtml, title: b.title })));
   return built.map((b, i) => ({
     doc: b.doc,
-    name: docFileName(reference, b.doc),
+    certNo: b.certNo,
+    name: docFileName(reference, b.doc, b.certNo),
     pdf: pdfs[i].pdf,
     pages: pdfs[i].pages,
     version: b.version,

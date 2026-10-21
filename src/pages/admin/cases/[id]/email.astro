@@ -3,54 +3,87 @@ import AdminLayout from "../../../../layouts/AdminLayout.astro";
 import { csrfToken } from "../../../../lib/cases/auth";
 import { getCase, isCaseId } from "../../../../lib/cases/cases";
 import { config } from "../../../../lib/cases/config";
-import { buildEmail, type EmailKind } from "../../../../lib/cases/emails";
+import { ASKABLE_FIELDS, EMAIL_WORDING_STATUS, buildEmail, type EmailKind } from "../../../../lib/cases/emails";
 import { takeFlash } from "../../../../lib/cases/http";
 
 export const prerender = false;
 
 const id = String(Astro.params.id ?? "");
-const kind = (Astro.url.searchParams.get("kind") ?? "") as EmailKind;
-if (!isCaseId(id) || !["A", "B", "C", "tracking"].includes(kind)) return new Response("Not found", { status: 404 });
+const q = Astro.url.searchParams;
+const kind = (q.get("kind") ?? "") as EmailKind;
+if (!isCaseId(id) || !["A", "B", "C", "tracking", "details"].includes(kind)) return new Response("Not found", { status: 404 });
 const c = await getCase(id);
 if (!c) return new Response("Not found", { status: 404 });
-const draft = buildEmail(c, kind);
+const certNo = Number(q.get("cert")) || undefined;
+const items = q.getAll("items").filter((k) => ASKABLE_FIELDS.includes(k));
+const caseLang = c.fields.client_language === "de" ? "de" : "en";
+const viewLang = q.get("lang") === "en" || q.get("lang") === "de" ? (q.get("lang") as "en" | "de") : caseLang;
+const sendDraft = buildEmail(c, kind, { certNo, items });
+const draft = viewLang === caseLang ? sendDraft : buildEmail(c, kind, { certNo, items, lang: viewLang });
 const csrf = csrfToken(Astro.locals.session!);
 const flash = takeFlash(Astro.cookies);
 const live = config.live();
 const blocked = live && !config.templatesApproved();
-const actualTo = live ? draft.to : [config.testRecipient()];
-const already = c.emails.filter((e) => e.kind === kind);
-const total = draft.attachments.reduce((n, a) => n + a.size, 0);
+const actualTo = live ? sendDraft.to : [config.testRecipient()];
+const already = c.emails.filter((e) => e.kind === kind && (kind !== "C" || e.certNo === certNo));
+const total = sendDraft.attachments.reduce((n, a) => n + a.size, 0);
 const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
-const LABEL: Record<string, string> = { A: "Email A · signed documents", B: "Email B · notarized Award Letter", C: "Email C · certificate and full set", tracking: "Courier tracking update" };
+const LABEL: Record<string, string> = {
+  A: "Email A · your pension documents",
+  B: "Email B · notarized Award Letter",
+  C: `Send certificate C${certNo ?? ""}`,
+  tracking: "Courier tracking update",
+  details: "Request missing details",
+};
+const toggle = (lang: string) => {
+  const p = new URLSearchParams(q);
+  p.set("lang", lang);
+  return `?${p.toString()}`;
+};
+const langName = (l: string) => (l === "de" ? "German" : "English");
 ---
 <AdminLayout title={`${id} ${LABEL[kind]}`} flash={flash}>
   <div class="muted small"><a href="/admin">Cases</a> / <a href={`/admin/cases/${id}#emails`}>{id}</a> / email</div>
   <h1>{LABEL[kind]}</h1>
+  <p class="small"><span class="badge action">{EMAIL_WORDING_STATUS}</span> <span class="muted">Sent in the case language: <b>{langName(caseLang)}</b>.</span></p>
   <div class="card">
     <dl class="kv">
       <dt>From</dt><dd>{config.clientFrom()}</dd>
-      <dt>To</dt><dd><b>{actualTo.join(", ")}</b>{!live && <span class="muted"> · TEST MODE, would have gone to {draft.to.join(", ") || "(no client email)"}</span>}</dd>
+      <dt>To</dt><dd><b>{actualTo.join(", ")}</b>{!live && <span class="muted"> · TEST MODE, would have gone to {sendDraft.to.join(", ") || "(no client email)"}</span>}</dd>
       {config.bcc() && (<><dt>Bcc</dt><dd>{config.bcc()}</dd></>)}
-      <dt>Reply-to</dt><dd>{config.replyTo() || <span class="muted">none (footer says the mailbox is not monitored)</span>}</dd>
-      <dt>Subject</dt><dd>{draft.subject}</dd>
-      <dt>Attachments</dt><dd>{draft.attachments.length ? draft.attachments.map((a) => <div>{a.name} <span class="muted small">({size(a.size)})</span></div>) : <span class="muted">none</span>}{total > 28 * 1024 * 1024 && <div class="small muted">Large: will be split into several emails if needed.</div>}</dd>
+      <dt>Reply-to</dt><dd>{config.replyTo() || <span class="muted">none (footer points to the contact form)</span>}</dd>
+      <dt>Subject</dt><dd>{sendDraft.subject}</dd>
+      <dt>Attachments</dt><dd>{sendDraft.attachments.length ? sendDraft.attachments.map((a) => <div>{a.name} <span class="muted small">({size(a.size)})</span></div>) : <span class="muted">none</span>}{total > 28 * 1024 * 1024 && <div class="small muted">Large: will be split into several emails if needed.</div>}</dd>
     </dl>
     {already.length > 0 && <p class="small" style="margin-top:8px"><b>Already sent</b> {already.length}× (last {new Date(already.at(-1)!.sentAt).toLocaleString("en-US", { timeZone: "America/New_York" })} ET).</p>}
-    {draft.problems.length > 0 && <div class="flash err" style="margin-top:10px">{draft.problems.join(" ")}</div>}
+    {sendDraft.problems.length > 0 && <div class="flash err" style="margin-top:10px">{sendDraft.problems.join(" ")}</div>}
     {blocked && <div class="flash err" style="margin-top:10px">Live mode without approved templates: sending is blocked.</div>}
   </div>
   <div class="card">
-    <h2>Body</h2>
-    <iframe sandbox="" srcdoc={draft.html} class="preview" title="Email preview"></iframe>
-    <details><summary class="small">Plain-text version</summary><pre class="mail">{draft.text}</pre></details>
+    <div class="row">
+      <h2>Full text ({langName(viewLang)}{viewLang !== caseLang ? ", for reading only" : ""})</h2>
+      <span class="spacer"></span>
+      <div class="tabs">
+        <a href={toggle(caseLang)} aria-current={viewLang === caseLang ? "page" : undefined}>{langName(caseLang)} (sent)</a>
+        {caseLang !== "en" && <a href={toggle("en")} aria-current={viewLang === "en" ? "page" : undefined}>English version</a>}
+      </div>
+    </div>
+    {viewLang !== caseLang && <p class="small muted">Subject in English: {draft.subject}</p>}
+    <pre class="mail full">{draft.text}</pre>
+    <details><summary class="small">Show the formatted (HTML) version</summary><iframe sandbox="" srcdoc={draft.html} class="preview" title="Email preview"></iframe></details>
   </div>
   <form method="post" action={`/admin/cases/${id}/action`} class="row" onsubmit="return confirm('Send this email now?')">
-    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="send_email" /><input type="hidden" name="kind" value={kind} /><input type="hidden" name="_back" value="#emails" />
-    <button type="submit" disabled={draft.problems.length > 0 || blocked}>{already.length ? "Send again" : "Send email"}</button>
-    <a href={`/admin/cases/${id}#emails`}>Back to the case</a>
+    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="send_email" /><input type="hidden" name="kind" value={kind} />
+    {certNo && <input type="hidden" name="cert" value={certNo} />}
+    {items.map((k) => <input type="hidden" name="items" value={k} />)}
+    <button type="submit" disabled={sendDraft.problems.length > 0 || blocked}>{already.length ? "Send again" : `Send in ${langName(caseLang)}`}</button>
+    <a href={`/admin/cases/${id}${kind === "C" ? `#cert-${certNo}` : "#emails"}`}>Back to the case</a>
   </form>
 </AdminLayout>
 <style>
-  .preview { width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 6px; background: #F3F6FA; }
+  .preview { width: 100%; height: 560px; border: 1px solid var(--border); border-radius: 6px; background: #F3F6FA; margin-top: 8px; }
+  pre.full { max-height: none; font-size: 14px; line-height: 1.55; background: #fff; }
+  .tabs { display: flex; gap: 4px; }
+  .tabs a { padding: 4px 10px; border-radius: 99px; text-decoration: none; color: var(--body); font-weight: 600; font-size: 13px; }
+  .tabs a[aria-current="page"] { background: var(--navy); color: #fff; }
 </style>

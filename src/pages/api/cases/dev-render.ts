@@ -2,7 +2,7 @@
 // Local dev: open freely. Production: requires `Authorization: Bearer CRON_SECRET` or an admin session.
 import type { APIRoute } from "astro";
 import { DOC_KEYS, buildDocument, renderDocuments, type DocKey } from "../../../lib/cases/documents";
-import { FIXTURE_REFERENCE, fixtureFields } from "../../../lib/cases/fixture";
+import { FIXTURE_REFERENCE, fixtureCertificate, fixtureFields } from "../../../lib/cases/fixture";
 import { config } from "../../../lib/cases/config";
 import { bearerOk, notFound } from "../../../lib/cases/http";
 import { getSession } from "../../../lib/cases/auth";
@@ -21,13 +21,16 @@ export const GET: APIRoute = async ({ request, url, cookies }) => {
     cents: url.searchParams.get("cents") === "1",
   });
   const watermark = url.searchParams.get("watermark") !== "0";
+  const withTags = url.searchParams.get("tags") === "1";
+  const cert = fixtureCertificate(url.searchParams.get("variant") === "payment_history" ? "payment_history" : "onboarding");
+  const item = doc === "certificate" ? { doc, withTags, certNo: cert.no, certificate: cert } : { doc, withTags };
 
   if (url.searchParams.get("format") === "html") {
-    const built = buildDocument(doc, fields, FIXTURE_REFERENCE, { watermark });
+    const built = buildDocument(doc, fields, doc === "certificate" ? `${FIXTURE_REFERENCE}-C${cert.no}` : FIXTURE_REFERENCE, { watermark, withTags, certificate: doc === "certificate" ? cert : undefined });
     return new Response(built.html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
   }
   const started = Date.now();
-  const [out] = await renderDocuments([doc], fields, FIXTURE_REFERENCE, { watermark });
+  const [out] = await renderDocuments([item], fields, FIXTURE_REFERENCE, { watermark });
   return new Response(out.pdf as BodyInit, {
     headers: {
       "Content-Type": "application/pdf",

@@ -4,6 +4,13 @@ import { applyDefaults } from "./derive";
 
 export const FIXTURE_REFERENCE = "SPG-2026-0000";
 
+/** Certificate issue for the fixture: C1 before the first payment, C2 after six payments. */
+export function fixtureCertificate(variant: "onboarding" | "payment_history") {
+  return variant === "onboarding"
+    ? { no: 1, variant, certificate_date: "2026-11-02" } as const
+    : { no: 2, variant, certificate_date: "2027-06-03", payments_made: 6, last_payment_date: "2027-05-01" } as const;
+}
+
 export function fixtureFields(variant: { survivor?: boolean; existing?: boolean; cents?: boolean } = {}): Fields {
   return applyDefaults({
     company_name: "Example Holdings LLC",
@@ -37,7 +44,5 @@ export function fixtureFields(variant: { survivor?: boolean; existing?: boolean;
     fund_amount: "750000",
     signing_date: "2026-11-02",
     award_letter_date: "2026-11-02",
-    certificate_date: "2027-02-15",
-    first_payment_date: "2026-12-01",
   });
 }

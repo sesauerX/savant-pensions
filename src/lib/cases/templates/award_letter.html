@@ -1,4 +1,4 @@
-<!-- template_version: AWD-2026-10-21.1 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending) -->
+<!-- template_version: AWD-2026-10-21.2 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending) -->
 <header class="letterhead">
   <p class="name">{{company_name}}</p>
   <p class="line">{{principal_office_address_lines|br}}</p>
@@ -37,7 +37,7 @@
   <p style="margin-top:0.2in">Sincerely,</p>
   <p>For and on behalf of <strong>{{company_name}}</strong></p>
   <div class="sig" style="margin-top:0">
-    <div class="space"></div>
+    <div class="space">{{#if with_tags}}<span class="tag">{{@spg_sig_award}}</span>{{/if}}</div>
     <div class="line"></div>
     <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
     <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>

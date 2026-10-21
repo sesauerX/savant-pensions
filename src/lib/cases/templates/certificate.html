@@ -1,4 +1,5 @@
-<!-- template_version: CERT-2026-10-21.1 | source: Sterling_Pension_Group_Certificate_of_Pension_Administration.pdf -->
+<!-- template_version: CERT-2026-10-21.2 | source: Sterling_Pension_Group_Certificate_of_Pension_Administration.pdf
+     COUNSEL REVIEW: both paragraph 5 variants (onboarding / payment_history) are new wording from the owner, 21 Oct 2026. -->
 <header class="sterling-head">
   <div class="logo">{{> logo}}</div>
   <div class="addr"><strong>Sterling Pension Group LLC</strong>15 N Main St #100, West Hartford, CT 06107, USA</div>
@@ -18,14 +19,14 @@
   <div class="para"><span class="badge">2</span><p><strong>The pension.</strong> The Company maintains the {{company_name}} Retirement Income Plan (the “Plan”). By written consent of its sole member dated {{signing_date}}, the Company awarded {{beneficiary_name}}, born on {{beneficiary_dob}}, holder of {{beneficiary_nationality}} passport {{beneficiary_passport}}, a pension of USD {{monthly_amount}} ({{monthly_amount_words}} US dollars) per month, payable monthly from {{commencement_date}} for the remainder of the beneficiary’s life, adjusted annually.</p></div>
   <div class="para"><span class="badge">3</span><p><strong>Status.</strong> The pension is fully vested, non-forfeitable and irrevocable, and is a lifetime obligation of the Company.{{#if has_survivor}} Where a survivor is named, on the beneficiary’s death it continues for life, at the full amount, to {{survivor_name}}, born on {{survivor_dob}}.{{/if}}</p></div>
   <div class="para"><span class="badge">4</span><p><strong>Administration.</strong> Sterling Pension Group LLC has been appointed administrator of the Plan under the Company’s Operating Agreement. It administers the designated pension fund of the Company from which the pension is paid.</p></div>
-  <div class="para"><span class="badge">5</span><p><strong>Payments.</strong> As of the date of this certificate, the pension has been paid monthly since {{commencement_date}}.</p></div>
+  {{#if is_onboarding}}<div class="para"><span class="badge">5</span><p><strong>Payments.</strong> The first monthly payment is due on {{commencement_date}}. As of the date of this certificate, no payment has yet fallen due.</p></div>{{else}}<div class="para"><span class="badge">5</span><p><strong>Payments.</strong> As of the date of this certificate, the pension has been paid monthly since {{commencement_date}}, {{payments_made_words}} ({{payments_made}}) payment(s) having been made, the most recent on {{last_payment_date}}.</p></div>{{/if}}
 </div>
 
 <p>This certificate is issued for submission to banks, consulates and immigration authorities.</p>
 <p>Issued in West Hartford, Connecticut, on {{certificate_date}}.</p>
 
 <div class="sig" style="margin-top:0.1in">
-  <div class="space"></div>
+  <div class="space">{{#if with_tags}}<span class="tag">{{@spg_sig_cert}}</span>{{/if}}</div>
   <div class="line" style="width:3.6in"></div>
   <p><strong>Sterling Pension Group LLC</strong></p>
   <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>

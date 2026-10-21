@@ -45,6 +45,7 @@ export async function createCase(init: Pick<Case, "source"> & Partial<Case>, by:
     files: [],
     docs: emptyDocs(),
     milestones: {},
+    certificates: [],
     shipments: [],
     emails: [],
     inbound: [],
@@ -68,6 +69,7 @@ export async function getCase(id: string): Promise<Case | null> {
 /** Older records may lack newer arrays. */
 function normalise(c: Case): Case {
   c.inbound ??= [];
+  c.certificates ??= [];
   c.emails ??= [];
   c.shipments ??= [];
   c.events ??= [];
@@ -145,7 +147,7 @@ const slug = (name: string) =>
 /** Store bytes under the case folder; returns the file record (caller adds it to the case). */
 export async function storeFile(
   caseId: string,
-  opts: { bytes: Uint8Array; name: string; kind: FileKind; contentType: string; by: string; doc?: DocKey; templateVersion?: string; inboundEmailId?: string; pages?: number },
+  opts: { bytes: Uint8Array; name: string; kind: FileKind; contentType: string; by: string; doc?: DocKey; templateVersion?: string; inboundEmailId?: string; pages?: number; certNo?: number },
 ): Promise<CaseFile> {
   const id = randomId();
   const path = `cases/${caseId}/files/${id}-${slug(opts.name)}`;
@@ -163,6 +165,7 @@ export async function storeFile(
     ...(opts.templateVersion ? { templateVersion: opts.templateVersion } : {}),
     ...(opts.inboundEmailId ? { inboundEmailId: opts.inboundEmailId } : {}),
     ...(opts.pages ? { pages: opts.pages } : {}),
+    ...(opts.certNo ? { certNo: opts.certNo } : {}),
   };
 }
 

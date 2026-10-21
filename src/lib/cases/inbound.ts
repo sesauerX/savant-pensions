@@ -136,6 +136,13 @@ export async function attachEmailToCase(
   });
 }
 
+/** German-speaking client by nationality or country of residence. */
+export function suggestsGerman(fields: Record<string, unknown>) {
+  const nat = String(fields.beneficiary_nationality ?? "").toLowerCase();
+  const addr = `${String(fields.member_address ?? "")} ${String(fields.beneficiary_address ?? "")}`.toLowerCase();
+  return /\b(german|austrian|swiss)\b/.test(nat) || /\b(germany|deutschland|austria|österreich|osterreich|switzerland|schweiz|suisse)\b/.test(addr);
+}
+
 /** Run extraction and store the result on the case (also used by "Re-run extraction"). */
 export async function runExtraction(caseId: string, email: { from: string; subject: string; text: string }, atts: { filename: string; contentType: string; bytes: Uint8Array }[], by: string) {
   try {
@@ -144,7 +151,13 @@ export async function runExtraction(caseId: string, email: { from: string; subje
       // Keep anything already typed in by a person; fill the rest.
       const merged = { ...r.fields, ...Object.fromEntries(Object.entries(c.fields).filter(([, v]) => v !== undefined && v !== "")) };
       c.fields = applyDefaults(merged);
-      c.extraction = { model: r.model, at: nowIso(), notes: r.notes, missing: r.missing, uncertain: r.uncertain };
+      const uncertain = [...r.uncertain];
+      // German emails for German, Austrian or Swiss clients; Pocholo confirms (flagged uncertain).
+      if (!c.milestones.details_confirmed && suggestsGerman(c.fields)) {
+        c.fields.client_language = "de";
+        if (!uncertain.includes("client_language")) uncertain.push("client_language");
+      }
+      c.extraction = { model: r.model, at: nowIso(), notes: r.notes, missing: r.missing, uncertain };
       addEvent(c, by, `Details extracted by ${r.model} (${Object.keys(r.fields).length} fields, ${r.uncertain.length} uncertain)`);
     });
   } catch (err) {

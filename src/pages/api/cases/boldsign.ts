@@ -4,7 +4,7 @@ import { verifyWebhook } from "../../../lib/cases/boldsign";
 import { config } from "../../../lib/cases/config";
 import { notFound } from "../../../lib/cases/http";
 import { readJson } from "../../../lib/cases/store";
-import { completeSigning, refreshSignature } from "../../../lib/cases/workflow";
+import { completeCertificateSigning, completeSigning, refreshCertificateSignature, refreshSignature } from "../../../lib/cases/workflow";
 
 export const prerender = false;
 
@@ -23,10 +23,13 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response("Bad JSON", { status: 400 });
   }
   const documentId = String(payload.data?.documentId ?? "");
-  const link = documentId ? (await readJson<{ caseId: string }>(`boldsign/doc-${documentId.replace(/[^\w-]/g, "")}.json`))?.data : null;
+  const link = documentId ? (await readJson<{ caseId: string; certNo?: number }>(`boldsign/doc-${documentId.replace(/[^\w-]/g, "")}.json`))?.data : null;
   if (!link) return Response.json({ ignored: true });
   try {
-    if (event === "Completed") await completeSigning(link.caseId, "BoldSign webhook");
+    if (link.certNo) {
+      if (event === "Completed") await completeCertificateSigning(link.caseId, "BoldSign webhook", link.certNo);
+      else await refreshCertificateSignature(link.caseId, "BoldSign webhook", link.certNo);
+    } else if (event === "Completed") await completeSigning(link.caseId, "BoldSign webhook");
     else await refreshSignature(link.caseId, "BoldSign webhook");
     console.log(`[cases] boldsign ${event} for ${link.caseId}`);
     return Response.json({ ok: true });

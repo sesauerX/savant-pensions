@@ -1,8 +1,8 @@
 // Admin POST actions for a case. Every guard is enforced here, not only in the UI.
 import { addEvent, deleteCaseData, fileById, getCase, mutateCase, nowIso, randomId, setMilestone, storeFile } from "./cases";
 import { config } from "./config";
-import { DOCS, INITIAL_DOCS, type DocKey } from "./documents";
-import { trackingUrl, CARRIERS, type EmailKind } from "./emails";
+import { type DocKey } from "./documents";
+import { ASKABLE_FIELDS, trackingUrl, CARRIERS, type EmailKind } from "./emails";
 import { attachEmailToCase, getInboxEmail, htmlToText, intakeEmail, listInbox, runExtraction, updateInboxItem } from "./inbound";
 import { GuardError, requireActive, requireMilestones } from "./milestones";
 import { FIELDS, isIsoDate, normaliseValue } from "./schema";
@@ -25,28 +25,55 @@ export function sniffType(bytes: Uint8Array) {
   return null;
 }
 
-type FileAs = "award_notarized" | "award_apostille" | "cert_notarized" | "cert_apostille" | "payment_proof" | "other";
-const FILE_AS: Record<FileAs, { doc?: DocKey; kind: CaseFile["kind"]; label: string }> = {
+type FileAs = "award_notarized" | "award_apostille" | "cert_notarized" | "cert_apostille" | "cert_proof" | "other";
+const FILE_AS: Record<FileAs, { doc?: DocKey; kind: CaseFile["kind"]; label: string; cert?: boolean }> = {
   award_notarized: { doc: "award_letter", kind: "notarized", label: "Award Letter – notarized" },
   award_apostille: { doc: "award_letter", kind: "apostille", label: "Award Letter – apostille" },
-  cert_notarized: { doc: "certificate", kind: "notarized", label: "Certificate – notarized" },
-  cert_apostille: { doc: "certificate", kind: "apostille", label: "Certificate – apostille" },
-  payment_proof: { kind: "proof", label: "Payment proof" },
+  cert_notarized: { doc: "certificate", kind: "notarized", label: "notarized", cert: true },
+  cert_apostille: { doc: "certificate", kind: "apostille", label: "apostille", cert: true },
+  cert_proof: { kind: "proof", label: "payment evidence", cert: true },
   other: { kind: "upload", label: "Other" },
 };
-export const FILE_AS_OPTIONS = Object.entries(FILE_AS).map(([k, v]) => ({ value: k, label: v.label }));
 
-/** Record a stored file under a purpose: sets doc links and milestones. Runs inside mutateCase. */
-function fileUnder(c: Case, file: CaseFile, as: FileAs, by: string) {
-  const def = FILE_AS[as];
-  if (!def) throw new GuardError("Unknown file purpose.");
-  if (def.doc === "certificate") requireMilestones(c, ["first_payment_confirmed"], "Filing certificate documents");
+/** "File as…" choices for a case: certificate purposes once per issue ("cert_notarized:2"). */
+export function fileAsOptions(c: Case) {
+  const out: { value: string; label: string }[] = [
+    { value: "award_notarized", label: FILE_AS.award_notarized.label },
+    { value: "award_apostille", label: FILE_AS.award_apostille.label },
+  ];
+  for (const cert of c.certificates) {
+    for (const k of ["cert_notarized", "cert_apostille", "cert_proof"] as const) out.push({ value: `${k}:${cert.no}`, label: `Certificate C${cert.no} – ${FILE_AS[k].label}` });
+  }
+  out.push({ value: "other", label: "Other" });
+  return out;
+}
+
+function parseAs(value: string): { as: FileAs; certNo?: number } {
+  const [as, no] = value.split(":");
+  if (!(as in FILE_AS)) throw new GuardError("Unknown file purpose.");
+  const def = FILE_AS[as as FileAs];
+  if (def.cert && !Number(no)) throw new GuardError("Choose a certificate.");
+  return { as: as as FileAs, ...(def.cert ? { certNo: Number(no) } : {}) };
+}
+
+/** Record a stored file under a purpose: sets doc/certificate links and milestones. Runs inside mutateCase. */
+function fileUnder(c: Case, file: CaseFile, target: { as: FileAs; certNo?: number }, by: string) {
+  const def = FILE_AS[target.as];
   file.kind = def.kind;
   if (def.doc) file.doc = def.doc;
+  if (def.cert) {
+    const cert = wf.certByNo(c, target.certNo!);
+    if (!cert) throw new GuardError(`Certificate C${target.certNo} not found.`);
+    file.certNo = cert.no;
+    if (def.kind === "proof") cert.files.proof = [...new Set([...cert.files.proof, file.id])];
+    else cert.files.notarized = [...new Set([...cert.files.notarized, file.id])];
+    addEvent(c, by, `Filed "${file.name}" as Certificate C${cert.no} – ${def.label}`);
+    return;
+  }
   if (def.doc && (def.kind === "notarized" || def.kind === "apostille")) {
     const rec = c.docs[def.doc];
     rec.notarized = [...new Set([...(rec.notarized ?? []), file.id])];
-    setMilestone(c, def.doc === "award_letter" ? "award_notarized" : "certificate_notarized", by);
+    setMilestone(c, "award_notarized", by);
   }
   addEvent(c, by, `Filed "${file.name}" as ${def.label}`);
 }
@@ -59,9 +86,6 @@ function checkUpload(bytes: Uint8Array | null) {
   return type;
 }
 
-function selectedDocs(form: FormData) {
-  return form.getAll("contents").map(String).filter((d): d is DocKey => d in DOCS);
-}
 
 export async function runCaseAction(caseId: string, form: FormData, user: { name: string }): Promise<ActionResult> {
   const by = user.name;
@@ -91,17 +115,17 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
           return { ok: true, message: "Details confirmed and documents generated." };
         }
         if (form.get("regenerate") === "1" && before.milestones.documents_generated) {
-          await wf.generateDocuments(caseId, by);
+          await wf.regenerateInitial(caseId, by);
           return { ok: true, message: "Saved and documents regenerated." };
         }
         return { ok: true, message: "Details saved." };
       }
       case "generate": {
-        await wf.generateDocuments(caseId, by, INITIAL_DOCS);
-        return { ok: true, message: "Documents regenerated." };
+        await wf.regenerateInitial(caseId, by);
+        return { ok: true, message: "Documents regenerated (and C1 while it is unsigned)." };
       }
       case "generate_award": {
-        await wf.generateDocuments(caseId, by, ["award_letter"]);
+        await wf.generateDocuments(caseId, by, { docs: ["award_letter"] });
         return { ok: true, message: "Award Letter regenerated." };
       }
       case "rerun_extraction": {
@@ -144,36 +168,47 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
       }
       case "send_email": {
         const kind = s(form, "kind", 10) as EmailKind;
-        if (!["A", "B", "C", "tracking"].includes(kind)) throw new GuardError("Unknown email.");
-        await wf.sendClientEmail(caseId, kind, by);
-        return { ok: true, message: `Email ${kind} sent${config.live() ? "" : ` (TEST: to ${config.testRecipient()})`}.`, redirect: `/admin/cases/${caseId}#emails` };
+        if (!["A", "B", "C", "tracking", "details"].includes(kind)) throw new GuardError("Unknown email.");
+        const certNo = Number(s(form, "cert", 4)) || undefined;
+        const items = form.getAll("items").map(String).filter((k) => ASKABLE_FIELDS.includes(k));
+        await wf.sendClientEmail(caseId, kind, by, { certNo, items });
+        const label = kind === "C" ? `Certificate C${certNo} email` : kind === "details" ? "Missing-details request" : `Email ${kind}`;
+        return { ok: true, message: `${label} sent${config.live() ? "" : ` (TEST: to ${config.testRecipient()})`}.`, redirect: `/admin/cases/${caseId}#emails` };
       }
       case "notary_meeting": {
         const doc = s(form, "doc") as DocKey;
         if (doc !== "award_letter" && doc !== "certificate") throw new GuardError("Unknown document.");
+        const certNo = Number(s(form, "cert", 4));
         const at = s(form, "at", 40);
         const day = at.slice(0, 10);
         if (!isIsoDate(day)) throw new GuardError("Enter the meeting date and time.");
-        const c0 = await wf.loadCase(caseId);
-        requireActive(c0);
-        if (doc === "award_letter") requireMilestones(c0, ["signatures_completed"], "The Award Letter notary meeting");
-        else requireMilestones(c0, ["certificate_generated"], "The certificate notary meeting");
+        const notary = s(form, "notary", 200);
         const moveDate = form.get("move_date") === "1";
-        await mutateCase(caseId, by, (c) => {
-          const key = doc === "award_letter" ? "award_notary_meeting" : "certificate_notary_meeting";
-          c.milestones[key] = { at: nowIso(), by, data: { meeting: at, notary: s(form, "notary", 200) } };
-          if (moveDate) c.fields[doc === "award_letter" ? "award_letter_date" : "certificate_date"] = day;
-          addEvent(c, by, `${DOCS[doc].short} notary meeting set for ${at.replace("T", " ")}`);
-        });
-        if (moveDate) {
-          const notarized = (c0.docs[doc].notarized ?? []).length > 0;
-          if (!notarized) await wf.generateDocuments(caseId, by, [doc]);
+        const c0 = await wf.loadCase(caseId);
+        if (c0.state === "on_hold" || c0.state === "cancelled") requireActive(c0);
+        if (doc === "award_letter") {
+          requireMilestones(c0, ["signatures_completed"], "The Award Letter notary meeting");
+          await mutateCase(caseId, by, (c) => {
+            c.milestones.award_notary_meeting = { at: nowIso(), by, data: { meeting: at, notary } };
+            if (moveDate) c.fields.award_letter_date = day;
+            addEvent(c, by, `Award Letter notary meeting set for ${at.replace("T", " ")}`);
+          });
+          if (moveDate && !(c0.docs.award_letter.notarized ?? []).length) await wf.generateDocuments(caseId, by, { docs: ["award_letter"] });
+          return { ok: true, message: `Meeting saved${moveDate ? ` and Award Letter dated ${day}` : ""}.`, redirect: `/admin/cases/${caseId}#award` };
         }
-        return { ok: true, message: `Meeting saved${moveDate ? ` and ${DOCS[doc].short} dated ${day}` : ""}.` };
+        const cert = wf.certByNo(c0, certNo);
+        if (!cert) throw new GuardError("Certificate not found.");
+        // Re-dating is checked against the certificate's paragraph 5 before anything is saved.
+        if (moveDate && !cert.files.notarized.length) await wf.regenerateCertificate(caseId, by, certNo, day);
+        await mutateCase(caseId, by, (c) => {
+          wf.certByNo(c, certNo)!.notary = { meeting: at, notary, at: nowIso(), by };
+          addEvent(c, by, `Certificate C${certNo} notary meeting set for ${at.replace("T", " ")}`);
+        });
+        return { ok: true, message: `Meeting saved${moveDate ? ` and C${certNo} dated ${day}` : ""}.`, redirect: `/admin/cases/${caseId}#cert-${certNo}` };
       }
       case "register_upload": {
         const path = s(form, "path", 300);
-        const as = s(form, "as", 40) as FileAs;
+        const target = parseAs(s(form, "as", 40));
         if (!path.startsWith(`cases/${caseId}/uploads/`) || path.includes("..")) throw new GuardError("Invalid upload.");
         const bytes = await getFileBytes(path);
         const type = checkUpload(bytes);
@@ -182,41 +217,44 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
           if (c.files.some((f) => f.path === path)) return;
           const file: CaseFile = { id: randomId(), path, name, kind: "upload", size: bytes!.byteLength, contentType: type, createdAt: nowIso(), by };
           c.files.push(file);
-          fileUnder(c, file, as, by);
+          fileUnder(c, file, target, by);
         });
         return { ok: true, message: `Uploaded ${name}.` };
       }
       case "file_as": {
         const fileId = s(form, "file", 40);
-        const as = s(form, "as", 40) as FileAs;
+        const target = parseAs(s(form, "as", 40));
         const c0 = await wf.loadCase(caseId);
         const f0 = fileById(c0, fileId);
         if (!f0) throw new GuardError("File not found.");
         const bytes = await getFileBytes(f0.path);
-        if (as !== "other") checkUpload(bytes);
+        if (target.as !== "other") checkUpload(bytes);
         await mutateCase(caseId, by, (c) => {
-          const f = fileById(c, fileId)!;
-          fileUnder(c, f, as, by);
+          fileUnder(c, fileById(c, fileId)!, target, by);
         });
-        return { ok: true, message: `Filed as ${FILE_AS[as].label}.` };
+        return { ok: true, message: "Filed." };
       }
       case "add_shipment": {
-        const contents = selectedDocs(form);
+        const what = s(form, "what", 10); // "award" or a certificate number
+        const certNo = what === "award" ? undefined : Number(what);
         const carrier = s(form, "carrier", 40);
         const tracking = s(form, "tracking", 80);
         const shippedAt = s(form, "shipped_at", 10);
-        if (!contents.length) throw new GuardError("Choose what was shipped.");
+        if (what !== "award" && !certNo) throw new GuardError("Choose what was shipped.");
         if (!CARRIERS.includes(carrier as (typeof CARRIERS)[number])) throw new GuardError("Choose a carrier.");
         if (!tracking) throw new GuardError("Enter the tracking number.");
         if (!isIsoDate(shippedAt)) throw new GuardError("Enter the shipped date.");
         await mutateCase(caseId, by, (c) => {
+          if (certNo && !wf.certByNo(c, certNo)) throw new GuardError(`Certificate C${certNo} not found.`);
           const url = trackingUrl(carrier, tracking) ?? (s(form, "tracking_url", 300).startsWith("https://") ? s(form, "tracking_url", 300) : undefined);
-          c.shipments.push({ id: randomId(4), contents, carrier, tracking, ...(url ? { trackingUrl: url } : {}), shippedAt });
-          if (contents.includes("award_letter")) setMilestone(c, "award_couriered", by);
-          if (contents.includes("certificate")) setMilestone(c, "certificate_couriered", by);
-          addEvent(c, by, `Shipment recorded: ${contents.map((d) => DOCS[d].short).join(", ")} via ${carrier}`);
+          const id = randomId(4);
+          const contents: DocKey[] = certNo ? ["certificate"] : ["award_letter"];
+          c.shipments.push({ id, contents, ...(certNo ? { certNo } : {}), carrier, tracking, ...(url ? { trackingUrl: url } : {}), shippedAt });
+          if (certNo) wf.certByNo(c, certNo)!.shipments.push(id);
+          else setMilestone(c, "award_couriered", by);
+          addEvent(c, by, `Shipment recorded: ${certNo ? `Certificate C${certNo}` : "Award Letter"} via ${carrier}`);
         });
-        return { ok: true, message: "Shipment recorded.", redirect: `/admin/cases/${caseId}#shipments` };
+        return { ok: true, message: "Shipment recorded.", redirect: `/admin/cases/${caseId}${certNo ? `#cert-${certNo}` : "#shipments"}` };
       }
       case "shipment_delivered": {
         const sid = s(form, "shipment", 20);
@@ -230,30 +268,31 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
         });
         return { ok: true, message: "Delivery recorded.", redirect: `/admin/cases/${caseId}#shipments` };
       }
-      case "confirm_payment": {
-        const day = s(form, "first_payment_date", 10);
-        if (!isIsoDate(day)) throw new GuardError("Enter the date of the first payment.");
-        if (form.get("confirm") !== "1") throw new GuardError("Tick the confirmation that the payment was made from the Designated Fund.");
-        const c0 = await wf.loadCase(caseId);
-        requireActive(c0);
-        requireMilestones(c0, ["signatures_completed"], "Confirming the first payment");
-        await mutateCase(caseId, by, (c) => {
-          c.fields.first_payment_date = day;
-          if (!c.fields.certificate_date) c.fields.certificate_date = new Date().toISOString().slice(0, 10);
-          setMilestone(c, "first_payment_confirmed", by, { first_payment_date: day });
-          addEvent(c, by, `First pension payment confirmed (${day})`);
+      case "issue_certificate": {
+        const payments = s(form, "payments_made", 6);
+        const no = await wf.issuePaymentCertificate(caseId, by, {
+          certificate_date: s(form, "certificate_date", 10),
+          payments_made: /^\d+$/.test(payments) ? Number(payments) : NaN,
+          last_payment_date: s(form, "last_payment_date", 10),
+          attested: form.get("attest") === "1",
         });
-        await wf.generateDocuments(caseId, by, ["certificate"]);
-        return { ok: true, message: "Payment confirmed and certificate generated." };
+        return { ok: true, message: `Certificate C${no} issued and generated.`, redirect: `/admin/cases/${caseId}#cert-${no}` };
       }
-      case "generate_certificate": {
+      case "regenerate_certificate": {
+        const no = Number(s(form, "cert", 4));
         const day = s(form, "certificate_date", 10);
-        if (day && !isIsoDate(day)) throw new GuardError("Enter a valid certificate date.");
-        const c0 = await wf.loadCase(caseId);
-        requireMilestones(c0, ["first_payment_confirmed"], "The certificate");
-        if (day) await mutateCase(caseId, by, (c) => void (c.fields.certificate_date = day));
-        await wf.generateDocuments(caseId, by, ["certificate"]);
-        return { ok: true, message: "Certificate generated." };
+        await wf.regenerateCertificate(caseId, by, no, day || undefined);
+        return { ok: true, message: `Certificate C${no} regenerated.`, redirect: `/admin/cases/${caseId}#cert-${no}` };
+      }
+      case "sign_certificate": {
+        const no = Number(s(form, "cert", 4));
+        await wf.sendCertificateForSignature(caseId, by, no);
+        return { ok: true, message: `C${no} sent to ${config.spgSignerName()} for e-signature.`, redirect: `/admin/cases/${caseId}#cert-${no}` };
+      }
+      case "refresh_certificate": {
+        const no = Number(s(form, "cert", 4));
+        const c = await wf.refreshCertificateSignature(caseId, by, no);
+        return { ok: true, message: `C${no} BoldSign status: ${wf.certByNo(c, no)?.boldsign?.status ?? "–"}`, redirect: `/admin/cases/${caseId}#cert-${no}` };
       }
       case "notes": {
         const notes = String(form.get("notes") ?? "").slice(0, 20000);

@@ -25,7 +25,7 @@ Rules:
 
 // Set by Sterling, not by the intake: dates chosen at confirm time, state-law defaults, and the
 // plan-wide adjustment terms (fixed in the Policy template, counsel to confirm).
-const NOT_EXTRACTED = ["signing_date", "award_letter_date", "certificate_date", "first_payment_date", "llc_act", "secretary_of_state", "adjustment_date", "adjustment_index"];
+const NOT_EXTRACTED = ["signing_date", "award_letter_date", "certificate_date", "first_payment_date", "llc_act", "secretary_of_state", "adjustment_date", "adjustment_index", "client_language"];
 
 /** JSON schema for the result. Structured outputs allow few union types, so "not stated" is an empty string. */
 function schema() {

@@ -20,11 +20,16 @@ export type Attachment = { filename: string; bytes: Uint8Array };
 
 export type SentEmail = { ids: string[]; to: string[]; redirectedFrom?: string[]; parts: number };
 
-const FOOTER_TEXT_NO_REPLY = "This mailbox is not monitored. Please contact us through sterlingpensiongroup.com/contact.";
+export type Lang = "en" | "de";
 
-function layout(bodyHtml: string, banner?: string) {
-  const footer = config.replyTo() ? "Sterling Pension Group LLC · 15 N Main St #100, West Hartford, CT 06107, USA" : FOOTER_TEXT_NO_REPLY;
-  return `<!doctype html><html><body style="margin:0;background:#F3F6FA;font-family:Helvetica,Arial,sans-serif;color:#1F2D3D">
+const FOOTER_NO_REPLY: Record<Lang, string> = {
+  en: "This mailbox is not monitored. Please contact us through sterlingpensiongroup.com/contact.",
+  de: "Diese E-Mail wurde von einer nicht überwachten Adresse versendet. Bitte kontaktieren Sie uns über sterlingpensiongroup.com/contact.",
+};
+
+function layout(bodyHtml: string, banner?: string, lang: Lang = "en") {
+  const footer = config.replyTo() ? "Sterling Pension Group LLC · 15 N Main St #100, West Hartford, CT 06107, USA" : FOOTER_NO_REPLY[lang];
+  return `<!doctype html><html lang="${lang}"><body style="margin:0;background:#F3F6FA;font-family:Helvetica,Arial,sans-serif;color:#1F2D3D">
 ${banner ? `<div style="background:#B42318;color:#fff;padding:10px 16px;font-size:13px;font-weight:bold">${escapeHtml(banner)}</div>` : ""}
 <div style="max-width:620px;margin:0 auto;padding:24px 16px">
 <div style="background:#fff;border:1px solid #DCE3EC;border-radius:8px;padding:28px">
@@ -35,8 +40,8 @@ ${banner ? `<div style="background:#B42318;color:#fff;padding:10px 16px;font-siz
 </div></body></html>`;
 }
 
-function textLayout(text: string, banner?: string) {
-  const footer = config.replyTo() ? "" : `\n\n--\n${FOOTER_TEXT_NO_REPLY}`;
+function textLayout(text: string, banner?: string, lang: Lang = "en") {
+  const footer = config.replyTo() ? "" : `\n\n--\n${FOOTER_NO_REPLY[lang]}`;
   return `${banner ? `${banner}\n\n` : ""}${text}${footer}`;
 }
 
@@ -71,6 +76,7 @@ export async function sendEmail(opts: {
   text: string;
   attachments?: Attachment[];
   clientFacing: boolean;
+  lang?: Lang;
 }): Promise<SentEmail> {
   let to = opts.to.filter(Boolean);
   let banner: string | undefined;
@@ -95,8 +101,8 @@ export async function sendEmail(opts: {
         ...(opts.clientFacing && config.bcc() ? { bcc: [config.bcc()] } : {}),
         ...(opts.clientFacing && config.replyTo() ? { reply_to: config.replyTo() } : {}),
         subject: opts.subject + suffix,
-        html: layout(opts.html, banner),
-        text: textLayout(opts.text, banner),
+        html: layout(opts.html, banner, opts.lang),
+        text: textLayout(opts.text, banner, opts.lang),
         ...(groups[i].length ? { attachments: groups[i].map((a) => ({ filename: a.filename, content: b64(a.bytes) })) } : {}),
       }),
     });

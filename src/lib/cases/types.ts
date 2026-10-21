@@ -19,9 +19,39 @@ export type CaseFile = {
   templateVersion?: string;
   inboundEmailId?: string;
   pages?: number;
+  /** Certificate issue number (C1, C2…) for certificate files. */
+  certNo?: number;
 };
 
 export type DocRecord = { current?: string; signed?: string; notarized?: string[]; history: string[] };
+
+export type EnvelopeRef = {
+  documentId: string;
+  status: string;
+  sentAt: string;
+  completedAt?: string;
+  lastPolledAt?: string;
+  signers?: { name: string; email: string; status: string; order: number }[];
+};
+
+/** One issued Certificate of Pension Administration (C1 at onboarding, later payment-history issues). */
+export type CertIssue = {
+  no: number;
+  ref: string; // "{caseRef}-C{no}"
+  variant: "onboarding" | "payment_history";
+  certificate_date: string;
+  payments_made?: number;
+  last_payment_date?: string;
+  attestedBy?: { name: string; at: string; text: string };
+  createdAt: string;
+  by: string;
+  files: { current?: string; signed?: string; notarized: string[]; history: string[]; proof: string[] };
+  notary?: { meeting: string; notary: string; at: string; by: string };
+  boldsign?: EnvelopeRef; // separate e-signature (issues after C1)
+  signPages?: number;
+  shipments: string[]; // shipment ids
+  emailedAt?: string;
+};
 
 export type Case = {
   id: string;
@@ -39,7 +69,7 @@ export type Case = {
     status: string;
     sentAt: string;
     completedAt?: string;
-    parts: { doc: DocKey; pages: number }[];
+    parts: { doc: DocKey; pages: number; certNo?: number }[];
     lastPolledAt?: string;
     signers?: { name: string; email: string; status: string; order: number }[];
     redirectedFrom?: string;
@@ -47,9 +77,11 @@ export type Case = {
     history?: { documentId: string; status: string; at: string }[];
   };
   milestones: Partial<Record<MilestoneKey, { at: string; by: string; data?: Record<string, string> }>>;
+  certificates: CertIssue[];
   shipments: {
     id: string;
     contents: DocKey[];
+    certNo?: number;
     carrier: string;
     tracking: string;
     trackingUrl?: string;
@@ -57,7 +89,9 @@ export type Case = {
     deliveredAt?: string;
   }[];
   emails: {
-    kind: "A" | "B" | "C" | "tracking" | "other";
+    kind: "A" | "B" | "C" | "tracking" | "details" | "other";
+    certNo?: number;
+    lang?: "en" | "de";
     to: string[];
     subject: string;
     sentAt: string;

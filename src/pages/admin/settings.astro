@@ -1,6 +1,7 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro";
 import { config, integrationStatus } from "../../lib/cases/config";
+import { EMAIL_TEMPLATES, EMAIL_WORDING_STATUS } from "../../lib/cases/emails";
 
 export const prerender = false;
 
@@ -30,6 +31,14 @@ const status = Object.entries(integrationStatus());
   <div class="card"><h2>Mode</h2><dl class="kv">{flags.map(([k, v]) => <><dt>{k}</dt><dd><b>{v}</b></dd></>)}</dl></div>
   <div class="card"><h2>Configuration</h2><dl class="kv">{values.map(([k, v]) => <><dt>{k}</dt><dd>{v}</dd></>)}</dl></div>
   <div class="card"><h2>Integrations</h2><dl class="kv">{status.map(([k, ok]) => <><dt>{k}</dt><dd>{ok ? <span class="badge done">configured</span> : <span class="badge stop">missing</span>}</dd></>)}</dl></div>
+  <div class="card">
+    <h2>Client email templates</h2>
+    <p class="small muted">English and German. Documents themselves stay English.</p>
+    <table class="t small">
+      <thead><tr><th>Email</th><th>English</th><th>German</th></tr></thead>
+      <tbody>{EMAIL_TEMPLATES.map((t) => <tr><td>{t.name}</td><td><span class="badge action">{EMAIL_WORDING_STATUS}</span></td><td><span class="badge action">{EMAIL_WORDING_STATUS}</span></td></tr>)}</tbody>
+    </table>
+  </div>
   <div class="card">
     <h2>Webhooks</h2>
     <dl class="kv small">

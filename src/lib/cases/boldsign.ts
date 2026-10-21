@@ -24,29 +24,40 @@ async function bsJson(path: string, init: RequestInit = {}) {
   return body;
 }
 
-/** Text tag definitions (spec §6.6). SignerIndex is 1-based: 1 = client, 2 = Sterling. */
-const TAGS: { id: string; type: "Signature" | "DateSigned"; signer: 1 | 2 }[] = [
+type Tag = { id: string; type: "Signature" | "DateSigned"; signer: number };
+
+/**
+ * Main envelope (OA, Policy, Consent, Award Letter, Certificate C1). SignerIndex is 1-based:
+ * 1 = client (member), 2 = Sterling (Pocholo). The Award Letter and C1 are signed by Sterling only.
+ */
+export const MAIN_TAGS: Tag[] = [
   { id: "client_sig_oa", type: "Signature", signer: 1 },
   { id: "client_date_oa", type: "DateSigned", signer: 1 },
   { id: "spg_sig_oa", type: "Signature", signer: 2 },
   { id: "spg_sig_policy", type: "Signature", signer: 2 },
   { id: "client_sig_consent", type: "Signature", signer: 1 },
   { id: "spg_sig_consent", type: "Signature", signer: 2 },
+  { id: "spg_sig_award", type: "Signature", signer: 2 },
+  { id: "spg_sig_cert", type: "Signature", signer: 2 },
 ];
+
+/** Later certificate issues: one document, Sterling is the only signer. */
+export const CERT_ONLY_TAGS: Tag[] = [{ id: "spg_sig_cert", type: "Signature", signer: 1 }];
 
 export type SendInput = {
   title: string;
   message: string;
   files: { name: string; bytes: Uint8Array }[];
-  client: { name: string; email: string };
-  spg: { name: string; email: string };
+  /** In signing order. */
+  signers: { name: string; email: string }[];
+  tags: Tag[];
 };
 
 export async function sendEnvelope(input: SendInput): Promise<string> {
   const form = new FormData();
   form.set("Title", input.title);
   form.set("Message", input.message);
-  form.set("EnableSigningOrder", "true");
+  form.set("EnableSigningOrder", input.signers.length > 1 ? "true" : "false");
   form.set("UseTextTags", "true");
   form.set("ExpiryDays", "30");
   form.set("ReminderSettings.EnableAutoReminder", "true");
@@ -55,17 +66,13 @@ export async function sendEnvelope(input: SendInput): Promise<string> {
   form.set("HideDocumentId", "false");
   // Local smoke tests only: create the envelope without emailing anyone.
   if (process.env.BOLDSIGN_DISABLE_EMAILS === "true") form.set("DisableEmails", "true");
-  const signers = [
-    { ...input.client, order: 1 },
-    { ...input.spg, order: 2 },
-  ];
-  signers.forEach((s, i) => {
+  input.signers.forEach((s, i) => {
     form.set(`Signers[${i}][Name]`, s.name);
     form.set(`Signers[${i}][EmailAddress]`, s.email);
-    form.set(`Signers[${i}][SignerOrder]`, String(s.order));
+    form.set(`Signers[${i}][SignerOrder]`, String(i + 1));
     form.set(`Signers[${i}][SignerType]`, "Signer");
   });
-  TAGS.forEach((t, i) => {
+  input.tags.forEach((t, i) => {
     form.set(`TextTagDefinitions[${i}][DefinitionId]`, t.id);
     form.set(`TextTagDefinitions[${i}][Type]`, t.type);
     form.set(`TextTagDefinitions[${i}][SignerIndex]`, String(t.signer));
@@ -119,18 +126,18 @@ export async function downloadAuditTrail(documentId: string): Promise<Uint8Array
  * Split the combined signed PDF into one file per part (by page counts). Any pages after the
  * parts are the audit trail (when BoldSign combines it).
  */
-export async function splitSigned(combined: Uint8Array, parts: { doc: DocKey; pages: number }[]) {
+export async function splitSigned(combined: Uint8Array, parts: { doc: DocKey; pages: number; certNo?: number }[]) {
   const src = await PDFDocument.load(combined);
   const total = src.getPageCount();
   const needed = parts.reduce((n, p) => n + p.pages, 0);
   if (total < needed) throw new Error(`Signed PDF has ${total} pages, expected at least ${needed}`);
-  const out: { doc: DocKey; bytes: Uint8Array; pages: number }[] = [];
+  const out: { doc: DocKey; certNo?: number; bytes: Uint8Array; pages: number }[] = [];
   let start = 0;
   for (const part of parts) {
     const doc = await PDFDocument.create();
     const pages = await doc.copyPages(src, Array.from({ length: part.pages }, (_, i) => start + i));
     pages.forEach((p) => doc.addPage(p));
-    out.push({ doc: part.doc, bytes: await doc.save(), pages: part.pages });
+    out.push({ doc: part.doc, certNo: part.certNo, bytes: await doc.save(), pages: part.pages });
     start += part.pages;
   }
   let audit: Uint8Array | null = null;

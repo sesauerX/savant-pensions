@@ -55,3 +55,11 @@ test("template: unbalanced blocks are rejected", () => {
   assert.throws(() => renderTemplate("{{#if a}}x", { a: true }));
   assert.throws(() => renderTemplate("x{{/if}}", {}));
 });
+
+import { formatUsdDe } from "../src/lib/cases/words.ts";
+
+test("German amounts", () => {
+  assert.equal(formatUsdDe("2500"), "2.500 USD");
+  assert.equal(formatUsdDe("2500.5"), "2.500,50 USD");
+  assert.equal(formatUsdDe("1000000"), "1.000.000 USD");
+});

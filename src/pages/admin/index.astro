@@ -16,7 +16,7 @@ const q = (Astro.url.searchParams.get("q") ?? "").trim().toLowerCase();
 const FILTERS = [
   { key: "active", label: "Active" },
   { key: "waiting_client", label: "Waiting on client" },
-  { key: "waiting_payment", label: "Waiting on payment" },
+  { key: "waiting_payment", label: "Onboarding complete" },
   { key: "on_hold", label: "On hold" },
   { key: "closed", label: "Closed" },
   { key: "all", label: "All" },
@@ -31,7 +31,7 @@ const tone = (e: (typeof all)[number]) =>
   : e.state === "cancelled" ? "stop"
   : e.state === "closed" || e.status === "closed" ? "done"
   : e.status === "details_confirmed" ? "action"
-  : ["signatures_completed", "first_payment_confirmed"].includes(e.status) ? "wait"
+  : ["signatures_completed", "onboarding_complete"].includes(e.status) ? "wait"
   : "";
 const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 ---

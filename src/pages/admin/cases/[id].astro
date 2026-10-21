@@ -4,15 +4,15 @@ import { csrfToken } from "../../../lib/cases/auth";
 import { fileById, getCase, isCaseId } from "../../../lib/cases/cases";
 import { config } from "../../../lib/cases/config";
 import { confirmDefaults } from "../../../lib/cases/derive";
-import { DOCS, DOC_KEYS, type DocKey } from "../../../lib/cases/documents";
-import { CARRIERS } from "../../../lib/cases/emails";
+import { DOCS, INITIAL_DOCS } from "../../../lib/cases/documents";
+import { ASKABLE_FIELDS, CARRIERS } from "../../../lib/cases/emails";
 import { takeFlash } from "../../../lib/cases/http";
-import { FILE_AS_OPTIONS } from "../../../lib/cases/actions";
+import { fileAsOptions } from "../../../lib/cases/actions";
 import { MILESTONES, caseStatus } from "../../../lib/cases/milestones";
-import { FIELDS, GROUPS, formatDate, missingFields, todayIso } from "../../../lib/cases/schema";
+import { FIELDS, FIELD_BY_KEY, GROUPS, formatDate, missingFields, todayIso } from "../../../lib/cases/schema";
 import { readJson } from "../../../lib/cases/store";
-import { refreshSignature, fieldProblems } from "../../../lib/cases/workflow";
-import type { Case, CaseFile } from "../../../lib/cases/types";
+import { refreshAllSignatures, fieldProblems } from "../../../lib/cases/workflow";
+import type { Case, CaseFile, CertIssue } from "../../../lib/cases/types";
 
 export const prerender = false;
 
@@ -21,15 +21,14 @@ if (!isCaseId(id)) return new Response("Not found", { status: 404 });
 let c = await getCase(id);
 if (!c) return new Response("Not found", { status: 404 });
 
-// Poll BoldSign when a pending envelope is viewed (at most every 2 minutes).
-if (c.boldsign && !c.milestones.signatures_completed && !["Declined", "Expired", "Revoked"].includes(c.boldsign.status)) {
-  const last = c.boldsign.lastPolledAt ? Date.parse(c.boldsign.lastPolledAt) : 0;
-  if (Date.now() - last > 120_000) {
-    try {
-      c = await refreshSignature(id, "system (page poll)");
-    } catch (err) {
-      console.error("[cases] page poll failed", id, (err as Error).message);
-    }
+// Poll BoldSign when a pending envelope is viewed (at most every 2 minutes per envelope).
+const BAD = ["Declined", "Expired", "Revoked"];
+const stalePoll = (e?: { status: string; lastPolledAt?: string }) => e && !BAD.includes(e.status) && e.status !== "Completed" && Date.now() - (e.lastPolledAt ? Date.parse(e.lastPolledAt) : 0) > 120_000;
+if ((stalePoll(c.boldsign) && !c.milestones.signatures_completed) || c.certificates.some((x) => !x.files.signed && stalePoll(x.boldsign))) {
+  try {
+    c = await refreshAllSignatures(id, "system (page poll)");
+  } catch (err) {
+    console.error("[cases] page poll failed", id, (err as Error).message);
   }
 }
 const cs = c as Case;
@@ -44,6 +43,7 @@ const missing = new Set(missingFields(shown));
 const uncertain = new Set(cs.extraction?.uncertain ?? []);
 const problems = fieldProblems({ ...cs, fields: shown });
 const active = cs.state === "active";
+const workable = cs.state === "active" || cs.state === "closed";
 
 const fmtDate = (iso?: string) => {
   if (!iso) return "";
@@ -53,20 +53,20 @@ const fmtTime = (iso?: string) => (iso ? new Date(iso).toLocaleString("en-US", {
 const size = (n: number) => (n > 1024 * 1024 ? `${(n / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`);
 const href = (f: CaseFile, dl = false) => `/api/cases/file?case=${cs.id}&file=${f.id}${dl ? "&download=1" : ""}`;
 const file = (fid?: string) => fileById(cs, fid);
-const notarized = (doc: DocKey) => (cs.docs[doc].notarized ?? []).map((x) => file(x)).filter(Boolean) as CaseFile[];
+const files = (ids: string[] = []) => ids.map((x) => file(x)).filter(Boolean) as CaseFile[];
+const fileAs = fileAsOptions(cs);
 
-// Inbound emails (bodies are untrusted: text shown escaped, HTML only in a sandboxed frame).
 const inbound = await Promise.all(
   cs.inbound.map(async (i) => ({
     ...i,
     body: (await readJson<{ text?: string; html?: string }>(`cases/${cs.id}/inbound/${i.emailId}.json`).catch(() => null))?.data ?? null,
-    files: i.fileIds.map((x) => file(x)).filter(Boolean) as CaseFile[],
+    files: files(i.fileIds),
   })),
 );
 
 const bs = cs.boldsign;
-const bsPending = bs && !m.signatures_completed && !["Declined", "Expired", "Revoked"].includes(bs.status);
-const bsBad = bs && ["Declined", "Expired", "Revoked"].includes(bs.status) && !m.signatures_completed;
+const bsPending = bs && !m.signatures_completed && !BAD.includes(bs.status);
+const bsBad = bs && BAD.includes(bs.status) && !m.signatures_completed;
 const canSend = active && confirmed && m.documents_generated && (!bs || (bsBad && !m.sent_for_signature)) && !m.signatures_completed;
 const sendBlock = config.live() && !config.templatesApproved();
 const dateWarning = bs?.completedAt && bs.signingDatePrinted && bs.completedAt.slice(0, 10) !== bs.signingDatePrinted ? `Documents are dated ${fmtDate(bs.signingDatePrinted)}; signing completed ${fmtDate(bs.completedAt)}.` : "";
@@ -77,6 +77,20 @@ const input = (key: string) => {
 };
 const fieldClass = (key: string) => [missing.has(key) ? "is-missing" : "", uncertain.has(key) ? "is-uncertain" : ""].join(" ");
 const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+const askDefault = new Set(ASKABLE_FIELDS.filter((k) => missing.has(k) || (k === "apostille_sets" && !cs.fields.apostille_sets)));
+const shipmentsFor = (cert: CertIssue) => cs.shipments.filter((s) => s.certNo === cert.no);
+const certStatus = (cert: CertIssue) => [
+  { label: "generated", on: Boolean(cert.files.current) },
+  { label: cert.no === 1 ? "e-signed (envelope)" : "e-signed", on: Boolean(cert.files.signed) },
+  { label: "notarized", on: cert.files.notarized.length > 0 },
+  { label: "emailed", on: Boolean(cert.emailedAt) },
+  { label: "couriered", on: shipmentsFor(cert).length > 0 },
+];
+const latestC = cs.certificates.at(-1);
+const certificateC1Unsigned = (x: Case) => {
+  const c1 = x.certificates.find((y) => y.no === 1);
+  return Boolean(c1 && !c1.files.signed);
+};
 ---
 <AdminLayout title={`${cs.id} ${String(cs.fields.company_name ?? "")}`} flash={flash} wide>
   <div class="head">
@@ -86,6 +100,7 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
       <div class="row small">
         <span class={`badge ${status.tone}`}>{status.label}</span>
         <span class="muted">Next: {status.next}</span>
+        <span class="muted">· Emails in {cs.fields.client_language === "de" ? "German" : "English"}</span>
         <span class="muted">· Created {fmtTime(cs.createdAt)} from {cs.source.type}{cs.source.from ? ` (${cs.source.from})` : ""}</span>
       </div>
     </div>
@@ -133,7 +148,7 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
                       ) : f.type === "select" ? (
                         <select id={`f_${f.key}`} name={`f_${f.key}`}>
                           <option value="">–</option>
-                          {f.options!.map((o) => <option value={o} selected={input(f.key) === o}>{o}</option>)}
+                          {f.options!.map((o) => <option value={o} selected={input(f.key) === o}>{f.key === "client_language" ? (o === "de" ? "German (de)" : "English (en)") : o}</option>)}
                         </select>
                       ) : f.type === "textarea" ? (
                         <textarea id={`f_${f.key}`} name={`f_${f.key}`} rows="2">{input(f.key)}</textarea>
@@ -149,8 +164,21 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
               <button type="submit" name="_action" value="save_fields" class="secondary" disabled={!active}>Save</button>
               {confirmed && m.documents_generated && <label class="check"><input type="checkbox" name="regenerate" value="1" /> Regenerate documents after saving</label>}
               {!confirmed && <button type="submit" name="_action" value="confirm" disabled={!active}>Confirm details and generate documents</button>}
-              <span class="muted small">Dates print as “{fmtDate(todayIso())}”. Amounts are USD.</span>
+              <span class="muted small">Confirming also creates certificate C1 (onboarding), dated on the signing date.</span>
             </div>
+          </form>
+        </details>
+        <details style="margin-top:10px">
+          <summary class="small">Request missing details from the client…</summary>
+          <form method="get" action={`/admin/cases/${cs.id}/email`} style="margin-top:8px">
+            <input type="hidden" name="kind" value="details" />
+            <div class="asks">
+              {ASKABLE_FIELDS.map((k) => (
+                <label class="check"><input type="checkbox" name="items" value={k} checked={askDefault.has(k)} /> {FIELD_BY_KEY[k].ask!.en}</label>
+              ))}
+            </div>
+            <button class="secondary" type="submit">Preview request email</button>
+            <span class="small muted"> Sent in {cs.fields.client_language === "de" ? "German" : "English"}; you see the full text first.</span>
           </form>
         </details>
       </section>
@@ -161,42 +189,57 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
           {confirmed && active && (
             <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
               <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate" />
-              <button class="secondary" type="submit">Regenerate 1–4</button>
+              <button class="secondary" type="submit">Regenerate 1–4{certificateC1Unsigned(cs) ? " and C1" : ""}</button>
             </form>
           )}
         </div>
         <table class="t docs">
-          <thead><tr><th>Document</th><th>Current</th><th>Signed</th><th>Notarized / apostille</th><th>Older</th></tr></thead>
+          <thead><tr><th>Document</th><th>Current (unsigned)</th><th>E-signed</th><th>Notarized / apostille</th><th>Older</th></tr></thead>
           <tbody>
-            {DOC_KEYS.map((k) => {
+            {INITIAL_DOCS.map((k) => {
               const rec = cs.docs[k];
               const cur = file(rec.current);
               const signed = file(rec.signed);
-              const older = rec.history.map((x) => file(x)).filter(Boolean) as CaseFile[];
+              const older = files(rec.history);
               return (
                 <tr>
-                  <td><b>{DOCS[k].n}. {DOCS[k].title}</b>{k === "certificate" && !m.first_payment_confirmed && <div class="muted small">Available after the first pension payment is confirmed</div>}</td>
+                  <td><b>{DOCS[k].n}. {DOCS[k].title}</b></td>
                   <td>{cur ? <span><a href={href(cur)} target="_blank" rel="noopener">Preview</a> · <a href={href(cur, true)}>Download</a><div class="muted small">{fmtTime(cur.createdAt)} · {cur.templateVersion}</div></span> : <span class="muted">–</span>}</td>
-                  <td>{signed ? <a href={href(signed)} target="_blank" rel="noopener">Signed PDF</a> : <span class="muted">{["operating_agreement", "pension_policy", "written_consent"].includes(k) ? "–" : "n/a (notary)"}</span>}</td>
-                  <td>{notarized(k).length ? notarized(k).map((f) => <div><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> <span class="muted small">({f.kind})</span></div>) : <span class="muted">{["award_letter", "certificate"].includes(k) ? "–" : "n/a"}</span>}</td>
+                  <td>{signed ? <a href={href(signed)} target="_blank" rel="noopener">Signed PDF</a> : <span class="muted">–</span>}</td>
+                  <td>{files(rec.notarized).length ? files(rec.notarized).map((f) => <div><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> <span class="muted small">({f.kind})</span></div>) : <span class="muted">{k === "award_letter" ? "–" : "n/a"}</span>}</td>
                   <td>{older.length ? <details><summary class="small">{older.length} older</summary>{older.reverse().map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{fmtTime(f.createdAt)}</a> {f.templateVersion}</div>)}</details> : <span class="muted">–</span>}</td>
                 </tr>
               );
             })}
+            {cs.certificates.map((cert) => {
+              const cur = file(cert.files.current);
+              const signed = file(cert.files.signed);
+              return (
+                <tr>
+                  <td><b>5. Certificate <a href={`#cert-${cert.no}`}>C{cert.no}</a></b><div class="muted small">{cert.variant === "onboarding" ? "onboarding" : "payment history"} · {fmtDate(cert.certificate_date)}</div></td>
+                  <td>{cur ? <span><a href={href(cur)} target="_blank" rel="noopener">Preview</a> · <a href={href(cur, true)}>Download</a><div class="muted small">{cur.templateVersion}</div></span> : <span class="muted">–</span>}</td>
+                  <td>{signed ? <a href={href(signed)} target="_blank" rel="noopener">Signed PDF</a> : <span class="muted">–</span>}</td>
+                  <td>{files(cert.files.notarized).length ? files(cert.files.notarized).map((f) => <div><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> <span class="muted small">({f.kind})</span></div>) : <span class="muted">–</span>}</td>
+                  <td>{cert.files.history.length ? <span class="small muted">{cert.files.history.length} older</span> : <span class="muted">–</span>}</td>
+                </tr>
+              );
+            })}
+            {cs.certificates.length === 0 && <tr><td><b>5. Certificate C1</b></td><td colspan="4" class="muted small">Created when the details are confirmed.</td></tr>}
           </tbody>
         </table>
-        {cs.files.some((f) => f.kind === "audit_trail") && <p class="small" style="margin-top:8px">BoldSign audit trail: {cs.files.filter((f) => f.kind === "audit_trail").map((f) => <a href={href(f)} target="_blank" rel="noopener">{f.name}</a>)}</p>}
+        {cs.files.some((f) => f.kind === "audit_trail") && <p class="small" style="margin-top:8px">BoldSign audit trails: {cs.files.filter((f) => f.kind === "audit_trail").map((f) => <a href={href(f)} target="_blank" rel="noopener" style="margin-right:8px">{f.name}</a>)}</p>}
       </section>
 
       <!-- Signing -->
       <section class="card" id="signing">
-        <h2>E-signature (BoldSign): Operating Agreement, Policy, Consent</h2>
+        <h2>E-signature (BoldSign)</h2>
+        <p class="small muted">One envelope, 5 documents: Operating Agreement and Written Consent (client, then Pocholo), Corporate Pension Policy, Pension Award Letter and Certificate C1 (Pocholo only).</p>
         {!m.documents_generated ? <p class="muted">Confirm the details to generate the documents first.</p> : (
           <div>
             {bs && (
               <dl class="kv small">
                 <dt>Status</dt><dd><b>{bs.status}</b>{bs.lastPolledAt && <span class="muted"> · checked {fmtTime(bs.lastPolledAt)}</span>}</dd>
-                <dt>Sent</dt><dd>{fmtTime(bs.sentAt)}{bs.redirectedFrom && <span class="muted"> · TEST: client signer redirected from {bs.redirectedFrom}</span>}</dd>
+                <dt>Sent</dt><dd>{fmtTime(bs.sentAt)} · {bs.parts.length} documents{bs.redirectedFrom && <span class="muted"> · TEST: client signer redirected from {bs.redirectedFrom}</span>}</dd>
                 {bs.completedAt && (<><dt>Completed</dt><dd>{fmtTime(bs.completedAt)}</dd></>)}
                 <dt>Signers</dt><dd>{(bs.signers ?? []).length ? (bs.signers ?? []).map((s) => <div>{s.order}. {s.name} &lt;{s.email}&gt; – <b>{s.status}</b></div>) : <span class="muted">not polled yet</span>}</dd>
                 <dt>Document id</dt><dd class="muted">{bs.documentId}</dd>
@@ -243,122 +286,162 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
       <!-- Award Letter: notary -->
       <section class="card" id="award">
         <h2>Pension Award Letter: notary, apostille, courier</h2>
-        {!m.signatures_completed ? <p class="muted">Available once the corporate documents are signed.</p> : (
-          <div>
-            <div class="steps">
-              <div class="step">
-                <h3>1. Download for notary</h3>
-                {file(cs.docs.award_letter.current) ? <p><a href={href(file(cs.docs.award_letter.current)!, true)}>Award Letter (unsigned PDF)</a> <span class="muted small">dated {fmtDate(String(cs.fields.award_letter_date ?? ""))}</span></p> : <p class="muted">Not generated.</p>}
-                <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
-                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate_award" /><input type="hidden" name="_back" value="#award" />
-                  <button class="link" type="submit">Regenerate</button>
-                </form>
-              </div>
-              <div class="step">
-                <h3>2. Meeting</h3>
-                {m.award_notary_meeting && <p class="small">Set: <b>{m.award_notary_meeting.data?.meeting?.replace("T", " ")}</b> {m.award_notary_meeting.data?.notary}</p>}
-                <form method="post" action={`/admin/cases/${cs.id}/action`}>
-                  <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="award_letter" /><input type="hidden" name="_back" value="#award" />
-                  <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={m.award_notary_meeting?.data?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={m.award_notary_meeting?.data?.notary ?? ""} /></div></div>
-                  <label class="check"><input type="checkbox" name="move_date" value="1" checked={!notarized("award_letter").length} /> Date the Award Letter on the meeting day and regenerate</label>
-                  <button class="secondary" type="submit">Save meeting</button>
-                </form>
-              </div>
-              <div class="step">
-                <h3>3. Notarized copy and apostille</h3>
-                {notarized("award_letter").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
-                <form class="upload" data-case={cs.id} data-csrf={csrf}>
-                  <select name="as"><option value="award_notarized">Notarized copy</option><option value="award_apostille">Apostille</option></select>
-                  <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
-                  <button class="secondary" type="submit">Upload</button>
-                  <span class="status small muted"></span>
-                </form>
-                <p class="small muted">Or forward the notary’s email to {config.inboundAddress() || "the inbound address"} with {cs.id} in the subject, then use “File as…” below.</p>
-              </div>
-              <div class="step">
-                <h3>4. Email e-copies (B)</h3>
-                <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=B`}>Preview email B</a>
-                {m.award_ecopies_emailed && <span class="small muted"> Sent {fmtTime(m.award_ecopies_emailed.at)}</span>}
-              </div>
-              <div class="step">
-                <h3>5. Courier</h3>
-                <p class="small">{cs.shipments.filter((s) => s.contents.includes("award_letter")).map((s) => `${s.carrier} ${s.tracking} (${fmtDate(s.shippedAt)})`).join("; ") || "Not shipped yet."} <a href="#shipments">Add shipment</a></p>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      <!-- Payment and certificate -->
-      <section class="card" id="certificate">
-        <h2>First payment and Certificate</h2>
-        {!m.first_payment_confirmed ? (
-          <div>
-            <p class="muted small">The certificate states the pension “has been paid monthly since” the commencement date, so it is only available after the first payment.</p>
-            <form method="post" action={`/admin/cases/${cs.id}/action`}>
-              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="confirm_payment" /><input type="hidden" name="_back" value="#certificate" />
-              <div class="grid2"><div><label>Date of the first payment</label><input type="date" name="first_payment_date" value={String(cs.fields.first_payment_date ?? "")} required /></div></div>
-              <label class="check"><input type="checkbox" name="confirm" value="1" required /> I confirm the pension payment was made from the Designated Fund</label>
-              <button type="submit" disabled={!m.signatures_completed || !active}>Confirm first payment</button>
-              {!m.signatures_completed && <span class="small muted"> (after signing)</span>}
-            </form>
-            {m.signatures_completed && (
-              <form class="upload" data-case={cs.id} data-csrf={csrf} style="margin-top:10px">
-                <input type="hidden" name="as" value="payment_proof" />
-                <span class="small">Optional bank proof:</span>
-                <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" required />
-                <button class="secondary" type="submit">Upload proof</button>
-                <span class="status small muted"></span>
-              </form>
-            )}
-          </div>
-        ) : (
+        {!m.signatures_completed ? <p class="muted">Available once the documents are signed.</p> : (
           <div class="steps">
             <div class="step">
-              <h3>Payment</h3>
-              <p class="small">First payment {fmtDate(String(cs.fields.first_payment_date ?? ""))}, confirmed by {m.first_payment_confirmed.by}.</p>
-              {cs.files.filter((f) => f.kind === "proof").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a></div>)}
-            </div>
-            <div class="step">
-              <h3>1. Certificate</h3>
-              {file(cs.docs.certificate.current) ? <p><a href={href(file(cs.docs.certificate.current)!, true)}>Certificate (unsigned PDF)</a> <span class="muted small">dated {fmtDate(String(cs.fields.certificate_date ?? ""))}</span></p> : <p class="muted">Not generated.</p>}
-              <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
-                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate_certificate" /><input type="hidden" name="_back" value="#certificate" />
-                <input type="date" name="certificate_date" value={String(cs.fields.certificate_date ?? "")} style="max-width:170px" />
-                <button class="secondary" type="submit">Generate</button>
+              <h3>1. Download for notary</h3>
+              {file(cs.docs.award_letter.current) ? <p><a href={href(file(cs.docs.award_letter.current)!, true)}>Award Letter (unsigned PDF)</a> <span class="muted small">dated {fmtDate(String(cs.fields.award_letter_date ?? ""))}</span></p> : <p class="muted">Not generated.</p>}
+              <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="generate_award" /><input type="hidden" name="_back" value="#award" />
+                <button class="link" type="submit">Regenerate</button>
               </form>
             </div>
             <div class="step">
               <h3>2. Meeting</h3>
-              {m.certificate_notary_meeting && <p class="small">Set: <b>{m.certificate_notary_meeting.data?.meeting?.replace("T", " ")}</b> {m.certificate_notary_meeting.data?.notary}</p>}
+              {m.award_notary_meeting && <p class="small">Set: <b>{m.award_notary_meeting.data?.meeting?.replace("T", " ")}</b> {m.award_notary_meeting.data?.notary}</p>}
               <form method="post" action={`/admin/cases/${cs.id}/action`}>
-                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="certificate" /><input type="hidden" name="_back" value="#certificate" />
-                <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={m.certificate_notary_meeting?.data?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={m.certificate_notary_meeting?.data?.notary ?? ""} /></div></div>
-                <label class="check"><input type="checkbox" name="move_date" value="1" checked={!notarized("certificate").length} /> Date the certificate on the meeting day and regenerate</label>
+                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="award_letter" />
+                <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={m.award_notary_meeting?.data?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={m.award_notary_meeting?.data?.notary ?? ""} /></div></div>
+                <label class="check"><input type="checkbox" name="move_date" value="1" checked={!files(cs.docs.award_letter.notarized).length} /> Date the Award Letter on the meeting day and regenerate</label>
                 <button class="secondary" type="submit">Save meeting</button>
               </form>
             </div>
             <div class="step">
               <h3>3. Notarized copy and apostille</h3>
-              {notarized("certificate").map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
+              {files(cs.docs.award_letter.notarized).map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
               <form class="upload" data-case={cs.id} data-csrf={csrf}>
-                <select name="as"><option value="cert_notarized">Notarized copy</option><option value="cert_apostille">Apostille</option></select>
+                <select name="as"><option value="award_notarized">Notarized copy</option><option value="award_apostille">Apostille</option></select>
                 <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
                 <button class="secondary" type="submit">Upload</button>
                 <span class="status small muted"></span>
               </form>
+              <p class="small muted">Or forward the notary’s email to {config.inboundAddress() || "the inbound address"} with {cs.id} in the subject, then use “File as…” below.</p>
             </div>
             <div class="step">
-              <h3>4. Email certificate and full set (C)</h3>
-              <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=C`}>Preview email C</a>
-              {m.final_pack_emailed && <span class="small muted"> Sent {fmtTime(m.final_pack_emailed.at)}</span>}
+              <h3>4. Email e-copies (B)</h3>
+              <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=B`}>Preview email B</a>
+              {m.award_ecopies_emailed && <span class="small muted"> Sent {fmtTime(m.award_ecopies_emailed.at)}</span>}
             </div>
             <div class="step">
               <h3>5. Courier</h3>
-              <p class="small">{cs.shipments.filter((s) => s.contents.includes("certificate")).map((s) => `${s.carrier} ${s.tracking} (${fmtDate(s.shippedAt)})`).join("; ") || "Not shipped yet."} <a href="#shipments">Add shipment</a></p>
+              {cs.shipments.filter((s) => !s.certNo).map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
+              <form method="post" action={`/admin/cases/${cs.id}/action`} class="row ship">
+                <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" /><input type="hidden" name="what" value="award" />
+                <select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select>
+                <input name="tracking" placeholder="Tracking number" required />
+                <input type="date" name="shipped_at" value={todayIso()} required />
+                <input name="tracking_url" placeholder="Link (Other carriers)" />
+                <button class="secondary" type="submit">Add shipment</button>
+              </form>
             </div>
           </div>
         )}
+      </section>
+
+      <!-- Certificates -->
+      <section class="card" id="certificates">
+        <h2>Certificates of Pension Administration</h2>
+        <p class="small muted">C1 (onboarding) is signed in the main envelope and states that no payment has yet fallen due. Later issues report verified payments. Notarizing, emailing and couriering are optional per issue.</p>
+        {cs.certificates.length === 0 && <p class="muted">C1 is created when the details are confirmed.</p>}
+        {cs.certificates.map((cert) => {
+          const cur = file(cert.files.current);
+          const signed = file(cert.files.signed);
+          const notarized = files(cert.files.notarized);
+          const ships = shipmentsFor(cert);
+          const eb = cert.boldsign;
+          return (
+            <div class="certcard" id={`cert-${cert.no}`}>
+              <div class="row">
+                <h3 class="certtitle">C{cert.no} · {cert.variant === "onboarding" ? "Onboarding" : "Payment history"} · dated {fmtDate(cert.certificate_date)}</h3>
+                <span class="spacer"></span>
+                {certStatus(cert).map((x) => <span class={`chip ${x.on ? "on" : ""}`}>{x.label}</span>)}
+              </div>
+              {cert.variant === "payment_history" && <p class="small">Reports <b>{cert.payments_made}</b> payment(s), the most recent on {fmtDate(cert.last_payment_date)}. Attested by {cert.attestedBy?.name} on {fmtTime(cert.attestedBy?.at)}: “{cert.attestedBy?.text}”.</p>}
+              {files(cert.files.proof).length > 0 && <p class="small">Payment evidence: {files(cert.files.proof).map((f) => <a href={href(f)} target="_blank" rel="noopener" style="margin-right:8px">{f.name}</a>)}</p>}
+              <div class="steps">
+                <div class="step">
+                  <h3>Document</h3>
+                  <p class="small">{cur ? <span><a href={href(cur, true)}>Download for notary (unsigned)</a> · <a href={href(cur)} target="_blank" rel="noopener">Preview</a></span> : "Not generated."}{signed && <span> · <a href={href(signed)} target="_blank" rel="noopener">E-signed copy</a></span>}</p>
+                  <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
+                    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="regenerate_certificate" /><input type="hidden" name="cert" value={cert.no} />
+                    <input type="date" name="certificate_date" value={cert.certificate_date} style="max-width:170px" />
+                    <button class="secondary" type="submit" disabled={!workable}>Re-date / regenerate</button>
+                    <span class="small muted">{cert.variant === "onboarding" ? `Must be before ${fmtDate(String(cs.fields.commencement_date ?? ""))}.` : `On or after ${fmtDate(cert.last_payment_date)}.`}{signed ? " The e-signed copy keeps its date." : ""}</span>
+                  </form>
+                </div>
+                {cert.no > 1 && (
+                  <div class="step">
+                    <h3>E-signature (Pocholo)</h3>
+                    {eb && <p class="small">BoldSign: <b>{eb.status}</b> · sent {fmtTime(eb.sentAt)}{eb.lastPolledAt ? ` · checked ${fmtTime(eb.lastPolledAt)}` : ""}</p>}
+                    {!signed && (!eb || BAD.includes(eb.status)) && (
+                      <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                        <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="sign_certificate" /><input type="hidden" name="cert" value={cert.no} />
+                        <button class="secondary" type="submit" disabled={!workable}>Send C{cert.no} for e-signature</button>
+                      </form>
+                    )}
+                    {!signed && eb && !BAD.includes(eb.status) && (
+                      <form method="post" action={`/admin/cases/${cs.id}/action`} class="inline">
+                        <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="refresh_certificate" /><input type="hidden" name="cert" value={cert.no} />
+                        <button class="secondary" type="submit">Refresh status</button>
+                      </form>
+                    )}
+                    {!signed && <span class="small muted"> Optional if this certificate is notarized instead.</span>}
+                  </div>
+                )}
+                <div class="step">
+                  <h3>Notary (optional)</h3>
+                  {cert.notary && <p class="small">Meeting: <b>{cert.notary.meeting.replace("T", " ")}</b> {cert.notary.notary}</p>}
+                  <form method="post" action={`/admin/cases/${cs.id}/action`}>
+                    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="notary_meeting" /><input type="hidden" name="doc" value="certificate" /><input type="hidden" name="cert" value={cert.no} />
+                    <div class="grid2"><div><label>Date and time</label><input type="datetime-local" name="at" value={cert.notary?.meeting ?? nowLocal} required /></div><div><label>Platform / notary</label><input name="notary" value={cert.notary?.notary ?? ""} /></div></div>
+                    <label class="check"><input type="checkbox" name="move_date" value="1" checked={false} /> Date the certificate on the meeting day and regenerate</label>
+                    <button class="secondary" type="submit" disabled={!workable}>Save meeting</button>
+                  </form>
+                  {notarized.map((f) => <div class="small"><a href={href(f)} target="_blank" rel="noopener">{f.name}</a> ({f.kind}, {size(f.size)})</div>)}
+                  <form class="upload" data-case={cs.id} data-csrf={csrf} style="margin-top:6px">
+                    <select name="as"><option value={`cert_notarized:${cert.no}`}>Notarized copy</option><option value={`cert_apostille:${cert.no}`}>Apostille</option><option value={`cert_proof:${cert.no}`}>Payment evidence</option></select>
+                    <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
+                    <button class="secondary" type="submit">Upload</button>
+                    <span class="status small muted"></span>
+                  </form>
+                </div>
+                <div class="step">
+                  <h3>Email</h3>
+                  <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=C&cert=${cert.no}`}>Preview “Send certificate C{cert.no}”</a>
+                  {cert.emailedAt && <span class="small muted"> Sent {fmtTime(cert.emailedAt)}</span>}
+                  <p class="small muted">Attaches C{cert.no} ({notarized.length ? "notarized/apostille copies" : signed ? "e-signed copy" : "needs a signed or notarized copy first"}) plus the latest versions of documents 1–4.</p>
+                </div>
+                <div class="step">
+                  <h3>Courier (optional)</h3>
+                  {ships.map((s) => <p class="small">{s.carrier} {s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking} · shipped {fmtDate(s.shippedAt)}{s.deliveredAt ? ` · delivered ${fmtDate(s.deliveredAt)}` : ""}</p>)}
+                  <form method="post" action={`/admin/cases/${cs.id}/action`} class="row ship">
+                    <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" /><input type="hidden" name="what" value={String(cert.no)} />
+                    <select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select>
+                    <input name="tracking" placeholder="Tracking number" required />
+                    <input type="date" name="shipped_at" value={todayIso()} required />
+                    <input name="tracking_url" placeholder="Link (Other carriers)" />
+                    <button class="secondary" type="submit" disabled={!workable}>Add shipment</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div class="certcard issue" id="issue-certificate">
+          <h3 class="certtitle">Issue new certificate (payment history)</h3>
+          {!m.signatures_completed ? <p class="small muted">Available once the documents are signed and payments have been made.</p> : (
+            <form method="post" action={`/admin/cases/${cs.id}/action`}>
+              <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="issue_certificate" />
+              <div class="grid2">
+                <div><label>Certificate date</label><input type="date" name="certificate_date" value={todayIso()} required /></div>
+                <div><label>Monthly payments made so far</label><input name="payments_made" inputmode="numeric" pattern="[0-9]+" required placeholder="e.g. 6" /></div>
+                <div><label>Date of the most recent payment</label><input type="date" name="last_payment_date" required /></div>
+              </div>
+              <label class="check"><input type="checkbox" name="attest" value="1" required /> I have verified these payments against the Designated Fund bank records</label>
+              <div class="row"><button type="submit" disabled={!workable}>Issue C{(latestC?.no ?? 0) + 1}</button><span class="small muted">First payment due {fmtDate(String(cs.fields.commencement_date ?? ""))}. Your name and the time are recorded with the attestation. Upload the bank evidence to the new issue afterwards.</span></div>
+            </form>
+          )}
+        </div>
       </section>
 
       <!-- Emails -->
@@ -366,14 +449,13 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
         <div class="row"><h2>Emails to the client</h2><span class="spacer"></span>
           {m.signatures_completed && <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=A`}>{m.signed_pack_emailed ? "Resend A" : "Preview A"}</a>}
           <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=B`}>B</a>
-          <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=C`}>C</a>
           {cs.shipments.length > 0 && <a class="btn secondary" href={`/admin/cases/${cs.id}/email?kind=tracking`}>Tracking update</a>}
         </div>
         {cs.emails.length === 0 ? <p class="muted">None sent yet.</p> : (
           <table class="t small">
             <thead><tr><th>Sent</th><th>Email</th><th>To</th><th>Attachments</th></tr></thead>
             <tbody>{[...cs.emails].reverse().map((e) => (
-              <tr><td style="white-space:nowrap">{fmtTime(e.sentAt)}</td><td><b>{e.kind}</b> {e.subject}</td><td>{e.to.join(", ")}{e.redirectedFrom && <div class="muted">TEST, for {e.redirectedFrom.join(", ")}</div>}</td><td>{(e.attachments ?? []).length}</td></tr>
+              <tr><td style="white-space:nowrap">{fmtTime(e.sentAt)}</td><td><b>{e.kind === "C" ? `C${e.certNo}` : e.kind}</b>{e.lang ? ` [${e.lang}]` : ""} {e.subject}</td><td>{e.to.join(", ")}{e.redirectedFrom && <div class="muted">TEST, for {e.redirectedFrom.join(", ")}</div>}</td><td>{(e.attachments ?? []).length}</td></tr>
             ))}</tbody>
           </table>
         )}
@@ -382,12 +464,12 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
       <!-- Shipments -->
       <section class="card" id="shipments">
         <h2>Shipments</h2>
-        {cs.shipments.length > 0 && (
+        {cs.shipments.length === 0 ? <p class="muted small">None yet. Add them in the Award Letter or certificate panels.</p> : (
           <table class="t small">
             <thead><tr><th>Contents</th><th>Carrier</th><th>Tracking</th><th>Shipped</th><th>Delivered</th></tr></thead>
             <tbody>{cs.shipments.map((s) => (
               <tr>
-                <td>{s.contents.map((d) => DOCS[d].short).join(", ")}</td><td>{s.carrier}</td>
+                <td>{s.certNo ? `Certificate C${s.certNo}` : "Award Letter"}</td><td>{s.carrier}</td>
                 <td>{s.trackingUrl ? <a href={s.trackingUrl} target="_blank" rel="noopener noreferrer">{s.tracking}</a> : s.tracking}</td>
                 <td>{fmtDate(s.shippedAt)}</td>
                 <td>{s.deliveredAt ? fmtDate(s.deliveredAt) : (
@@ -400,21 +482,7 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
             ))}</tbody>
           </table>
         )}
-        <form method="post" action={`/admin/cases/${cs.id}/action`} style="margin-top:10px">
-          <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="add_shipment" />
-          <div class="row small" style="margin-bottom:6px">Contents:
-            <label class="check"><input type="checkbox" name="contents" value="award_letter" checked={!m.award_couriered} /> Award Letter</label>
-            <label class="check"><input type="checkbox" name="contents" value="certificate" checked={Boolean(m.award_couriered && m.first_payment_confirmed)} disabled={!m.first_payment_confirmed} /> Certificate</label>
-          </div>
-          <div class="grid2">
-            <div><label>Carrier</label><select name="carrier">{CARRIERS.map((x) => <option>{x}</option>)}</select></div>
-            <div><label>Tracking number</label><input name="tracking" required /></div>
-            <div><label>Shipped</label><input type="date" name="shipped_at" value={todayIso()} required /></div>
-            <div><label>Tracking link (Other carriers)</label><input name="tracking_url" placeholder="https://…" /></div>
-          </div>
-          <p class="small muted">Ships to: {String(cs.fields.beneficiary_address ?? "–")}</p>
-          <button class="secondary" type="submit" disabled={!active}>Add shipment</button>
-        </form>
+        <p class="small muted" style="margin-top:6px">Ships to: {String(cs.fields.beneficiary_address ?? "–")}{cs.fields.apostille_sets ? ` · ${String(cs.fields.apostille_sets)} apostilled set(s)` : ""}</p>
       </section>
 
       <!-- Inbox -->
@@ -430,11 +498,11 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
             </details>
             {e.files.map((f) => (
               <div class="row small attach">
-                <a href={href(f, true)}>{f.name}</a><span class="muted">{size(f.size)} · {f.kind}{f.doc ? ` · ${DOCS[f.doc].short}` : ""}</span>
+                <a href={href(f, true)}>{f.name}</a><span class="muted">{size(f.size)} · {f.kind}{f.doc ? ` · ${f.certNo ? `C${f.certNo}` : DOCS[f.doc].short}` : ""}</span>
                 <span class="spacer"></span>
                 <form method="post" action={`/admin/cases/${cs.id}/action`} class="row">
                   <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="file_as" /><input type="hidden" name="file" value={f.id} /><input type="hidden" name="_back" value="#inbox" />
-                  <select name="as" style="max-width:220px">{FILE_AS_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}</select>
+                  <select name="as" style="max-width:260px">{fileAs.map((o) => <option value={o.value}>{o.label}</option>)}</select>
                   <button class="secondary" type="submit">File as…</button>
                 </form>
               </div>
@@ -444,7 +512,7 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
         <details style="margin-top:10px">
           <summary class="small">Upload another file to this case</summary>
           <form class="upload" data-case={cs.id} data-csrf={csrf} style="margin-top:8px">
-            <select name="as">{FILE_AS_OPTIONS.map((o) => <option value={o.value}>{o.label}</option>)}</select>
+            <select name="as">{fileAs.map((o) => <option value={o.value}>{o.label}</option>)}</select>
             <input type="file" name="file" accept="application/pdf,image/jpeg,image/png" multiple required />
             <button class="secondary" type="submit">Upload</button>
             <span class="status small muted"></span>
@@ -459,10 +527,18 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
         <ol class="rail">
           {MILESTONES.map((ms) => {
             const done = cs.milestones[ms.key];
-            const current = status.key === ms.key;
+            const current = status.key === ms.key || (ms.key === "closed" && status.key === "onboarding_complete");
             return <li class={done ? "done" : current ? "current" : ""}><span class="dot"></span><span><b>{ms.label}</b>{done && <div class="muted small">{fmtTime(done.at)} · {done.by}</div>}</span></li>;
           })}
         </ol>
+        {cs.certificates.length > 0 && (
+          <div class="railcerts">
+            <h3>Certificates</h3>
+            {cs.certificates.map((cert) => (
+              <a class="small" href={`#cert-${cert.no}`}>C{cert.no} · {cert.variant === "onboarding" ? "onboarding" : `${cert.payments_made} payment(s)`} · {certStatus(cert).filter((x) => x.on).map((x) => x.label).at(-1)}</a>
+            ))}
+          </div>
+        )}
       </section>
       <section class="card" id="notes">
         <h2>Notes</h2>
@@ -485,7 +561,7 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
             <form method="post" action={`/admin/cases/${cs.id}/action`}><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="resume" /><button type="submit">Resume</button></form>
           )}
           {cs.state === "active" && (
-            <form method="post" action={`/admin/cases/${cs.id}/action`} onsubmit="return confirm('Close this case?')"><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="close" /><button class="secondary" type="submit">Close case</button></form>
+            <form method="post" action={`/admin/cases/${cs.id}/action`} onsubmit="return confirm('Close this case? Certificates can still be issued later.')"><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="close" /><button class="secondary" type="submit">Close case</button></form>
           )}
           {(cs.state === "closed" || cs.state === "cancelled") && (
             <form method="post" action={`/admin/cases/${cs.id}/action`}><input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="reopen" /><button class="secondary" type="submit">Reopen</button></form>
@@ -554,6 +630,15 @@ const nowLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).t
 </script>
 
 <style>
+  .certcard { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-top: 12px; }
+  .certcard.issue { background: var(--light); }
+  .certtitle { margin: 0; font-size: 14px; color: var(--navy); text-transform: none; letter-spacing: 0; }
+  .chip { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: #EEF1F5; color: var(--muted); }
+  .chip.on { background: var(--okbg); color: var(--ok); font-weight: 700; }
+  .ship input, .ship select { width: auto; max-width: 180px; }
+  .asks { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0 12px; margin-bottom: 8px; }
+  .asks .check { font-weight: 500; margin: 3px 0; }
+  .railcerts { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 4px; display: grid; gap: 4px; }
   .head { margin-bottom: 12px; }
   .ref { font-weight: 600; font-size: 16px; }
   .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 14px; align-items: start; }

@@ -56,6 +56,13 @@ export function splitAmount(amount: string) {
   return { whole: m[1].replace(/^0+(?=\d)/, ""), cents: (m[2] ?? "").padEnd(2, "0") };
 }
 
+/** German amount: "2500" -> "2.500 USD"; "2500.5" -> "2.500,50 USD". */
+export function formatUsdDe(amount: string): string {
+  const { whole, cents } = splitAmount(amount);
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return `${cents === "00" ? grouped : `${grouped},${cents}`} USD`;
+}
+
 /** "2500" -> "2,500"; "2500.5" -> "2,500.50". */
 export function formatAmount(amount: string): string {
   const { whole, cents } = splitAmount(amount);

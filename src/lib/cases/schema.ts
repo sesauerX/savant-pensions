@@ -6,7 +6,7 @@ export type FieldGroup = "Company" | "Member" | "Beneficiary" | "Pension" | "Sur
 
 /**
  * required: true = always; a string = required when that boolean field is true;
- * "stage" = only required at a later stage (certificate / first payment).
+ * "stage" = only required at a later stage.
  */
 export type FieldDef = {
   key: string;
@@ -16,49 +16,51 @@ export type FieldDef = {
   required: true | false | "existing_llc" | "has_survivor" | "stage";
   options?: string[];
   hint?: string;
+  /** Wording for the "request missing details" email, per client language. */
+  ask?: { en: string; de: string };
 };
 
 export const FIELDS: FieldDef[] = [
   { key: "company_name", label: "Company name", group: "Company", type: "text", required: true, hint: "Exact legal name incl. LLC" },
   { key: "state_of_formation", label: "State of formation", group: "Company", type: "text", required: true },
-  { key: "formation_date", label: "Formation date", group: "Company", type: "date", required: true },
-  { key: "state_filing_id", label: "State filing number", group: "Company", type: "text", required: true },
-  { key: "ein", label: "EIN", group: "Company", type: "ein", required: true, hint: "12-3456789" },
-  { key: "principal_office_address", label: "Principal office address", group: "Company", type: "textarea", required: true },
-  { key: "registered_agent_name", label: "Registered agent", group: "Company", type: "text", required: true },
-  { key: "registered_agent_address", label: "Registered agent address", group: "Company", type: "textarea", required: true },
+  { key: "formation_date", label: "Formation date", group: "Company", type: "date", required: true, ask: { en: "Formation date of the company", de: "Gründungsdatum der Gesellschaft" } },
+  { key: "state_filing_id", label: "State filing number", group: "Company", type: "text", required: true, ask: { en: "State filing number of the company", de: "Registernummer der Gesellschaft (State Filing Number)" } },
+  { key: "ein", label: "EIN", group: "Company", type: "ein", required: true, hint: "12-3456789", ask: { en: "Employer Identification Number (EIN) of the company", de: "Steuernummer der Gesellschaft (Employer Identification Number, EIN)" } },
+  { key: "principal_office_address", label: "Principal office address", group: "Company", type: "textarea", required: true, ask: { en: "Principal office address of the company", de: "Anschrift des Hauptsitzes der Gesellschaft" } },
+  { key: "registered_agent_name", label: "Registered agent", group: "Company", type: "text", required: true, ask: { en: "Name of the company's registered agent", de: "Name des Registered Agent der Gesellschaft" } },
+  { key: "registered_agent_address", label: "Registered agent address", group: "Company", type: "textarea", required: true, ask: { en: "Address of the company's registered agent", de: "Anschrift des Registered Agent der Gesellschaft" } },
   { key: "existing_llc", label: "LLC existed before (amend & restate)?", group: "Company", type: "bool", required: true },
-  { key: "prior_oa_date", label: "Date of prior operating agreement", group: "Company", type: "date", required: "existing_llc" },
-  { key: "capital_amount", label: "Capital contributed (USD)", group: "Company", type: "amount", required: true },
+  { key: "prior_oa_date", label: "Date of prior operating agreement", group: "Company", type: "date", required: "existing_llc", ask: { en: "Date of the company's previous operating agreement", de: "Datum des bisherigen Gesellschaftsvertrags (Operating Agreement)" } },
+  { key: "capital_amount", label: "Capital contributed (USD)", group: "Company", type: "amount", required: true, ask: { en: "Capital you contributed to the company (USD)", de: "Ihre Kapitaleinlage in die Gesellschaft (USD)" } },
   { key: "llc_act", label: "Name of the state LLC Act", group: "Company", type: "text", required: true, hint: "Default from state; counsel to confirm" },
   { key: "secretary_of_state", label: "Filing office", group: "Company", type: "text", required: true, hint: "Default from state; counsel to confirm" },
-  { key: "successors", label: "Named successors/heirs", group: "Member", type: "text", required: false, hint: "Optional, OA 4.5(a)" },
+  { key: "successors", label: "Named successors/heirs", group: "Member", type: "text", required: false, hint: "Optional, OA 4.5(a)", ask: { en: "Names of any successors or heirs to be named", de: "Namen etwaiger zu benennender Rechtsnachfolger oder Erben" } },
   { key: "member_name", label: "Sole member full legal name", group: "Member", type: "text", required: true },
-  { key: "member_address", label: "Member residential address", group: "Member", type: "textarea", required: true },
+  { key: "member_address", label: "Member residential address", group: "Member", type: "textarea", required: true, ask: { en: "Your residential address", de: "Ihre Wohnanschrift" } },
   { key: "member_email", label: "Member email (the client)", group: "Member", type: "email", required: true },
+  { key: "client_language", label: "Client email language", group: "Member", type: "select", required: true, options: ["en", "de"], hint: "Emails only; documents stay English" },
   { key: "beneficiary_name", label: "Beneficiary full legal name", group: "Beneficiary", type: "text", required: true },
   { key: "beneficiary_salutation", label: "Salutation", group: "Beneficiary", type: "select", required: true, options: ["Ms.", "Mr.", "Mx."] },
   { key: "beneficiary_surname", label: "Surname", group: "Beneficiary", type: "text", required: true },
-  { key: "beneficiary_dob", label: "Date of birth", group: "Beneficiary", type: "date", required: true },
-  { key: "beneficiary_nationality", label: "Nationality (adjective)", group: "Beneficiary", type: "text", required: true, hint: "e.g. German" },
-  { key: "beneficiary_passport", label: "Passport number", group: "Beneficiary", type: "text", required: true },
-  { key: "beneficiary_address", label: "Residential address (courier address)", group: "Beneficiary", type: "textarea", required: true },
-  { key: "beneficiary_role", label: "Role served", group: "Beneficiary", type: "text", required: true, hint: "e.g. Managing Member" },
-  { key: "service_start_date", label: "Service start date", group: "Beneficiary", type: "date", required: true },
+  { key: "beneficiary_dob", label: "Date of birth", group: "Beneficiary", type: "date", required: true, ask: { en: "Your date of birth", de: "Ihr Geburtsdatum" } },
+  { key: "beneficiary_nationality", label: "Nationality (adjective)", group: "Beneficiary", type: "text", required: true, hint: "e.g. German", ask: { en: "Your nationality", de: "Ihre Staatsangehörigkeit" } },
+  { key: "beneficiary_passport", label: "Passport number", group: "Beneficiary", type: "text", required: true, ask: { en: "Your passport number", de: "Ihre Reisepassnummer" } },
+  { key: "beneficiary_address", label: "Residential address (courier address)", group: "Beneficiary", type: "textarea", required: true, ask: { en: "Address for delivery of the original documents", de: "Lieferanschrift für die Originaldokumente" } },
+  { key: "beneficiary_role", label: "Role served", group: "Beneficiary", type: "text", required: true, hint: "e.g. Managing Member", ask: { en: "Your role in the company", de: "Ihre Funktion in der Gesellschaft" } },
+  { key: "apostille_sets", label: "Apostilled original sets", group: "Beneficiary", type: "text", required: false, hint: "Number of sets", ask: { en: "Number of apostilled original sets", de: "Anzahl der apostillierten Originalsätze" } },
+  { key: "service_start_date", label: "Service start date", group: "Beneficiary", type: "date", required: true, ask: { en: "Start date of your service to the company", de: "Beginn Ihrer Tätigkeit für die Gesellschaft" } },
   { key: "monthly_amount", label: "Monthly pension (USD)", group: "Pension", type: "amount", required: true },
   { key: "commencement_date", label: "First payment date", group: "Pension", type: "date", required: true },
   { key: "adjustment_date", label: "Annual adjustment date", group: "Pension", type: "text", required: true },
   { key: "adjustment_index", label: "Index", group: "Pension", type: "textarea", required: true },
   { key: "has_survivor", label: "Survivor named?", group: "Survivor", type: "bool", required: true },
-  { key: "survivor_name", label: "Survivor full legal name", group: "Survivor", type: "text", required: "has_survivor" },
-  { key: "survivor_dob", label: "Survivor date of birth", group: "Survivor", type: "date", required: "has_survivor" },
+  { key: "survivor_name", label: "Survivor full legal name", group: "Survivor", type: "text", required: "has_survivor", ask: { en: "Full legal name of your survivor (spouse or partner)", de: "Vollständiger Name der hinterbliebenen Person (Ehe- oder Lebenspartner)" } },
+  { key: "survivor_dob", label: "Survivor date of birth", group: "Survivor", type: "date", required: "has_survivor", ask: { en: "Date of birth of your survivor", de: "Geburtsdatum der hinterbliebenen Person" } },
   { key: "survivor_relationship", label: "Relationship", group: "Survivor", type: "select", required: "has_survivor", options: ["spouse", "partner"] },
-  { key: "fund_bank", label: "Bank holding Designated Fund", group: "Fund", type: "text", required: true, hint: "e.g. Mercury" },
-  { key: "fund_amount", label: "Designated Fund amount (USD)", group: "Fund", type: "amount", required: true },
+  { key: "fund_bank", label: "Bank holding Designated Fund", group: "Fund", type: "text", required: true, hint: "e.g. Mercury", ask: { en: "Bank holding the Designated Fund", de: "Bank, bei der der Pensionsfonds (Designated Fund) geführt wird" } },
+  { key: "fund_amount", label: "Designated Fund amount (USD)", group: "Fund", type: "amount", required: true, ask: { en: "Amount of the Designated Fund (USD)", de: "Höhe des Pensionsfonds (Designated Fund) in USD" } },
   { key: "signing_date", label: "Date of signing", group: "Dates", type: "date", required: true },
   { key: "award_letter_date", label: "Award letter date", group: "Dates", type: "date", required: true, hint: "Defaults to signing date; may move to the notary meeting date" },
-  { key: "certificate_date", label: "Certificate issue date", group: "Dates", type: "date", required: "stage" },
-  { key: "first_payment_date", label: "First payment actually made", group: "Dates", type: "date", required: "stage" },
 ];
 
 export const FIELD_KEYS = FIELDS.map((f) => f.key);
@@ -72,6 +74,15 @@ export const DEFAULT_ADJUSTMENT_INDEX =
   "Consumer Price Index for All Urban Consumers (CPI-U), published by the US Bureau of Labor Statistics";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+const MONTHS_DE = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+/** ISO date to "1. Januar 2027". */
+export function formatDateDe(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) throw new Error(`not an ISO date: ${iso}`);
+  return `${Number(m[3])}. ${MONTHS_DE[Number(m[2]) - 1]} ${m[1]}`;
+}
 
 /** ISO date to "January 15, 2026". */
 export function formatDate(iso: string): string {
