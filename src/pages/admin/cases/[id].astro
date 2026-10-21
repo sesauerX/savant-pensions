@@ -228,6 +228,13 @@ const certificateC1Unsigned = (x: Case) => {
             {cs.certificates.length === 0 && <tr><td><b>5. Certificate C1</b></td><td colspan="4" class="muted small">Created when the details are confirmed.</td></tr>}
           </tbody>
         </table>
+        {cs.files.some((f) => f.kind === "upload" || (f.kind === "proof" && !f.certNo)) && (
+          <div class="small" style="margin-top:8px"><b>Other files:</b>
+            {cs.files.filter((f) => f.kind === "upload" || (f.kind === "proof" && !f.certNo)).map((f) => (
+              <div class="row">{f.deleted ? <span class="muted"><s>{f.name}</s> deleted {fmtDate(f.deleted.at)}</span> : <a href={href(f)} target="_blank" rel="noopener">{f.name}</a>}<span class="muted">{size(f.size)} · uploaded {fmtTime(f.createdAt)} by {f.by}</span>{f.identity && !f.deleted && <span class="badge hold">Identity document</span>}</div>
+            ))}
+          </div>
+        )}
         {cs.files.some((f) => f.kind === "audit_trail") && <p class="small" style="margin-top:8px">BoldSign audit trails: {cs.files.filter((f) => f.kind === "audit_trail").map((f) => <a href={href(f)} target="_blank" rel="noopener" style="margin-right:8px">{f.name}</a>)}</p>}
       </section>
 
