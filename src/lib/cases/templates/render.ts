@@ -15,8 +15,12 @@ type Node =
   | { t: "if"; name: string; negate: boolean; yes: Node[]; no: Node[] };
 
 export class MissingFieldsError extends Error {
-  constructor(public missing: string[], public template: string) {
+  missing: string[];
+  template: string;
+  constructor(missing: string[], template: string) {
     super(`Template "${template}" is missing: ${missing.join(", ")}`);
+    this.missing = missing;
+    this.template = template;
   }
 }
 

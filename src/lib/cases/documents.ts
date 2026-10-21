@@ -47,8 +47,10 @@ function baseField(name: string) {
 }
 
 export class DocumentFieldsError extends Error {
-  constructor(public missing: string[]) {
+  missing: string[];
+  constructor(missing: string[]) {
     super(`Missing fields: ${missing.join(", ")}`);
+    this.missing = missing;
   }
 }
 
