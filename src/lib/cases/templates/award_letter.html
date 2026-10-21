@@ -1,0 +1,46 @@
+<!-- template_version: AWD-2026-10-21.1 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending) -->
+<header class="letterhead">
+  <p class="name">{{company_name}}</p>
+  <p class="line">{{principal_office_address_lines|br}}</p>
+  <p class="line">EIN {{ein}}</p>
+</header>
+
+<p>Date: {{award_letter_date}}</p>
+<p><strong>Ref: {{reference}}, Pension Award under the {{company_name}} Retirement Income Plan</strong></p>
+
+<p style="margin-top:0.2in">{{beneficiary_name}}<br>{{beneficiary_address_lines|br}}</p>
+
+<p style="margin-top:0.2in">Dear {{beneficiary_salutation}} {{beneficiary_surname}},</p>
+<p>We confirm that {{company_name}} (the “Company”) has awarded you a lifetime pension under its Retirement Income Plan, by written consent of its sole member dated {{signing_date}}.</p>
+
+<h3>Summary of entitlement</h3>
+<table class="summary">
+  <tr><th>Beneficiary</th><td>{{beneficiary_name}}</td></tr>
+  <tr><th>Date of birth</th><td>{{beneficiary_dob}}</td></tr>
+  {{#if show_passport}}<tr><th>Passport</th><td>{{beneficiary_nationality}}, {{beneficiary_passport}}</td></tr>{{/if}}
+  <tr><th>Pension type</th><td>Private company retirement pension</td></tr>
+  <tr><th>Monthly amount</th><td>USD {{monthly_amount}} ({{monthly_amount_words}} US dollars)</td></tr>
+  <tr><th>Payment</th><td>Monthly, by bank transfer to an account in your name</td></tr>
+  <tr><th>Commencement</th><td>{{commencement_date}}</td></tr>
+  <tr><th>Duration</th><td>For life (vitalicia)</td></tr>
+  <tr><th>Status</th><td>Vested, non-forfeitable and irrevocable</td></tr>
+  <tr><th>Annual adjustment</th><td>Each {{adjustment_date}}, in line with the {{adjustment_index_short}}</td></tr>
+  <tr><th>Survivor pension</th><td>{{#if has_survivor}}Full amount to {{survivor_name}}, for life{{else}}None{{/if}}</td></tr>
+  <tr><th>Plan Administrator</th><td>Sterling Pension Group LLC, West Hartford, Connecticut, USA</td></tr>
+</table>
+
+<h3>Status of this pension</h3>
+<p>This pension is a binding lifetime obligation of the Company, granted in recognition of your service to the Company, and constitutes a retirement pension. It is paid from the Company’s designated pension fund, administered by Sterling Pension Group LLC as Plan Administrator. It cannot be cancelled or reduced by the Company’s members or by any future owner of the Company.</p>
+<p>This letter may be relied on as proof of pension income for all official purposes, including banking requirements and residence or immigration applications.</p>
+
+<div class="keep">
+  <p style="margin-top:0.2in">Sincerely,</p>
+  <p>For and on behalf of <strong>{{company_name}}</strong></p>
+  <div class="sig" style="margin-top:0">
+    <div class="space"></div>
+    <div class="line"></div>
+    <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
+    <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>
+    <p class="muted">Date: {{award_letter_date}}</p>
+  </div>
+</div>

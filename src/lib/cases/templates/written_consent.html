@@ -1,0 +1,46 @@
+<!-- template_version: WC-2026-10-21.1 | source: 3_WRITTEN_CONSENT_OF_SOLE_MEMBER_TEMPLATE.docx (counsel review pending) -->
+<header class="company-head"><span class="name">{{company_name}}</span></header>
+
+<div class="title-block">
+  <h1>WRITTEN CONSENT OF THE SOLE MEMBER<br>IN LIEU OF A MEETING</h1>
+  <div class="gold-rule"></div>
+  <p class="subtitle">{{company_name}}, a {{state_of_formation}} limited liability company</p>
+  <p class="ref-line">Ref: <strong>{{reference}}</strong></p>
+</div>
+
+<p>The undersigned, being the sole member of {{company_name}} (the “Company”), acting by written consent under the Company’s Operating Agreement and the {{llc_act}}, adopts the following resolutions with effect from {{signing_date}}.</p>
+
+<h2>Recitals</h2>
+<p>WHEREAS {{beneficiary_name}} has served the Company as {{beneficiary_role}} since {{service_start_date}};</p>
+<p>WHEREAS the Company maintains the {{company_name}} Retirement Income Plan (the “Plan”) under Article IV of its Operating Agreement; and</p>
+<p>WHEREAS the Company wishes to award a lifetime pension under the Plan in recognition of that service;</p>
+<p>NOW, THEREFORE, IT IS RESOLVED:</p>
+
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Adoption of the Plan.</strong> The Corporate Pension Policy and Retirement Income Plan of the Company, in the form attached, is adopted.</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Award.</strong> The Company awards a pension under the Plan to {{beneficiary_name}}, born on {{beneficiary_dob}} (the “Beneficiary”).</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Amount.</strong> USD {{monthly_amount}} ({{monthly_amount_words}} US dollars) per month.</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Commencement and duration.</strong> The first payment is due on {{commencement_date}}. Payments continue for the remainder of the Beneficiary’s life.</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Annual adjustment.</strong> The monthly amount is adjusted each year under Section 5 of the Plan.</div></div>
+{{#if has_survivor}}<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Survivor pension.</strong> On the Beneficiary’s death, payments continue without interruption to {{survivor_name}}, born on {{survivor_dob}}, the Beneficiary’s {{survivor_relationship}} (the “Survivor”), for the remainder of the Survivor’s life, at the full monthly amount then payable.</div></div>
+{{/if}}<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Vested and irrevocable.</strong> This Award is fully vested, non-forfeitable and irrevocable.</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Designated Fund.</strong> The Company maintains its Designated Fund in a separate account in its name at {{fund_bank}}, funded with USD {{fund_amount}} ({{fund_amount_words}} US dollars).</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Payment.</strong> Payments are made monthly by bank transfer from the Designated Fund to an account in the Beneficiary’s own name.</div></div>
+<div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Plan Administrator.</strong> Sterling Pension Group LLC, 15 N Main St #100, West Hartford, CT 06107, USA, as Plan Administrator, is authorized and directed to implement these resolutions, make the payments and issue all certifications required by third parties.</div></div>
+
+<div class="sig">
+  <div class="space"><span class="tag">{{@client_sig_consent}}</span></div>
+  <div class="line"></div>
+  <p>{{member_name}}, Sole Member</p>
+  <p class="muted">Date: {{signing_date}}</p>
+</div>
+
+<div class="keep">
+  <p style="margin-top:0.3in"><strong>Certificate of the Plan Administrator.</strong> The undersigned certifies that this is a true and complete copy of the written consent of the sole member of {{company_name}} dated {{signing_date}}, and that it remains in full force and effect.</p>
+  <div class="sig" style="margin-top:0.04in">
+    <div class="space"><span class="tag">{{@spg_sig_consent}}</span></div>
+    <div class="line"></div>
+    <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
+    <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>
+    <p class="muted">Date: {{signing_date}}</p>
+  </div>
+</div>

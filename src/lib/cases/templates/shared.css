@@ -1,0 +1,93 @@
+/* Shared print styles for all case documents. US Letter; the page border and
+   gold hairline are drawn on every page by pdf.ts, the footer by Chromium. */
+@page { size: 8.5in 11in; margin: 0.8in 1in 1.05in 1in; }
+
+:root {
+  --navy: #0B2545;
+  --sterling: #13467A;
+  --bright: #1E6FD9;
+  --gold: #F2B33D;
+  --ink: #1F2D3D;
+  --grey: #5B6776;
+  --rule: #DCE3EC;
+  --badge: #E8F0FB;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", sans-serif;
+  font-size: 10pt;
+  line-height: 1.45;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-feature-settings: "kern", "liga";
+}
+p { margin: 0 0 0.75em; }
+strong, b { font-weight: 700; color: var(--navy); }
+
+/* Header: Sterling (certificate) */
+.sterling-head { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 0.2in; border-bottom: 0.75pt solid var(--rule); margin-bottom: 0.22in; }
+.sterling-head .logo svg { display: block; width: 2.04in; height: auto; margin: -0.09in 0 0 -0.27in; }
+.sterling-head .addr { text-align: right; font-size: 9.5pt; color: var(--grey); line-height: 1.45; padding-top: 0.12in; }
+.sterling-head .addr strong { display: block; font-size: 10.5pt; font-weight: 700; }
+
+/* Header: client company (OA, Policy, Consent) */
+.company-head { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 0.12in; border-bottom: 0.75pt solid var(--rule); margin-bottom: 0.32in; }
+.company-head .name { font-weight: 700; color: var(--navy); font-size: 10.5pt; }
+.company-head .ref { font-size: 9pt; color: var(--grey); }
+
+/* Header: company letterhead (Award Letter) */
+.letterhead { padding-bottom: 0.16in; border-bottom: 0.75pt solid var(--rule); margin-bottom: 0.28in; }
+.letterhead .name { font-weight: 800; color: var(--navy); font-size: 15pt; letter-spacing: -0.01em; margin: 0 0 0.04in; }
+.letterhead .line { font-size: 9.5pt; color: var(--grey); line-height: 1.45; margin: 0; }
+
+/* Title block */
+.title-block { text-align: center; margin-bottom: 0.22in; }
+/* The certificate follows the reference design: slightly smaller body text. */
+body.cert { font-size: 9.5pt; line-height: 1.42; }
+.kicker { font-size: 7.5pt; font-weight: 700; letter-spacing: 0.32em; text-transform: uppercase; color: var(--bright); margin: 0 0 0.1in; }
+h1 { font-size: 20pt; font-weight: 800; color: var(--navy); text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.12; margin: 0; text-wrap: balance; }
+.gold-rule { width: 0.75in; height: 3pt; background: var(--gold); margin: 0.13in auto 0.1in; border: 0; }
+.subtitle { font-size: 10.5pt; color: var(--ink); margin: 0 0 0.06in; }
+.ref-line { font-size: 9.5pt; color: var(--grey); margin: 0; }
+.ref-line strong { color: var(--navy); }
+
+/* Agreement sections */
+h2 { font-size: 10.5pt; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.06em; margin: 0.26in 0 0.1in; padding-bottom: 0.05in; border-bottom: 0.75pt solid var(--rule); break-after: avoid; }
+.clause { display: flex; gap: 0.12in; margin: 0 0 0.6em; }
+.clause > .no { flex: 0 0 0.36in; font-weight: 700; color: var(--navy); }
+.clause > .body { flex: 1; }
+.sub { display: flex; gap: 0.1in; margin: 0 0 0.45em 0.48in; }
+.sub > .no { flex: 0 0 0.3in; }
+.sub > .body { flex: 1; }
+ul.defs { margin: 0 0 0.6em; padding-left: 0.26in; }
+ul.defs li { margin: 0 0 0.4em; padding-left: 0.04in; }
+
+/* Certificate: numbered paragraphs with circular badges */
+.paras { border-top: 0.75pt solid var(--rule); margin: 0.1in 0 0.18in; }
+.para { display: flex; gap: 0.3in; padding: 0.09in 0; border-bottom: 0.75pt solid var(--rule); break-inside: avoid; }
+.badge { flex: 0 0 0.3in; height: 0.3in; border-radius: 50%; background: var(--badge); color: var(--navy); font-weight: 700; font-size: 9.5pt; display: flex; align-items: center; justify-content: center; margin-top: 0.02in; }
+.para p { margin: 0; }
+
+/* Award letter summary table */
+table.summary { width: 100%; border-collapse: collapse; margin: 0.08in 0 0.24in; font-size: 10pt; break-inside: avoid; }
+table.summary th, table.summary td { text-align: left; vertical-align: top; padding: 0.06in 0.1in; border-bottom: 0.75pt solid var(--rule); }
+table.summary th { width: 34%; font-weight: 700; color: var(--navy); background: #F3F6FA; }
+h3 { font-size: 10.5pt; font-weight: 700; color: var(--navy); margin: 0.2in 0 0.08in; break-after: avoid; }
+
+/* Signatures */
+.sig { position: relative; break-inside: avoid; margin-top: 0.22in; }
+.sig .space { position: relative; height: 0.52in; }
+.sig .line { width: 3.1in; border-top: 0.75pt solid var(--navy); margin: 0 0 0.06in; }
+.sig p { margin: 0; line-height: 1.45; }
+.sig .muted { color: var(--grey); }
+.sig-label { font-weight: 700; color: var(--navy); margin: 0.22in 0 0; break-after: avoid; }
+.keep { break-inside: avoid; }
+/* BoldSign text tags: invisible 1pt text at the top-left of the signature space. */
+.tag { position: absolute; left: 0; top: 0.05in; font-size: 1pt; line-height: 1; color: #FFFFFF; white-space: nowrap; }
+.tag.date { left: 3.4in; top: 0.3in; }
+
+/* Draft watermark: fixed elements repeat on every printed page. */
+.watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-38deg); font-size: 27pt; font-weight: 800; color: rgba(11, 37, 69, 0.07); white-space: nowrap; letter-spacing: 0.04em; z-index: 1000; pointer-events: none; }
