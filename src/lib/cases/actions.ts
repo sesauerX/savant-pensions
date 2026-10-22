@@ -3,10 +3,10 @@ import { addEvent, deleteCaseData, fileById, getCase, mutateCase, nowIso, random
 import { config } from "./config";
 import { type DocKey } from "./documents";
 import { ASKABLE_FIELDS, trackingUrl, CARRIERS, type EmailKind } from "./emails";
-import { attachEmailToCase, getInboxEmail, htmlToText, intakeEmail, listInbox, runExtraction, updateInboxItem } from "./inbound";
+import { attachEmailToCase, caseEmailsForExtraction, getInboxEmail, intakeEmail, listInbox, runExtraction, updateInboxItem } from "./inbound";
 import { GuardError, requireActive, requireMilestones } from "./milestones";
 import { FIELDS, isIsoDate, normaliseValue } from "./schema";
-import { getFileBytes, readJson } from "./store";
+import { getFileBytes } from "./store";
 import { remind } from "./boldsign";
 import * as wf from "./workflow";
 import type { Case, CaseFile } from "./types";
@@ -148,18 +148,13 @@ export async function runCaseAction(caseId: string, form: FormData, user: { name
       }
       case "rerun_extraction": {
         const c = await wf.loadCase(caseId);
-        const em = c.inbound[0];
-        if (!em) throw new GuardError("This case has no intake email.");
-        const raw = (await readJson<{ from: string; subject: string; text?: string; html?: string }>(`cases/${caseId}/inbound/${em.emailId}.json`))?.data;
-        if (!raw) throw new GuardError("The stored intake email was not found.");
-        const atts = [];
-        for (const id of em.fileIds) {
-          const f = fileById(c, id);
-          const bytes = f && (await getFileBytes(f.path));
-          if (f && bytes) atts.push({ filename: f.name, contentType: f.contentType, bytes });
-        }
-        const done = await runExtraction(caseId, { from: raw.from, subject: raw.subject, text: raw.text || htmlToText(raw.html ?? "") }, atts, by);
-        return done.extraction?.error ? { ok: false, message: `Extraction failed: ${done.extraction.error}` } : { ok: true, message: "Extraction finished. Empty fields were filled; your edits were kept." };
+        if (!c.inbound.length) throw new GuardError("This case has no inbound emails.");
+        // Every inbound email (intake and client replies) with their attachments, oldest first.
+        const { email, atts, count } = await caseEmailsForExtraction(c);
+        const done = await runExtraction(caseId, email, atts, by);
+        return done.extraction?.error
+          ? { ok: false, message: `Extraction failed: ${done.extraction.error}` }
+          : { ok: true, message: `Extraction finished over ${count} email(s). Empty fields were filled; confirmed and edited fields were kept.` };
       }
       case "send_signature": {
         await wf.sendForSignature(caseId, by);

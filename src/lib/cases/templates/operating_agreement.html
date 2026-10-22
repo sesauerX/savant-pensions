@@ -1,4 +1,4 @@
-<!-- template_version: OA-2026-10-21.1 | source: 1_OPERATING_AGREEMENT_TEMPLATE.docx (counsel review pending) -->
+<!-- template_version: OA-2026-10-22.1 | source: 1_OPERATING_AGREEMENT_TEMPLATE.docx (counsel review pending) -->
 <header class="company-head"><span class="name">{{company_name}}</span></header>
 
 <div class="title-block">
@@ -60,7 +60,7 @@
 <div class="keep">
   <p style="margin-top:0.24in">Executed on {{signing_date}}.</p>
   <div class="sig">
-    <div class="space"><span class="tag">{{@client_sig_oa}}</span><span class="tag date">{{@client_date_oa}}</span></div>
+    <div class="space">{{#if with_tags}}<a class="sigbox" href="https://sig.invalid/client_sig_oa" aria-hidden="true"></a>{{/if}}{{#if with_tags}}<a class="sigbox date" href="https://sig.invalid/client_date_oa" aria-hidden="true"></a>{{/if}}</div>
     <div class="line"></div>
     <p>{{member_name}}, Sole Member</p>
   </div>
@@ -69,7 +69,7 @@
 <div class="keep">
   <p class="sig-label">Accepted as Plan Administrator:</p>
   <div class="sig" style="margin-top:0.04in">
-    <div class="space"><span class="tag">{{@spg_sig_oa}}</span></div>
+    <div class="space">{{#if with_tags}}<a class="sigbox" href="https://sig.invalid/spg_sig_oa" aria-hidden="true"></a>{{/if}}</div>
     <div class="line"></div>
     <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
     <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>

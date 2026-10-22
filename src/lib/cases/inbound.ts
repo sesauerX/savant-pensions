@@ -7,7 +7,7 @@ import { applyDefaults } from "./derive";
 import { extractFields } from "./extract";
 import { safeEqual } from "./http";
 import { bareAddress, downloadReceivedAttachments, getReceivedEmail, notifyAdmins, type ReceivedEmail } from "./mail";
-import { putFile, readJson, updateJson, writeJson } from "./store";
+import { getFileBytes, putFile, readJson, updateJson, writeJson } from "./store";
 import type { Case, CaseFile } from "./types";
 
 // ---- Svix signature (Resend webhooks)
@@ -126,7 +126,10 @@ export async function attachEmailToCase(
   const files: CaseFile[] = [];
   for (const a of atts) {
     if (a.bytes.byteLength > MAX_ATTACH) continue;
-    files.push(await storeFile(c.id, { bytes: a.bytes, name: a.filename, kind: "inbound", contentType: a.contentType, by, inboundEmailId: e.id }));
+    const f = await storeFile(c.id, { bytes: a.bytes, name: a.filename, kind: "inbound", contentType: a.contentType, by, inboundEmailId: e.id });
+    // Suggest the identity tag at once (also for client replies, which are not extracted).
+    if (looksLikeIdentityDocument(a.filename)) f.identitySuggested = true;
+    files.push(f);
   }
   return mutateCase(c.id, by, (cc) => {
     if (cc.inbound.some((i) => i.emailId === e.id)) return;
@@ -134,6 +137,46 @@ export async function attachEmailToCase(
     cc.inbound.push({ emailId: e.id, from: bareAddress(e.from), subject: e.subject ?? "", receivedAt: e.created_at ?? nowIso(), fileIds: files.map((f) => f.id) });
     addEvent(cc, by, `Inbound email attached (${files.length} attachment${files.length === 1 ? "" : "s"})`);
   });
+}
+
+/** Attachment names that look like passport or ID scans (suggestion only; an admin confirms). */
+export function looksLikeIdentityDocument(name: string) {
+  return /passport|reisepass|pass[-_ ]?(scan|kopie|copy)|ausweis|identity|identit[äa]t|id[-_ ]?card|carte[-_ ]d.?identit|national[-_ ]id|(^|[^a-z])id([^a-z]|$)/i.test(name);
+}
+
+/** Identifiers that look like placeholders (00-0000000, 1234567, 0000…): flag for review. */
+export function looksLikePlaceholder(value: unknown) {
+  const v = String(value ?? "");
+  const digits = v.replace(/\D/g, "");
+  if (digits.length < 5) return false;
+  const zeros = digits.split("").filter((d) => d === "0").length;
+  return /^(\d)\1+$/.test(digits) || zeros >= digits.length - 1 || "01234567890123456789".includes(digits) || "98765432109876543210".includes(digits);
+}
+
+/** All inbound emails of a case (oldest first) as one extraction input, plus their attachments. */
+export async function caseEmailsForExtraction(c: Case) {
+  const parts: string[] = [];
+  const atts: { filename: string; contentType: string; bytes: Uint8Array }[] = [];
+  const emails = [...c.inbound].sort((a, b) => a.receivedAt.localeCompare(b.receivedAt));
+  let n = 0;
+  for (const em of emails) {
+    const raw = (await readJson<{ from?: string; subject?: string; created_at?: string; text?: string; html?: string }>(`cases/${c.id}/inbound/${safeId(em.emailId)}.json`))?.data;
+    if (!raw) continue;
+    n++;
+    parts.push(`--- Email ${n} (${em.from === c.source.from ? "intake" : "follow-up"}) ---\nFrom: ${raw.from ?? em.from}\nDate: ${raw.created_at ?? em.receivedAt}\nSubject: ${raw.subject ?? em.subject}\n\n${raw.text || htmlToText(raw.html ?? "")}`);
+    for (const id of em.fileIds) {
+      const f = c.files.find((x) => x.id === id);
+      if (!f || f.deleted) continue;
+      const bytes = await getFileBytes(f.path);
+      if (bytes) atts.push({ filename: f.name, contentType: f.contentType, bytes });
+    }
+  }
+  const first = emails[0];
+  return {
+    email: { from: first?.from ?? "", subject: first?.subject ?? "", text: `The case has ${n} email(s) in date order. Later emails (for example the client's replies) add missing details.\n\n${parts.join("\n\n")}` },
+    atts,
+    count: n,
+  };
 }
 
 /** German-speaking client by nationality or country of residence. */
@@ -157,11 +200,16 @@ export async function runExtraction(caseId: string, email: { from: string; subje
         c.fields.client_language = "de";
         if (!uncertain.includes("client_language")) uncertain.push("client_language");
       }
+      // Placeholder-looking identifiers are always flagged, whatever the model said.
+      for (const k of ["ein", "state_filing_id", "beneficiary_passport"]) {
+        if (c.fields[k] && looksLikePlaceholder(c.fields[k]) && !uncertain.includes(k)) uncertain.push(k);
+      }
+      if (typeof c.fields.ein === "string" && /^00-/.test(c.fields.ein) && !uncertain.includes("ein")) uncertain.push("ein");
       c.extraction = { model: r.model, at: nowIso(), notes: r.notes, missing: r.missing, uncertain };
       const suggested = new Set(r.identityDocuments.map((n) => n.trim().toLowerCase()));
       let tagged = 0;
       for (const f of c.files) {
-        if (f.kind === "inbound" && !f.identity && suggested.has(f.name.trim().toLowerCase())) {
+        if (f.kind === "inbound" && !f.identity && !f.deleted && (suggested.has(f.name.trim().toLowerCase()) || looksLikeIdentityDocument(f.name))) {
           f.identitySuggested = true;
           tagged++;
         }

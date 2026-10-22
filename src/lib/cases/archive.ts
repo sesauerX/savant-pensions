@@ -9,7 +9,7 @@ import type { Case, CaseFile } from "./types";
 import type { ZipEntry } from "./zip";
 
 const e = (v: unknown) => escapeHtml(String(v ?? ""));
-const when = (iso?: string) => (iso ? new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", dateStyle: "medium", timeStyle: "short" }) + " ET" : "");
+const when = (iso?: string) => (iso ? new Date(iso).toLocaleString("en-US", { timeZone: "Europe/London", dateStyle: "medium", timeStyle: "short" }) + " UK time" : "");
 const day = (iso?: string) => {
   try {
     return iso ? formatDate(iso.slice(0, 10)) : "";

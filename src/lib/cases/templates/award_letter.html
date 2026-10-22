@@ -1,4 +1,4 @@
-<!-- template_version: AWD-2026-10-21.3 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending)
+<!-- template_version: AWD-2026-10-22.1 | source: 4_PENSION_AWARD_LETTER_TEMPLATE.docx (counsel review pending)
      Letterhead is generated from case data only (company name, principal office, EIN): the client
      company's own paper, no Sterling branding. -->
 <header class="co-letterhead">
@@ -30,6 +30,7 @@
   <tr><th>Plan Administrator</th><td>Sterling Pension Group LLC, West Hartford, Connecticut, USA</td></tr>
 </table>
 
+<div class="keep">
 <h3>Status of this pension</h3>
 <p>This pension is a binding lifetime obligation of the Company, granted in recognition of your service to the Company, and constitutes a retirement pension. It is paid from the Company’s designated pension fund, administered by Sterling Pension Group LLC as Plan Administrator. It cannot be cancelled or reduced by the Company’s members or by any future owner of the Company.</p>
 <p>This letter may be relied on as proof of pension income for all official purposes, including banking requirements and residence or immigration applications.</p>
@@ -38,10 +39,11 @@
   <p style="margin-top:0.2in">Sincerely,</p>
   <p>For and on behalf of <strong>{{company_name}}</strong></p>
   <div class="sig" style="margin-top:0">
-    <div class="space">{{#if with_tags}}<span class="tag">{{@spg_sig_award}}</span>{{/if}}</div>
+    <div class="space">{{#if with_tags}}<a class="sigbox" href="https://sig.invalid/spg_sig_award" aria-hidden="true"></a>{{/if}}</div>
     <div class="line"></div>
     <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
     <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>
     <p class="muted">Date: {{award_letter_date}}</p>
   </div>
+</div>
 </div>

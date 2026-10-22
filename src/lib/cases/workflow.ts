@@ -1,6 +1,6 @@
 // Case workflow steps shared by admin actions, webhooks and cron.
 import * as boldsign from "./boldsign";
-import { addEvent, fileById, getCase, mutateCase, nowIso, setMilestone, storeFile } from "./cases";
+import { addEvent, getCase, mutateCase, nowIso, setMilestone, storeFile } from "./cases";
 import { config } from "./config";
 import type { CertificateValues } from "./derive";
 import { DOCS, ENVELOPE_DOCS, INITIAL_DOCS, certRef, docFileName, renderDocuments, type DocKey, type RenderItem } from "./documents";
@@ -224,26 +224,15 @@ export async function sendForSignature(id: string, by: string) {
   if (!c1) throw new GuardError("Certificate C1 is missing. Regenerate the documents.");
   certDateGuard("onboarding", c1.certificate_date, c.fields.commencement_date);
 
-  const { PDFDocument } = await import("pdf-lib");
-  // OA, Policy and Consent always carry their tags; the Award Letter and C1 are rendered with
-  // Sterling's signature tag only for the envelope (their stored copies stay clean for the notary).
-  const tagged = await renderDocuments([{ doc: "award_letter", withTags: true }, certItem(c1, true)], c.fields, c.id);
-  const files: { name: string; bytes: Uint8Array }[] = [];
-  const parts: { doc: DocKey; pages: number; certNo?: number }[] = [];
-  for (const doc of ENVELOPE_DOCS) {
-    if (doc === "award_letter" || doc === "certificate") {
-      const r = tagged.find((t) => t.doc === doc)!;
-      files.push({ name: r.name, bytes: r.pdf });
-      parts.push({ doc, pages: r.pages, ...(doc === "certificate" ? { certNo: 1 } : {}) });
-      continue;
-    }
-    const f = fileById(c, c.docs[doc].current);
-    if (!f) throw new GuardError(`No current ${DOCS[doc].title} to send. Generate documents first.`);
-    const bytes = await getFileBytes(f.path);
-    if (!bytes) throw new GuardError(`Stored ${DOCS[doc].title} could not be read.`);
-    files.push({ name: docFileName(c.id, doc), bytes });
-    parts.push({ doc, pages: f.pages ?? (await PDFDocument.load(bytes)).getPageCount() });
-  }
+  // The envelope copies are rendered with signature markers, which give the field positions and
+  // are removed from the PDF; the stored copies stay unmarked for the notary.
+  const rendered = await renderDocuments(
+    ENVELOPE_DOCS.map((doc): RenderItem => (doc === "certificate" ? certItem(c1, true) : { doc, withTags: true })),
+    c.fields,
+    c.id,
+  );
+  const files = rendered.map((r) => ({ name: r.name, bytes: r.pdf, pages: r.pages, fields: r.fields }));
+  const parts: { doc: DocKey; pages: number; certNo?: number }[] = rendered.map((r) => ({ doc: r.doc, pages: r.pages, ...(r.certNo ? { certNo: r.certNo } : {}) }));
   const realEmail = String(c.fields.member_email);
   const clientEmail = config.live() ? realEmail : config.testRecipient();
   if (!clientEmail) throw new GuardError("TEST_RECIPIENT is not set (test mode).");
@@ -386,7 +375,7 @@ export async function sendCertificateForSignature(id: string, by: string, no: nu
   const documentId = await boldsign.sendEnvelope({
     title: `${cert.ref} – ${String(c.fields.company_name)} – Certificate of Pension Administration`,
     message: `Certificate ${cert.ref} for signature as Plan Administrator.`,
-    files: [{ name: r.name, bytes: r.pdf }],
+    files: [{ name: r.name, bytes: r.pdf, pages: r.pages, fields: r.fields }],
     signers: [{ name: config.spgSignerName(), email: config.spgSignerEmail() }],
     tags: boldsign.CERT_ONLY_TAGS,
   });
@@ -485,7 +474,7 @@ export async function sendClientEmail(id: string, kind: EmailKind, by: string, o
     if (!bytes) throw new GuardError(`Attachment ${f.name} could not be read.`);
     attachments.push({ filename: f.name, bytes });
   }
-  const sent = await sendEmail({ to: draft.to, subject: draft.subject, html: draft.html, text: draft.text, attachments, clientFacing: true, lang: draft.lang });
+  const sent = await sendEmail({ to: draft.to, subject: draft.subject, html: draft.html, text: draft.text, attachments, clientFacing: true, lang: draft.lang, footer: draft.footer });
   return mutateCase(id, by, (cc) => {
     cc.emails.push({
       kind,

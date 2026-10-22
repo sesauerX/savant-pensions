@@ -33,7 +33,7 @@ const tone = (e: (typeof all)[number]) =>
   : e.status === "details_confirmed" ? "action"
   : ["signatures_completed", "onboarding_complete"].includes(e.status) ? "wait"
   : "";
-const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "Europe/London", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 ---
 <AdminLayout title="Cases" flash={flash}>
   <div class="row" style="margin-bottom:14px">

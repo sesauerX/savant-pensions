@@ -83,6 +83,8 @@ export async function sendEmail(opts: {
   attachments?: Attachment[];
   clientFacing: boolean;
   lang?: Lang;
+  /** Client emails carry the reply footer unless the body already asks for a reply. */
+  footer?: boolean;
 }): Promise<SentEmail> {
   let to = opts.to.filter(Boolean);
   let banner: string | undefined;
@@ -107,8 +109,8 @@ export async function sendEmail(opts: {
         ...(opts.clientFacing && config.bcc() ? { bcc: [config.bcc()] } : {}),
         ...(opts.clientFacing && config.replyTo() ? { reply_to: config.replyTo() } : {}),
         subject: opts.subject + suffix,
-        html: layout(opts.html, banner, opts.lang ?? "en", opts.clientFacing),
-        text: textLayout(opts.text, banner, opts.lang ?? "en", opts.clientFacing),
+        html: layout(opts.html, banner, opts.lang ?? "en", opts.clientFacing && opts.footer !== false),
+        text: textLayout(opts.text, banner, opts.lang ?? "en", opts.clientFacing && opts.footer !== false),
         ...(groups[i].length ? { attachments: groups[i].map((a) => ({ filename: a.filename, content: b64(a.bytes) })) } : {}),
       }),
     });

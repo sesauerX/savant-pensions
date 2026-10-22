@@ -25,6 +25,8 @@ export type EmailDraft = {
   text: string;
   attachments: CaseFile[];
   problems: string[];
+  /** The reply footer; off where the body already asks for a reply. */
+  footer: boolean;
 };
 
 /** Owner decisions on the wording (21 Oct 2026): German approved, English pending. */
@@ -188,7 +190,7 @@ export function buildEmail(c: Case, kind: EmailKind, opts: EmailOptions = {}): E
   const company = f(c, "company_name");
   const commencement = date(f(c, "commencement_date"), lang);
   const courierAddress = oneLine(f(c, "beneficiary_address"));
-  const done = (subject: string, blocks: Block[], attachments: CaseFile[]): EmailDraft => ({ kind, lang, to, subject, ...render([hello, ...blocks], lang), attachments, problems });
+  const done = (subject: string, blocks: Block[], attachments: CaseFile[]): EmailDraft => ({ kind, lang, to, subject, ...render([hello, ...blocks], lang), attachments, problems, footer: kind !== "details" });
 
   if (kind === "A") {
     const c1 = c.certificates.find((x) => x.no === 1);

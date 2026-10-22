@@ -25,7 +25,7 @@ const show = Astro.url.searchParams.get("show") === "all" ? "all" : "open";
 const items = (await listInbox()).filter((i) => show === "all" || i.status === "open");
 const opened = Astro.url.searchParams.get("email");
 const body = opened ? await getInboxEmail(opened) : null;
-const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "Europe/London", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 ---
 <AdminLayout title="Unassigned inbox" flash={flash}>
   <div class="row"><h1>Unassigned inbox</h1><span class="spacer"></span>
@@ -43,7 +43,7 @@ const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { timeZone: "
       )}
       {i.status === "open" ? (
         <div class="row" style="margin-top:10px">
-          <form method="post" class="inline" onsubmit="return confirm('Create a case from this email? Claude will extract the details.')">
+          <form method="post" class="inline" data-confirm="Create a case from this email? Claude will extract the details.">
             <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="create_case" /><input type="hidden" name="email" value={i.emailId} />
             <button type="submit">Create case</button>
           </form>

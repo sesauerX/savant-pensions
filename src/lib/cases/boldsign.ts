@@ -5,8 +5,12 @@ import { PDFDocument } from "pdf-lib";
 import { config } from "./config";
 import { safeEqual } from "./http";
 import type { DocKey } from "./types";
+import type { FieldMarker } from "./pdf";
 
 const API = "https://api.boldsign.com";
+
+/** Documents sent on behalf of a sender identity need `onBehalfOf` on later calls too. */
+const behalf = () => (config.boldsignSenderEmail() ? `&onBehalfOf=${encodeURIComponent(config.boldsignSenderEmail())}` : "");
 
 async function bs(path: string, init: RequestInit = {}) {
   const res = await fetch(`${API}${path}`, { ...init, headers: { "X-API-KEY": config.boldsignKey(), ...(init.headers ?? {}) } });
@@ -27,8 +31,9 @@ async function bsJson(path: string, init: RequestInit = {}) {
 type Tag = { id: string; type: "Signature" | "DateSigned"; signer: number };
 
 /**
- * Main envelope (OA, Policy, Consent, Award Letter, Certificate C1). SignerIndex is 1-based:
- * 1 = client (member), 2 = Sterling (Pocholo). The Award Letter and C1 are signed by Sterling only.
+ * Main envelope (OA, Policy, Consent, Award Letter, Certificate C1). Signer 1 = client (member),
+ * 2 = Sterling (Pocholo). The Award Letter and C1 are signed by Sterling only. The ids match the
+ * .sigbox markers in the templates.
  */
 export const MAIN_TAGS: Tag[] = [
   { id: "client_sig_oa", type: "Signature", signer: 1 },
@@ -47,10 +52,54 @@ export const CERT_ONLY_TAGS: Tag[] = [{ id: "spg_sig_cert", type: "Signature", s
 export type SendInput = {
   title: string;
   message: string;
-  files: { name: string; bytes: Uint8Array }[];
+  /** Each file with the signature markers found while rendering it (see pdf.ts). */
+  files: { name: string; bytes: Uint8Array; pages: number; fields: FieldMarker[] }[];
   /** In signing order. */
   signers: { name: string; email: string }[];
   tags: Tag[];
+};
+
+/** BoldSign bounds are pixels at 96 dpi from the top-left of the page; PDF markers are points from the bottom-left. */
+const PX = 96 / 72;
+
+/** Signature fields placed by coordinates (no text tags, so nothing is left in the PDF text layer). */
+export function placeFields(files: SendInput["files"], tags: Tag[]) {
+  const placed: (Tag & { page: number; x: number; y: number; width: number; height: number })[] = [];
+  let offset = 0;
+  for (const f of files) {
+    for (const m of f.fields) {
+      const tag = tags.find((t) => t.id === m.id);
+      if (!tag) continue;
+      placed.push({
+        ...tag,
+        page: offset + m.page + 1, // 1-based, counted across all files of the envelope
+        x: Math.round(m.x * PX),
+        y: Math.round((m.pageHeight - m.y - m.height) * PX),
+        width: Math.round(m.width * PX),
+        height: Math.round(m.height * PX),
+      });
+    }
+    offset += f.pages;
+  }
+  const missing = tags.filter((t) => placed.filter((p) => p.id === t.id).length !== 1).map((t) => t.id);
+  if (missing.length) throw new Error(`Signature positions not found exactly once: ${missing.join(", ")}`);
+  return placed;
+}
+
+// BoldSign's own emails: keep the signing request, reminders and problem notices; no "completed"
+// email with the combined PDF (the client gets our email A instead).
+const RECIPIENT_NOTIFICATIONS: Record<string, boolean> = {
+  SignatureRequest: true,
+  Declined: true,
+  Revoked: true,
+  Signed: true,
+  Completed: false,
+  Expired: true,
+  Reassigned: true,
+  Deleted: true,
+  Reminders: true,
+  EditRecipient: true,
+  EditDocument: true,
 };
 
 export async function sendEnvelope(input: SendInput): Promise<string> {
@@ -58,27 +107,35 @@ export async function sendEnvelope(input: SendInput): Promise<string> {
   form.set("Title", input.title);
   form.set("Message", input.message);
   form.set("EnableSigningOrder", input.signers.length > 1 ? "true" : "false");
-  form.set("UseTextTags", "true");
   form.set("ExpiryDays", "30");
   form.set("ReminderSettings.EnableAutoReminder", "true");
   form.set("ReminderSettings.ReminderDays", "3");
   form.set("ReminderSettings.ReminderCount", "5");
   form.set("HideDocumentId", "false");
+  if (config.boldsignBrandId()) form.set("BrandId", config.boldsignBrandId());
+  if (config.boldsignSenderEmail()) form.set("OnBehalfOf", config.boldsignSenderEmail());
   // Local smoke tests only: create the envelope without emailing anyone.
   if (process.env.BOLDSIGN_DISABLE_EMAILS === "true") form.set("DisableEmails", "true");
+  const fields = placeFields(input.files, input.tags);
   input.signers.forEach((s, i) => {
     form.set(`Signers[${i}][Name]`, s.name);
     form.set(`Signers[${i}][EmailAddress]`, s.email);
     form.set(`Signers[${i}][SignerOrder]`, String(i + 1));
     form.set(`Signers[${i}][SignerType]`, "Signer");
-  });
-  input.tags.forEach((t, i) => {
-    form.set(`TextTagDefinitions[${i}][DefinitionId]`, t.id);
-    form.set(`TextTagDefinitions[${i}][Type]`, t.type);
-    form.set(`TextTagDefinitions[${i}][SignerIndex]`, String(t.signer));
-    form.set(`TextTagDefinitions[${i}][IsRequired]`, "true");
-    form.set(`TextTagDefinitions[${i}][Size][Width]`, t.type === "Signature" ? "200" : "110");
-    form.set(`TextTagDefinitions[${i}][Size][Height]`, t.type === "Signature" ? "40" : "18");
+    for (const [k, v] of Object.entries(RECIPIENT_NOTIFICATIONS)) form.set(`Signers[${i}][RecipientNotificationSettings][${k}]`, String(v));
+    fields
+      .filter((f) => f.signer === i + 1)
+      .forEach((f, j) => {
+        const key = `Signers[${i}][FormFields][${j}]`;
+        form.set(`${key}[Id]`, f.id);
+        form.set(`${key}[FieldType]`, f.type);
+        form.set(`${key}[PageNumber]`, String(f.page));
+        form.set(`${key}[IsRequired]`, "true");
+        form.set(`${key}[Bounds][X]`, String(f.x));
+        form.set(`${key}[Bounds][Y]`, String(f.y));
+        form.set(`${key}[Bounds][Width]`, String(f.width));
+        form.set(`${key}[Bounds][Height]`, String(f.height));
+      });
   });
   for (const f of input.files) {
     form.append("Files", new Blob([f.bytes as BlobPart], { type: "application/pdf" }), f.name);
@@ -97,7 +154,7 @@ export type EnvelopeStatus = {
 };
 
 export async function getStatus(documentId: string): Promise<EnvelopeStatus> {
-  const d = await bsJson(`/v1/document/properties?documentId=${encodeURIComponent(documentId)}`);
+  const d = await bsJson(`/v1/document/properties?documentId=${encodeURIComponent(documentId)}${behalf()}`);
   const signers = ((d.signerDetails as Record<string, unknown>[]) ?? []).map((s, i) => ({
     name: String(s.signerName ?? ""),
     email: String(s.signerEmail ?? ""),
@@ -109,14 +166,14 @@ export async function getStatus(documentId: string): Promise<EnvelopeStatus> {
 }
 
 export async function downloadSigned(documentId: string) {
-  const res = await bs(`/v1/document/download?documentId=${encodeURIComponent(documentId)}`);
+  const res = await bs(`/v1/document/download?documentId=${encodeURIComponent(documentId)}${behalf()}`);
   if (!res.ok) throw new Error(`BoldSign download failed: ${res.status}`);
   return new Uint8Array(await res.arrayBuffer());
 }
 
 /** Separate audit trail PDF, or null when the account combines it into the signed PDF. */
 export async function downloadAuditTrail(documentId: string): Promise<Uint8Array | null> {
-  const res = await bs(`/v1/document/downloadAuditLog?documentId=${encodeURIComponent(documentId)}`);
+  const res = await bs(`/v1/document/downloadAuditLog?documentId=${encodeURIComponent(documentId)}${behalf()}`);
   if (res.status === 412) return null;
   if (!res.ok) throw new Error(`BoldSign audit log download failed: ${res.status}`);
   return new Uint8Array(await res.arrayBuffer());

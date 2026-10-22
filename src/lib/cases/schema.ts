@@ -47,7 +47,7 @@ export const FIELDS: FieldDef[] = [
   { key: "beneficiary_passport", label: "Passport number", group: "Beneficiary", type: "text", required: true, ask: { en: "Your passport number", de: "Ihre Reisepassnummer" } },
   { key: "beneficiary_address", label: "Residential address (courier address)", group: "Beneficiary", type: "textarea", required: true, ask: { en: "Address for delivery of the original documents", de: "Lieferanschrift für die Originaldokumente" } },
   { key: "beneficiary_role", label: "Role served", group: "Beneficiary", type: "text", required: true, hint: "e.g. Managing Member", ask: { en: "Your role in the company", de: "Ihre Funktion in der Gesellschaft" } },
-  { key: "apostille_sets", label: "Apostilled original sets", group: "Beneficiary", type: "text", required: false, hint: "Number of sets", ask: { en: "Number of apostilled original sets", de: "Anzahl der apostillierten Originalsätze" } },
+  { key: "apostille_sets", label: "Apostilled original sets", group: "Beneficiary", type: "text", required: true, hint: "Number of sets", ask: { en: "Number of apostilled original sets", de: "Anzahl der apostillierten Originalsätze" } },
   { key: "service_start_date", label: "Service start date", group: "Beneficiary", type: "date", required: true, ask: { en: "Start date of your service to the company", de: "Beginn Ihrer Tätigkeit für die Gesellschaft" } },
   { key: "monthly_amount", label: "Monthly pension (USD)", group: "Pension", type: "amount", required: true },
   { key: "commencement_date", label: "First payment date", group: "Pension", type: "date", required: true, hint: "The pension start date, often given as \"Start date\"" },
@@ -100,8 +100,8 @@ export function isIsoDate(value: string) {
 
 export function todayIso(offsetDays = 0) {
   const d = new Date(Date.now() + offsetDays * 86400000);
-  // Business dates follow US Eastern time (West Hartford).
-  return d.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  // "Today" as seen by the admins (London).
+  return d.toLocaleDateString("en-CA", { timeZone: "Europe/London" });
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

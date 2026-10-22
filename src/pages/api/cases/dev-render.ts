@@ -39,6 +39,7 @@ export const GET: APIRoute = async ({ request, url, cookies }) => {
       "X-Pages": String(out.pages),
       "X-Template-Version": out.version,
       "X-Render-Ms": String(Date.now() - started),
+      "X-Fields": JSON.stringify(out.fields.map((f) => ({ id: f.id, page: f.page, x: Math.round(f.x), y: Math.round(f.y), w: Math.round(f.width), h: Math.round(f.height) }))),
       "Cache-Control": "no-store",
     },
   });

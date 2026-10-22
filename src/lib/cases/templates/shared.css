@@ -49,13 +49,20 @@ strong, b { font-weight: 700; color: var(--navy); }
 .co-name.long { font-size: 11pt; letter-spacing: 0.1em; }
 .co-line { font-size: 8.5pt; color: #5A5A5A; line-height: 1.45; margin: 0; text-wrap: balance; }
 .nowrap { white-space: nowrap; }
-body.letter, body.letter p { color: #1E1E1E; }
-body.letter strong, body.letter b, body.letter h3 { color: #111111; }
-body.letter table.summary th { background: #F3F3F3; color: #111111; }
-body.letter table.summary th, body.letter table.summary td { border-bottom-color: #DDDDDD; }
-body.letter .sig .line { border-top-color: #111111; }
-body.letter .sig .muted { color: #555555; }
-body.letter .watermark { color: rgba(0, 0, 0, 0.06); }
+/* The client company's own documents (1–4): plain black/grey, no Sterling navy or gold. */
+body.plain, body.plain p { color: #1E1E1E; }
+body.plain strong, body.plain b, body.plain h1, body.plain h2, body.plain h3, body.plain .clause > .no { color: #111111; }
+body.plain h2 { border-bottom-color: #D6D6D6; }
+body.plain .gold-rule { background: #2B2B2B; height: 1pt; }
+body.plain .company-head { border-bottom-color: #2B2B2B; }
+body.plain .company-head .name { color: #111111; }
+body.plain .ref-line, body.plain .company-head .ref { color: #5A5A5A; }
+body.plain .ref-line strong { color: #111111; }
+body.plain table.summary th { background: #F3F3F3; color: #111111; }
+body.plain table.summary th, body.plain table.summary td { border-bottom-color: #DDDDDD; }
+body.plain .sig .line { border-top-color: #111111; }
+body.plain .sig .muted { color: #555555; }
+body.plain .watermark { color: rgba(0, 0, 0, 0.06); }
 
 /* Title block */
 .title-block { text-align: center; margin-bottom: 0.22in; }
@@ -99,9 +106,10 @@ h3 { font-size: 10.5pt; font-weight: 700; color: var(--navy); margin: 0.2in 0 0.
 .sig .muted { color: var(--grey); }
 .sig-label { font-weight: 700; color: var(--navy); margin: 0.22in 0 0; break-after: avoid; }
 .keep { break-inside: avoid; }
-/* BoldSign text tags: invisible 1pt text at the top-left of the signature space. */
-.tag { position: absolute; left: 0; top: 0.05in; font-size: 1pt; line-height: 1; color: #FFFFFF; white-space: nowrap; }
-.tag.date { left: 3.4in; top: 0.3in; }
+/* Signature field markers: empty link boxes. pdf.ts reads their position from the PDF's link
+   annotations and removes them, so BoldSign fields are placed by coordinates and no text is left. */
+.sigbox { position: absolute; left: 0; top: 0.05in; display: block; width: 2.08in; height: 0.42in; }
+.sigbox.date { left: 3.4in; top: 0.3in; width: 1.15in; height: 0.19in; }
 
 /* Draft watermark: fixed elements repeat on every printed page. */
 .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-38deg); font-size: 27pt; font-weight: 800; color: rgba(11, 37, 69, 0.07); white-space: nowrap; letter-spacing: 0.04em; z-index: 1000; pointer-events: none; }

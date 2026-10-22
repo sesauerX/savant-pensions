@@ -82,15 +82,16 @@ export function buildDocument(
   const title = `${reference} - ${def.title}`;
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
 <style>${fontFaceCss()}
-${sharedCss}</style></head><body class="${doc === "certificate" ? "cert" : def.footer === "letter" ? "doc letter" : "doc"}">
+${sharedCss}</style></head><body class="${doc === "certificate" ? "cert" : def.footer === "letter" ? "doc letter plain" : "doc corp plain"}">
 ${watermark ? `<div class="watermark">${escapeHtml(WATERMARK_TEXT)}</div>` : ""}
 ${body}
 </body></html>`;
   const company = String(values.company_name);
   const left = def.footer === "sterling" ? STERLING_LINE : def.footer === "letter" ? company : `${company} · Ref: ${reference}`;
   const right = def.footer === "sterling" ? `Ref: ${reference} · ` : "";
-  const footerHtml = footerTemplate(left, right, def.footer === "letter");
-  return { doc, html, footerHtml, version: templateVersion(def.src), title, border: def.footer !== "letter", author: def.footer === "letter" ? company : "Sterling Pension Group LLC" };
+  // Only the certificate is Sterling's paper; documents 1–4 are the client company's own, in plain black/grey.
+  const footerHtml = footerTemplate(left, right, def.footer !== "sterling");
+  return { doc, html, footerHtml, version: templateVersion(def.src), title, border: def.footer === "sterling", author: def.footer === "sterling" ? "Sterling Pension Group LLC" : company };
 }
 
 function footerTemplate(left: string, rightPrefix: string, neutral = false) {
@@ -103,7 +104,7 @@ function footerTemplate(left: string, rightPrefix: string, neutral = false) {
   <div class="f"><div class="row"><span class="l">${escapeHtml(left)}</span><span class="r">${escapeHtml(rightPrefix)}Page <span class="pageNumber"></span> of <span class="totalPages"></span></span></div></div>`;
 }
 
-export type RenderedDoc = { doc: DocKey; certNo?: number; name: string; pdf: Uint8Array; pages: number; version: string };
+export type RenderedDoc = { doc: DocKey; certNo?: number; name: string; pdf: Uint8Array; pages: number; version: string; fields: import("./pdf").FieldMarker[] };
 export type RenderItem = DocKey | { doc: DocKey; withTags?: boolean; certNo?: number; certificate?: CertificateValues };
 
 /**
@@ -139,5 +140,6 @@ export async function renderDocuments(
     pdf: pdfs[i].pdf,
     pages: pdfs[i].pages,
     version: b.version,
+    fields: pdfs[i].fields,
   }));
 }

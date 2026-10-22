@@ -1,4 +1,4 @@
-<!-- template_version: WC-2026-10-21.1 | source: 3_WRITTEN_CONSENT_OF_SOLE_MEMBER_TEMPLATE.docx (counsel review pending) -->
+<!-- template_version: WC-2026-10-22.1 | source: 3_WRITTEN_CONSENT_OF_SOLE_MEMBER_TEMPLATE.docx (counsel review pending) -->
 <header class="company-head"><span class="name">{{company_name}}</span></header>
 
 <div class="title-block">
@@ -28,7 +28,7 @@
 <div class="clause"><span class="no">{{n}}.</span><div class="body"><strong>Plan Administrator.</strong> Sterling Pension Group LLC, 15 N Main St #100, West Hartford, CT 06107, USA, as Plan Administrator, is authorized and directed to implement these resolutions, make the payments and issue all certifications required by third parties.</div></div>
 
 <div class="sig">
-  <div class="space"><span class="tag">{{@client_sig_consent}}</span></div>
+  <div class="space">{{#if with_tags}}<a class="sigbox" href="https://sig.invalid/client_sig_consent" aria-hidden="true"></a>{{/if}}</div>
   <div class="line"></div>
   <p>{{member_name}}, Sole Member</p>
   <p class="muted">Date: {{signing_date}}</p>
@@ -37,7 +37,7 @@
 <div class="keep">
   <p style="margin-top:0.3in"><strong>Certificate of the Plan Administrator.</strong> The undersigned certifies that this is a true and complete copy of the written consent of the sole member of {{company_name}} dated {{signing_date}}, and that it remains in full force and effect.</p>
   <div class="sig" style="margin-top:0.04in">
-    <div class="space"><span class="tag">{{@spg_sig_consent}}</span></div>
+    <div class="space">{{#if with_tags}}<a class="sigbox" href="https://sig.invalid/spg_sig_consent" aria-hidden="true"></a>{{/if}}</div>
     <div class="line"></div>
     <p><strong>Sterling Pension Group LLC</strong>, as Plan Administrator</p>
     <p class="muted">By: Pocholo Delicana, Chief Executive Officer</p>

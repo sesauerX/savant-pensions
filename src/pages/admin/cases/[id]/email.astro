@@ -42,7 +42,7 @@ const toggle = (lang: string) => {
   return `?${p.toString()}`;
 };
 const langName = (l: string) => (l === "de" ? "German" : "English");
-const previewText = [draft.text, "", "--", clientFooter(viewLang)].join("\n");
+const previewText = draft.footer ? [draft.text, "", "--", clientFooter(viewLang)].join("\n") : draft.text;
 ---
 <AdminLayout title={`${id} ${LABEL[kind]}`} flash={flash}>
   <div class="muted small"><a href="/admin">Cases</a> / <a href={`/admin/cases/${id}#emails`}>{id}</a> / email</div>
@@ -57,7 +57,7 @@ const previewText = [draft.text, "", "--", clientFooter(viewLang)].join("\n");
       <dt>Subject</dt><dd>{sendDraft.subject}</dd>
       <dt>Attachments</dt><dd>{sendDraft.attachments.length ? sendDraft.attachments.map((a) => <div>{a.name} <span class="muted small">({size(a.size)})</span></div>) : <span class="muted">none</span>}{total > 28 * 1024 * 1024 && <div class="small muted">Large: will be split into several emails if needed.</div>}</dd>
     </dl>
-    {already.length > 0 && <p class="small" style="margin-top:8px"><b>Already sent</b> {already.length}× (last {new Date(already.at(-1)!.sentAt).toLocaleString("en-US", { timeZone: "America/New_York" })} ET).</p>}
+    {already.length > 0 && <p class="small" style="margin-top:8px"><b>Already sent</b> {already.length}× (last {new Date(already.at(-1)!.sentAt).toLocaleString("en-US", { timeZone: "Europe/London" })} UK time).</p>}
     {sendDraft.problems.length > 0 && <div class="flash err" style="margin-top:10px">{sendDraft.problems.join(" ")}</div>}
     {blocked && <div class="flash err" style="margin-top:10px">Live mode without approved templates: sending is blocked.</div>}
   </div>
@@ -74,7 +74,7 @@ const previewText = [draft.text, "", "--", clientFooter(viewLang)].join("\n");
     <pre class="mail full">{previewText}</pre>
     <details><summary class="small">Show the formatted (HTML) version</summary><iframe sandbox="" srcdoc={draft.html} class="preview" title="Email preview"></iframe></details>
   </div>
-  <form method="post" action={`/admin/cases/${id}/action`} class="row" onsubmit="return confirm('Send this email now?')">
+  <form method="post" action={`/admin/cases/${id}/action`} class="row" data-confirm="Send this email now?">
     <input type="hidden" name="_csrf" value={csrf} /><input type="hidden" name="_action" value="send_email" /><input type="hidden" name="kind" value={kind} />
     {certNo && <input type="hidden" name="cert" value={certNo} />}
     {items.map((k) => <input type="hidden" name="items" value={k} />)}

@@ -58,6 +58,44 @@ const nav = [
       {flash && <div class={`flash ${flash.ok ? "ok" : "err"}`} role="status">{flash.message}</div>}
       <slot />
     </main>
+    <script>
+      // On-page confirmation for forms marked data-confirm (no browser popups).
+      document.addEventListener(
+        "submit",
+        (event) => {
+          const form = event.target as HTMLFormElement;
+          const message = form.dataset.confirm;
+          if (!message || form.dataset.confirmed === "1") return;
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          form.querySelector(".confirm-bar")?.remove();
+          const submitter = (event as SubmitEvent).submitter as HTMLButtonElement | null;
+          const bar = document.createElement("div");
+          bar.className = "confirm-bar";
+          bar.setAttribute("role", "alertdialog");
+          const text = document.createElement("span");
+          text.textContent = message;
+          const yes = document.createElement("button");
+          yes.type = "button";
+          yes.textContent = "Yes, continue";
+          const no = document.createElement("button");
+          no.type = "button";
+          no.className = "secondary";
+          no.textContent = "Cancel";
+          yes.addEventListener("click", () => {
+            form.dataset.confirmed = "1";
+            yes.disabled = true;
+            no.disabled = true;
+            form.requestSubmit(submitter ?? undefined);
+          });
+          no.addEventListener("click", () => bar.remove());
+          bar.append(text, yes, no);
+          form.append(bar);
+          yes.focus();
+        },
+        true,
+      );
+    </script>
   </body>
 </html>
 
@@ -90,6 +128,9 @@ const nav = [
   .banner.stop { background: var(--errbg); color: var(--err); }
   main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 60px; }
   body.wide main { max-width: 1440px; }
+  .confirm-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; padding: 10px 12px; border: 1px solid #E0A100; background: var(--warnbg); border-radius: 6px; font-weight: 600; color: var(--navy); width: 100%; }
+  .confirm-bar span { flex: 1 1 220px; }
+  form.inline:has(.confirm-bar) { display: block; }
   .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; font-weight: 600; }
   .flash.ok { background: var(--okbg); color: var(--ok); }
   .flash.err { background: var(--errbg); color: var(--err); }

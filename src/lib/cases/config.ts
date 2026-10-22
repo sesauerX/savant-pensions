@@ -22,6 +22,10 @@ export const config = {
   anthropicModel: () => env("ANTHROPIC_MODEL") || "claude-sonnet-5-5",
   boldsignKey: () => env("BOLDSIGN_API_KEY"),
   boldsignWebhookSecret: () => env("BOLDSIGN_WEBHOOK_SECRET"),
+  /** Sterling brand (logo, colours, email display name) used on every envelope; never the account default. */
+  boldsignBrandId: () => env("BOLDSIGN_BRAND_ID"),
+  /** Approved BoldSign sender identity to send on behalf of (optional). */
+  boldsignSenderEmail: () => env("BOLDSIGN_SENDER_EMAIL"),
   spgSignerName: () => env("SPG_SIGNER_NAME") || "Pocholo Delicana",
   spgSignerEmail: () => env("SPG_SIGNER_EMAIL"),
   sessionSecret: () => env("SESSION_SECRET"),
@@ -57,6 +61,7 @@ export function integrationStatus() {
     "BoldSign API": Boolean(config.boldsignKey()),
     "BoldSign webhook secret": Boolean(config.boldsignWebhookSecret()),
     "BoldSign Sterling signer": Boolean(config.spgSignerEmail()),
+    "BoldSign Sterling brand": Boolean(config.boldsignBrandId()),
     "Session secret": config.sessionSecret().length >= 32,
     "Cron secret": Boolean(config.cronSecret()),
     "Admin users": config.adminUsers().length > 0,
