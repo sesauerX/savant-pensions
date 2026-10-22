@@ -53,7 +53,7 @@ const previewText = [draft.text, "", "--", clientFooter(viewLang)].join("\n");
       <dt>From</dt><dd>{config.clientFrom()}</dd>
       <dt>To</dt><dd><b>{actualTo.join(", ")}</b>{!live && <span class="muted"> · TEST MODE, would have gone to {sendDraft.to.join(", ") || "(no client email)"}</span>}</dd>
       {config.bcc() && (<><dt>Bcc</dt><dd>{config.bcc()}</dd></>)}
-      <dt>Reply-to</dt><dd>{config.replyTo() || <span class="muted">none (footer points to the contact form)</span>}</dd>
+      <dt>Reply-to</dt><dd>{config.replyTo()}</dd>
       <dt>Subject</dt><dd>{sendDraft.subject}</dd>
       <dt>Attachments</dt><dd>{sendDraft.attachments.length ? sendDraft.attachments.map((a) => <div>{a.name} <span class="muted small">({size(a.size)})</span></div>) : <span class="muted">none</span>}{total > 28 * 1024 * 1024 && <div class="small muted">Large: will be split into several emails if needed.</div>}</dd>
     </dl>

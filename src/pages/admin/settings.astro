@@ -46,6 +46,7 @@ const status = Object.entries(integrationStatus());
     <dl class="kv small">
       <dt>Case data</dt><dd><b>{RETENTION_POLICY}.</b> Cases are never deleted automatically; "Delete case data" on a case removes it by hand.</dd>
       <dt>Identity documents</dt><dd>Attachments tagged "Identity document" are deleted {IDENTITY_RETENTION_DAYS} days after the case's details were confirmed (daily check, logged on the case). The file record stays; the scan itself is removed.</dd>
+      <dt>Copies at Resend</dt><dd>Resend keeps received emails, including attachments, for 30 days on all plans and has no API to delete them. By the time the {IDENTITY_RETENTION_DAYS}-day rule runs, Resend's copy is already gone. (Shorter or custom retention is an Enterprise option at Resend; turning off content storage is a paid add-on.)</dd>
     </dl>
   </div>
   <div class="card">

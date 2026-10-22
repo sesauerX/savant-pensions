@@ -12,7 +12,8 @@ export const config = {
   allowedSenders: () =>
     env("INTAKE_ALLOWED_SENDERS").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean),
   clientFrom: () => env("CLIENT_FROM") || "Sterling Pension Group <noreply@sterlingpensiongroup.com>",
-  replyTo: () => env("SPG_REPLY_TO"),
+  /** Where client replies go; falls back to the intake address so replies always reach a case. */
+  replyTo: () => env("SPG_REPLY_TO") || env("INBOUND_ADDRESS"),
   bcc: () => env("SPG_BCC"),
   adminNotifyTo: () => env("ADMIN_NOTIFY_TO").split(",").map((s) => s.trim()).filter(Boolean),
   resendKey: () => env("RESEND_API_KEY"),

@@ -2,11 +2,11 @@
 //
 // Rules for every client email: name no party that might receive the documents (no banks,
 // consulates, authorities, countries or visas), plain factual tone, no email addresses in the
-// body (the contact form is the only contact route). Documents stay English; German emails give
+// body; clients reply to the email itself (reply-to is the intake address, which files replies to
+// the case by reference). Documents stay English; German emails give
 // the English title first with the German name in brackets.
 import { fileById } from "./cases";
 import type { Lang } from "./mail";
-import { config } from "./config";
 import { formatDate, formatDateDe } from "./schema";
 import { FIELD_BY_KEY } from "./schema";
 import { escapeHtml } from "./templates/render";
@@ -29,7 +29,7 @@ export type EmailDraft = {
 
 /** Owner decisions on the wording (21 Oct 2026): German approved, English pending. */
 export const EMAIL_APPROVAL: Record<Lang, { approved: boolean; note: string }> = {
-  de: { approved: true, note: "approved by the owner, 21 Oct 2026 (reply footer and the missing-details reply sentence added afterwards on the owner's instruction)" },
+  de: { approved: true, note: "approved by the owner, 21 Oct 2026; reply footer, missing-details reply sentence (21 Oct) and certificate reply sentence (22 Oct) added afterwards on the owner's instruction" },
   en: { approved: false, note: "wording pending owner approval" },
 };
 
@@ -263,12 +263,12 @@ export function buildEmail(c: Case, kind: EmailKind, opts: EmailOptions = {}): E
       ? [
           `anbei erhalten Sie die Bescheinigung der Pensionsverwaltung (Certificate of Pension Administration) Nr. C${cert.no} vom ${certDate}. ${position}`,
           ...(shipment ? [shipment] : []),
-          "Wie bereits erwähnt: Stellen, die diese Bescheinigung prüfen, möchten in der Regel auch Kontoauszüge über die erhaltenen Zahlungen sehen. Eine Bescheinigung gibt nur den Stand zu ihrem Datum wieder. Wenn Sie später eine aktualisierte Bescheinigung benötigen, fordern Sie diese bitte über unser Kontaktformular an. Wir benötigen dann Nachweise über die seit dieser Bescheinigung erfolgten Zahlungen.",
+          "Wie bereits erwähnt: Stellen, die diese Bescheinigung prüfen, möchten in der Regel auch Kontoauszüge über die erhaltenen Zahlungen sehen. Eine Bescheinigung gibt nur den Stand zu ihrem Datum wieder. Wenn Sie später eine aktualisierte Bescheinigung benötigen, antworten Sie bitte auf diese E-Mail, behalten Sie die Referenz im Betreff bei und fügen Sie Nachweise über die seit dieser Bescheinigung erfolgten Zahlungen bei (zum Beispiel Kontoauszüge).",
         ]
       : [
           `Attached is Certificate of Pension Administration no. C${cert.no}, dated ${certDate}. ${position}`,
           ...(shipment ? [shipment] : []),
-          "As before: anyone reviewing this certificate will usually also want to see bank statements showing the payments received. A certificate only reflects the facts as at its date, so if you need an updated one later, please request it through our contact form. We will need to see evidence of the payments made since this certificate before we can issue a new one.",
+          "As before: anyone reviewing this certificate will usually also want to see bank statements showing the payments received. A certificate only reflects the facts as at its date. If you need an updated certificate later, please reply to this email, keeping the reference in the subject line, and attach evidence of the payments made since this certificate (for example bank statements).",
         ];
     return done(de ? `${ref} – Bescheinigung der Pensionsverwaltung Nr. C${cert.no}` : `${ref} – Certificate of Pension Administration C${cert.no}`, blocks, [...ecopies, ...others]);
   }
@@ -280,16 +280,12 @@ export function buildEmail(c: Case, kind: EmailKind, opts: EmailOptions = {}): E
       ? [
           "um Ihre Unterlagen fertigstellen zu können, benötigen wir noch folgende Angaben:",
           { ul: items },
-          config.replyTo()
-            ? `Bitte antworten Sie direkt auf diese E-Mail mit den Angaben und fügen Sie gegebenenfalls Scans bei. Behalten Sie dabei die Referenz ${ref} im Betreff bei.`
-            : `Bitte senden Sie uns diese über sterlingpensiongroup.com/contact und geben Sie dabei die Referenz ${ref} an.`,
+          `Bitte antworten Sie direkt auf diese E-Mail mit den Angaben und fügen Sie gegebenenfalls Scans bei. Behalten Sie dabei die Referenz ${ref} im Betreff bei.`,
         ]
       : [
           "To complete your documents, we still need the following details:",
           { ul: items },
-          config.replyTo()
-            ? `Please reply to this email with the details and attach any scans. Keep the reference ${ref} in the subject line.`
-            : `Please send them to us through sterlingpensiongroup.com/contact and quote the reference ${ref}.`,
+          `Please reply to this email with the details and attach any scans. Keep the reference ${ref} in the subject line.`,
         ];
     return done(de ? `${ref} – Fehlende Angaben zu Ihrer Pensionsvereinbarung` : `${ref} – Missing details for your pension arrangement`, blocks, []);
   }

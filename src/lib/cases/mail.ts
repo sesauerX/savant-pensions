@@ -22,11 +22,7 @@ export type SentEmail = { ids: string[]; to: string[]; redirectedFrom?: string[]
 
 export type Lang = "en" | "de";
 
-const FOOTER_NO_REPLY: Record<Lang, string> = {
-  en: "This mailbox is not monitored. Please contact us through sterlingpensiongroup.com/contact.",
-  de: "Diese E-Mail wurde von einer nicht überwachten Adresse versendet. Bitte kontaktieren Sie uns über sterlingpensiongroup.com/contact.",
-};
-// With SPG_REPLY_TO set, client replies reach the intake address and are filed to the case by reference.
+// Client replies reach the intake address (reply-to) and are filed to the case by reference.
 const FOOTER_REPLY: Record<Lang, string> = {
   en: "Please reply to this email, keeping the reference in the subject line.",
   de: "Bitte antworten Sie direkt auf diese E-Mail und behalten Sie die Referenz im Betreff bei.",
@@ -34,7 +30,7 @@ const FOOTER_REPLY: Record<Lang, string> = {
 
 /** Footer for client emails; internal emails (notifications, login codes) have none. */
 export function clientFooter(lang: Lang) {
-  return config.replyTo() ? FOOTER_REPLY[lang] : FOOTER_NO_REPLY[lang];
+  return FOOTER_REPLY[lang];
 }
 
 function layout(bodyHtml: string, banner: string | undefined, lang: Lang, clientFacing: boolean) {
